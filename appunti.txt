@@ -1,0 +1,6 @@
+AI methods:
+- DL evaluation		https://github.com/zjeffer/chess-deep-rl
+- RL
+
+lookup table, negamax, alphabeta pruning	https://eleonoramisino.altervista.org/tablut-ai/
+self play, MCTS		https://medium.com/@samgill1256/reinforcement-learning-in-chess-73d97fad96b3
