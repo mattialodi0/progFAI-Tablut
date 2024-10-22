@@ -4,3 +4,41 @@ AI methods:
 
 lookup table, negamax, alphabeta pruning	https://eleonoramisino.altervista.org/tablut-ai/
 self play, MCTS		https://medium.com/@samgill1256/reinforcement-learning-in-chess-73d97fad96b3
+
+
+
+
+pseudocode:
+
+Client functioning: 
+
+0. checks the state for win/lose/draw   (state.getTurn())
+1. get the game state   (as matrix or array)
+2. checks if can win in a move      (TODO)
+
+// then
+3. starts the search of the best possible move  (NegaMax con AlphaBeta o MCTS)
+    iteration:      (Negamax + AlphaBeta)
+        - checks time 
+	    - evaluates a level of the tree
+        - choose a move
+
+// later
+    iteration:      (iterative deepening)
+        - checks time 
+	    - evaluates a level of the tree
+        - choose a move
+        - if max_level:
+            restart
+          else:
+            next level
+
+TODO functions:
+makeMove()
+backtrack()
+win()
+
+checkTime()
+
+treeSearch()
+evaluate()  //heuristic no ML
