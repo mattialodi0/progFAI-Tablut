@@ -17,6 +17,8 @@ public class BasicTreeSearch implements TreeSearch {
     
     public Action searchTree(State state) {
         Action best_move = randomMove(state);
+        //if(best_move == null)
+        //     raise Exception
         // float best_move_eval = -9999;
         // Action[] moves = GameState.availableMoves(state);
 
