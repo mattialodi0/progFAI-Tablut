@@ -1,4 +1,4 @@
-package it.unibo.ai.didattica.competition.tablut.client.our;
+package it.unibo.ai.didattica.competition.tablut.ourClient;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
