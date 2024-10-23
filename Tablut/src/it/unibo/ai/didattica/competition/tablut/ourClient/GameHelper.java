@@ -5,6 +5,7 @@ import java.util.List;
 import it.unibo.ai.didattica.competition.tablut.domain.Action;
 import it.unibo.ai.didattica.competition.tablut.domain.Game;
 import it.unibo.ai.didattica.competition.tablut.domain.State;
+import it.unibo.ai.didattica.competition.tablut.domain.State.Pawn;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
 
 public class GameHelper {
@@ -13,16 +14,19 @@ public class GameHelper {
 
     public GameHelper(Turn t, Game r) {
         playerColor = t;
-        rules = r;        
+        rules = r;
     }
 
     public static List<Action> availableMoves(State state) {
         List<Action> moves = new ArrayList<Action>();
         List<int[]> pawns = populatePawnList(state);
 
-        for(int[] p : pawns) {
+        for (int[] p : pawns) {
             moves.addAll(getPawnMoves(state, p));
         }
+
+        System.out.println("A P: " + pawns.size());
+        System.out.println("A M: " + moves.size());
 
         return moves;
     }
@@ -48,8 +52,7 @@ public class GameHelper {
                         buf[1] = j;
                         pawns.add(buf);
                     }
-                }
-                else {
+                } else {
                     if (state.getPawn(i, j).equalsPawn(State.Pawn.BLACK.toString())) {
                         buf = new int[2];
                         buf[0] = i;
@@ -59,6 +62,7 @@ public class GameHelper {
                 }
             }
         }
+
         return pawns;
     }
 
@@ -83,21 +87,20 @@ public class GameHelper {
     // terrible implementation, but good enough for now
     private static List<Action> getPawnMoves(State state, int[] pawn) {
         List<Action> pawnMoves = new ArrayList<Action>();
+        List<int[]> empty = populateEmptyList(state);
 
-        for(int i=0; i<state.getBoard().length; i++) {
-            for(int j=0; j<state.getBoard().length; j++) {
-                try {
-                    String from = state.getBox(i, j);
-                    String to = state.getBox(pawn[0], pawn[1]);
-                    Action move = new Action(from, to, state.getTurn());
+        for (int[] e : empty) {
+            try {
+                String from = state.getBox(pawn[0], pawn[1]);
+                String to = state.getBox(e[0], e[1]);
+                Action move = new Action(from, to, state.getTurn());
 
-                    rules.checkMove(state, move);
-                    pawnMoves.add(move);
-                }
-                catch(Exception e) {}
+                rules.checkMove(state, move);
+                pawnMoves.add(move);
+            } catch (Exception ex) {
             }
         }
-        
+
         return pawnMoves;
     }
 }

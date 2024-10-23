@@ -12,18 +12,16 @@ import it.unibo.ai.didattica.competition.tablut.ourClient.interfaces.TreeSearch;
 
 /* Visit only the first level of the tree */
 public class BasicTreeSearch implements TreeSearch {
-    private Turn playerColor;
     private Game rules;
 
-    public BasicTreeSearch(Turn t, Game r) {
-        this.playerColor = t;
+    public BasicTreeSearch(Game r) {
         this.rules = r;
     }
 
     @Override
     public Action searchTree(State state) {
         try {            
-            Action best_move = randomMove(state);
+            Action best_move  = randomMove(state);
             if(best_move == null)
                 throw new Exception("No available moves");
 
@@ -70,7 +68,7 @@ public class BasicTreeSearch implements TreeSearch {
 		boolean found = false;
 		Action a = null;
 		try {
-			a = new Action("z0", "z0", State.Turn.WHITE);
+			a = new Action("z0", "z0", state.getTurn());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -92,7 +90,7 @@ public class BasicTreeSearch implements TreeSearch {
 
 
             try {
-                a = new Action(from, to, State.Turn.WHITE);
+                a = new Action(from, to, state.getTurn());
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
@@ -103,7 +101,7 @@ public class BasicTreeSearch implements TreeSearch {
             } catch (Exception e) {}
 
         }
-        
+
         return a;
     }
 }
