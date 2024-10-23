@@ -5,12 +5,9 @@ import it.unibo.ai.didattica.competition.tablut.domain.State;
 import it.unibo.ai.didattica.competition.tablut.ourClient.interfaces.GameState;
 import it.unibo.ai.didattica.competition.tablut.ourClient.interfaces.TreeSearch;
 
-//NegaMaxTreeSearch(rules (GameAshtonTablut), this  (OurTablutClient))
-
 public class NegMaxTreeSearch implements TreeSearch {
 
-    Action bestAction; // Here the best move is stored
-
+    private Action bestAction; // Here the best move is stored
 
     @Override
     public float evaluate(State state) {
@@ -24,11 +21,16 @@ public class NegMaxTreeSearch implements TreeSearch {
         return null;
     }
 
+    @Override
+    public Action searchTree(State state) {
+        negMaxSearch(state, 4, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, 1);
+        return this.getBestAction();
+    }
+
     // returns the evaluation of the root node, not possible to return the action
     // because of the recursivness of the algorithm. The best Action will be stored
     // in an attribute. Player is always +1 at the beginning.
-    @Override
-    public float searchTree(State state, int depth, float alpha, float beta, int player) {
+    public float negMaxSearch(State state, int depth, float alpha, float beta, int player) {
 
         // call to some function that checks the possible moves, if there are no
         // possible moves the array is empty, becuase it means that the game ends.
@@ -43,10 +45,12 @@ public class NegMaxTreeSearch implements TreeSearch {
 
         for (Action a : moves) {
             // execute the move
+            State prevNode = state.clone();
+
             State s = GameState.makeMove(state, a); // makeMove has to take an Action not an int[]
 
             // call the other player
-            float cur = -searchTree(s, depth - 1, -beta, -alpha, -player);
+            float cur = -negMaxSearch(s, depth - 1, -beta, -alpha, -player);
 
             if (cur > score) {
                 score = cur;
@@ -56,11 +60,11 @@ public class NegMaxTreeSearch implements TreeSearch {
                 alpha = score;
             }
 
-            // Undo move -> so make state = ParentNode. This is not ok, if we pass the State
-            // as an argument to the function and not in the class and create a makeMove
-            // that doesn't modify the given state this could be a lot easier
+            // Undo move. Does checkMove() modify the state you pass to it. If it does so,
+            // we have to store the state before calling it so once it returns we can take
+            // back the parent node.
 
-            // this.state = parentNode;
+            state = prevNode;
 
             if (alpha >= beta) {
                 break;
