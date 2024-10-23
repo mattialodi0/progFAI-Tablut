@@ -1,61 +1,109 @@
 package it.unibo.ai.didattica.competition.tablut.ourClient;
 
+import java.util.List;
+import java.util.Random;
+import java.io.IOException;
 import it.unibo.ai.didattica.competition.tablut.domain.Action;
+import it.unibo.ai.didattica.competition.tablut.domain.Game;
 import it.unibo.ai.didattica.competition.tablut.domain.State;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Pawn;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
-import it.unibo.ai.didattica.competition.tablut.ourClient.interfaces.GameState;
 import it.unibo.ai.didattica.competition.tablut.ourClient.interfaces.TreeSearch;
 
 /* Visit only the first level of the tree */
 public class BasicTreeSearch implements TreeSearch {
     private Turn playerColor;
+    private Game rules;
 
-    public BasicTreeSearch(Turn t) {
+    public BasicTreeSearch(Turn t, Game r) {
         this.playerColor = t;
+        this.rules = r;
     }
-    
+
+    @Override
     public Action searchTree(State state) {
-        Action best_move = randomMove(state);
-        //if(best_move == null)
-        //     raise Exception
-        // float best_move_eval = -9999;
-        // Action[] moves = GameState.availableMoves(state);
+        try {            
+            Action best_move = randomMove(state);
+            if(best_move == null)
+                throw new Exception("No available moves");
 
-        // moves.forEach(m -> {
-        //     State s = GameState.makeMove(state, m);
-        //     float e = evaluate(s);
+            float best_move_eval = -9999;
+            List<Action> moves = GameHelper.availableMoves(state);
 
-        //     if(e > best_move_eval) {
-        //         best_move = m;
-        //         best_move_eval = e;
-        //     }
-        // })
+            for(Action m : moves) {
+                State s = rules.checkMove(state, m);
+                float e = evaluate(s);
 
-        return best_move;
+                if(e > best_move_eval) {
+                    best_move = m;
+                    best_move_eval = e;
+                }
+            }
+            return best_move;
+        }
+        catch (Exception e) {
+            return null;
+        }
+
     }
 
-    /* Basic heuristic, normalized between [-1, +1], more pieces -> more points  */
+    /* Basic heuristic, normalized between [-1, +1], more pieces -> more points */
+    @Override
     public float evaluate(State state) {
         float eval = 0;
 
-        if(playerColor == Turn.WHITE) {
-            eval = state.getNumberOf(Pawn.WHITE)*2 - state.getNumberOf(Pawn.BLACK);
-        }
-        else {
-            eval = state.getNumberOf(Pawn.BLACK) - state.getNumberOf(Pawn.WHITE)*2;
+        if (state.getTurn() == Turn.WHITE) {
+            eval = state.getNumberOf(Pawn.WHITE) * 2 - state.getNumberOf(Pawn.BLACK);
+        } else {
+            eval = state.getNumberOf(Pawn.BLACK) - state.getNumberOf(Pawn.WHITE) * 2;
         }
 
         return eval / 16;
     }
-    
+
     public Boolean hasMoreTime() {
         return true;
     }
 
-
     private Action randomMove(State state) {
-        // TODO: copy random player code
-        return null;
+        int[] selected = null;
+		boolean found = false;
+		Action a = null;
+		try {
+			a = new Action("z0", "z0", State.Turn.WHITE);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        
+		List<int[]> pawns = GameHelper.populatePawnList(state);
+		List<int[]> empty = GameHelper.populateEmptyList(state);
+
+        while (!found) {
+            if (pawns.size() > 1) {
+                selected = pawns.get(new Random().nextInt(pawns.size() - 1));
+            } else {
+                selected = pawns.get(0);
+            }
+
+            String from = state.getBox(selected[0], selected[1]);
+
+            selected = empty.get(new Random().nextInt(empty.size() - 1));
+            String to = state.getBox(selected[0], selected[1]);
+
+
+            try {
+                a = new Action(from, to, State.Turn.WHITE);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+
+            try {
+                rules.checkMove(state, a);
+                found = true;
+            } catch (Exception e) {}
+
+        }
+        
+        return a;
     }
 }
