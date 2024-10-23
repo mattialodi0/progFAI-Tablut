@@ -47,7 +47,7 @@ public class NegMaxTreeSearch implements TreeSearch {
             // execute the move
             State prevNode = state.clone();
 
-            State s = GameState.makeMove(state, a); // makeMove has to take an Action not an int[]
+            State s = checkMove(state, a); 
 
             // call the other player
             float cur = -negMaxSearch(s, depth - 1, -beta, -alpha, -player);
