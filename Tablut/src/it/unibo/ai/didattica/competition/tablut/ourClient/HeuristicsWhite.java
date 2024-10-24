@@ -1,33 +1,46 @@
 package it.unibo.ai.didattica.competition.tablut.ourClient;
 
-import it.unibo.ai.didattica.competition.tablut.domain.State;
-import it.unibo.ai.didattica.competition.tablut.domain.State.Pawn;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
+public class HeuristicsWhite extends Heuristics {
 
-// Make a Heuristics class that will have numEaten -> checks the state.turn and if its opponent counts;
-//Will have also numAlive, numberOfPawnsToReachKing, ConvergenceMiddle
-public class HeuristicsWhite {
-
-    // quanti bianchi possono affiancare il re?
-    public static int numberOfPawnsToReachKing(List<int[]> whitePawns, int[] kingPosition) {
-        return 0;
+    // number of clear paths to the escape tiles
+    public static int escapesOpen(List<int[]> emptyTiles, int[] kingPosition) {
+        List<int[]> escapingTiles = Arrays.asList(
+                new int[] { 0, 1 },
+                new int[] { 0, 2 },
+                new int[] { 0, 6 },
+                new int[] { 0, 7 },
+                new int[] { 1, 0 },
+                new int[] { 1, 8 },
+                new int[] { 2, 0 },
+                new int[] { 2, 8 },
+                new int[] { 6, 8 },
+                new int[] { 7, 8 },
+                new int[] { 6, 0 },
+                new int[] { 7, 0 },
+                new int[] { 8, 1 },
+                new int[] { 8, 2 },
+                new int[] { 8, 6 },
+                new int[] { 8, 7 });
+        List<int[]> availableEscapingTiles = escapingTiles.stream()
+                .filter(emptyTiles::contains)
+                .collect(Collectors.toList());
+        
+        return 1;
     }
 
-    public static float convergenceMiddle(List<int[]> blackPawns) {
-        return 0;
-    }
-
-    // how many escape tiles accessible?
-    public static int escapesOpen(List<int[]> escapeTiles, int[] kingPosition) {
-        return 0;
-    }
-
-    public static int numAlive(State state) {
-        return state.getNumberOf(Pawn.WHITE);
-    }
-
-    public static int numEaten(State state) {
-        return state.getNumberOf(Pawn.BLACK) - 16;
+    public static int freedomOfMovement(List<int[]> emptyTiles, int[] kingPosition) {
+        List<int[]> toCheckTiles = Arrays.asList(
+                new int[] { kingPosition[0] + 1, kingPosition[1] },
+                new int[] { kingPosition[0] - 1, kingPosition[1] },
+                new int[] { kingPosition[0], kingPosition[1] + 1 },
+                new int[] { kingPosition[0], kingPosition[1] - 1 });
+        int openDirections = (int) toCheckTiles.stream().filter(item1 -> emptyTiles.stream()
+                .anyMatch(item2 -> Arrays.equals(item1, item2)))
+                .count();
+        return openDirections;
     }
 }

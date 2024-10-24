@@ -3,6 +3,7 @@ package it.unibo.ai.didattica.competition.tablut.ourClient;
 import it.unibo.ai.didattica.competition.tablut.domain.Action;
 import it.unibo.ai.didattica.competition.tablut.domain.Game;
 import it.unibo.ai.didattica.competition.tablut.domain.State;
+import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
 import it.unibo.ai.didattica.competition.tablut.ourClient.interfaces.TreeSearch;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,7 @@ public class NegMaxTreeSearch implements TreeSearch {
 
     private Action bestAction; // Here the best move is stored
     private final Game rules;
+    private Turn t;
 
     public NegMaxTreeSearch(Game rules) {
         this.rules = rules;
@@ -32,8 +34,6 @@ public class NegMaxTreeSearch implements TreeSearch {
         // possible moves the array is empty, becuase it means that the game ends.
         Action[] moves = availableActions(state);
 
-        // check if we are at the last level of depth or the node is terminal (the game
-        // is over)
         if (depth == 0 || moves.length == 0) {
             return evaluate(state);
         }
@@ -71,32 +71,41 @@ public class NegMaxTreeSearch implements TreeSearch {
         return score;
     }
 
-    // To much code replicaton, look how to make the method in common only once
     @Override
     public float evaluate(State state) {
+        if (state.getTurn().equals(Turn.DRAW)) {
+            return 0;
+        } else if (state.getTurn().equals(Turn.WHITEWIN) && t.equals(Turn.WHITE)) {
+            return 1;
+        } else if (state.getTurn().equals(Turn.WHITEWIN) && t.equals(Turn.BLACK)) {
+            return -1;
+        } else if (state.getTurn().equals(Turn.BLACKWIN) && t.equals(Turn.WHITE)) {
+            return -1;
+        } else if (state.getTurn().equals(Turn.BLACKWIN) && t.equals(Turn.BLACK)) {
+            return 1;
+        }
         int[] kingPos = GameHelper.getKingPosition(state);
         List<int[]> emptyTiles = GameHelper.populateEmptyList(state);
         List<int[]> escapeTiles = new ArrayList<>();
+
+        // Common heuristics, everyone will be computed accordingly to who is calling it
+        int alivePawns = Heuristics.numAlive(state);
+        int eatenPawns = Heuristics.numEaten(state);
+        int kingReachable = Heuristics.numberOfPawnsToReachKing(GameHelper.populatePawnList(state), emptyTiles,
+                kingPos);
+        float conv = Heuristics.convergenceMiddle(GameHelper.populatePawnList(state));
+
         // white heuristics
         if (state.getTurn().equals(State.Turn.WHITE)) {
-            List<int[]> whitePawns = GameHelper.populatePawnList(state);
-            float conv = HeuristicsWhite.convergenceMiddle(whitePawns);
-            int escapes = HeuristicsWhite.escapesOpen(escapeTiles, kingPos);
-            int kingReachable = HeuristicsWhite.numberOfPawnsToReachKing(whitePawns, kingPos);
-            int alivePawns = HeuristicsWhite.numAlive(state);
-            int eatenPawns = HeuristicsWhite.numEaten(state);
-            return conv + kingReachable + escapes + alivePawns + eatenPawns;
+            int escapes = HeuristicsWhite.escapesOpen(emptyTiles, kingPos);
+            int directions = HeuristicsWhite.freedomOfMovement(emptyTiles, kingPos);
+            // Normalize it between 0 - 1
+            return directions + conv + kingReachable + escapes + alivePawns + eatenPawns;
         } else if (state.getTurn().equals(State.Turn.BLACK)) { // black heuristics
-            List<int[]> blackPawns = GameHelper.populatePawnList(state);
-            float conv = HeuristicsBlack.convergenceMiddle(blackPawns);
-            int kingReachable = HeuristicsBlack.canReachKing(blackPawns, emptyTiles, kingPos);
             int exitsBlocked = HeuristicsBlack.exitsBlocked(emptyTiles, escapeTiles, kingPos);
-            int alivePawns = HeuristicsBlack.numAlive(state);
-            int eatenPawns = HeuristicsBlack.numEaten(state);
-            // check the scales with weights
+            // Normalize between 0 - 1
             return conv + kingReachable + exitsBlocked + alivePawns + eatenPawns;
         }
-        // understand what is the behavior when Turn == WW, BW, D
         return 0;
     }
 
