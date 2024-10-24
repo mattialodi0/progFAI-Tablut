@@ -8,6 +8,7 @@ import it.unibo.ai.didattica.competition.tablut.domain.State;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Pawn;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
 
+
 public class GameHelper {
     private static Turn playerColor;
     private static Game rules;
@@ -22,13 +23,20 @@ public class GameHelper {
         List<int[]> pawns = populatePawnList(state);
 
         for (int[] p : pawns) {
-            moves.addAll(getPawnMoves(state, p));
+            List<Action> new_moves = getPawnMoves(state, p);
+            moves.addAll(new_moves);
+            // System.out.println(new_moves.size());
         }
 
         System.out.println("A P: " + pawns.size());
         System.out.println("A M: " + moves.size());
+        System.out.println("move: "+moves.get(0).getTurn()+" "+moves.get(0).getFrom()+"->"+moves.get(0).getTo());
 
         return moves;
+    }
+
+    public static State makeMove(State state, Action a) { 
+        return null;
     }
 
     public static Boolean win(State state) {
@@ -94,10 +102,12 @@ public class GameHelper {
                 String from = state.getBox(pawn[0], pawn[1]);
                 String to = state.getBox(e[0], e[1]);
                 Action move = new Action(from, to, state.getTurn());
-
-                rules.checkMove(state, move);
+                
+                State clone_state = state.clone();
+                rules.checkMove(clone_state, move);
                 pawnMoves.add(move);
             } catch (Exception ex) {
+                // System.out.println(ex.getMessage());
             }
         }
 

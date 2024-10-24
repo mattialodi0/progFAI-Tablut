@@ -1,17 +1,9 @@
 package it.unibo.ai.didattica.competition.tablut.ourClient;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.Socket;
 import java.net.UnknownHostException;
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-
-import com.google.gson.Gson;
-
 import it.unibo.ai.didattica.competition.tablut.client.TablutClient;
 import it.unibo.ai.didattica.competition.tablut.domain.*;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
@@ -113,9 +105,6 @@ public class TablutOurClient extends TablutClient {
 		searchStrategy = new BasicTreeSearch(rules);
 		gameHelper = new GameHelper(this.getPlayer(), rules);
 
-		List<int[]> pawns = new ArrayList<int[]>();
-		List<int[]> empty = new ArrayList<int[]>();
-
 		System.out.println("You are player " + this.getPlayer().toString() + "!");
 
 		while (true) {
@@ -134,39 +123,53 @@ public class TablutOurClient extends TablutClient {
 			} catch (InterruptedException e) {
 			}
 
-			if ((this.getPlayer().equals(Turn.WHITE)
-					&& this.getCurrentState().getTurn().equals(StateTablut.Turn.WHITE))) {
-				Action best_move = searchStrategy.searchTree(state);
+			if (this.getPlayer().equals(Turn.WHITE)) {
+				if (state.getTurn().equals(StateTablut.Turn.WHITE)) {
+					Action best_move = searchStrategy.searchTree(state);
 
-				try {
-					rules.checkMove(state, best_move);
-				} catch (Exception e) {
+					System.out.println("Mossa scelta: " + best_move.toString());
+					try {
+						this.write(best_move);
+					} catch (ClassNotFoundException | IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} else if (state.getTurn().equals(StateTablut.Turn.BLACK)) {
+					System.out.println("Waiting for your opponent move... ");
 				}
+				// ho vinto
+				else if (state.getTurn().equals(StateTablut.Turn.WHITEWIN)) {
+					System.out.println("YOU WIN!");
+					System.exit(0);
+				}
+				// ho perso
+				else if (state.getTurn().equals(StateTablut.Turn.BLACKWIN)) {
+					System.out.println("YOU LOSE!");
+					System.exit(0);
+				}
+				// pareggio
+				else if (state.getTurn().equals(StateTablut.Turn.DRAW)) {
+					System.out.println("DRAW!");
+					System.exit(0);
+				}
+			} 
+			// else if ((this.getPlayer().equals(Turn.BLACK)
+			// 		&& this.getCurrentState().getTurn().equals(StateTablut.Turn.BLACK))) {
+			// 	Action best_move = searchStrategy.searchTree(state);
 
-				System.out.println("Mossa scelta: " + best_move.toString());
-				try {
-					this.write(best_move);
-				} catch (ClassNotFoundException | IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			} else if ((this.getPlayer().equals(Turn.BLACK)
-					&& this.getCurrentState().getTurn().equals(StateTablut.Turn.BLACK))) {
-				Action best_move = searchStrategy.searchTree(state);
+			// 	try {
+			// 		rules.checkMove(state, best_move);
+			// 	} catch (Exception e) {
+			// 	}
 
-				try {
-					rules.checkMove(state, best_move);
-				} catch (Exception e) {
-				}
-
-				System.out.println("Mossa scelta: " + best_move.toString());
-				try {
-					this.write(best_move);
-				} catch (ClassNotFoundException | IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
+			// 	System.out.println("Mossa scelta: " + best_move.toString());
+			// 	try {
+			// 		this.write(best_move);
+			// 	} catch (ClassNotFoundException | IOException e) {
+			// 		// TODO Auto-generated catch block
+			// 		e.printStackTrace();
+			// 	}
+			// }
 
 			/*
 			 * if (this.getPlayer().equals(Turn.WHITE)) {

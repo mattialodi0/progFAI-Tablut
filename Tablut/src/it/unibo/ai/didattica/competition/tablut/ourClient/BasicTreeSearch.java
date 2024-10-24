@@ -10,6 +10,7 @@ import it.unibo.ai.didattica.competition.tablut.domain.State.Pawn;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
 import it.unibo.ai.didattica.competition.tablut.ourClient.interfaces.TreeSearch;
 
+
 /* Visit only the first level of the tree */
 public class BasicTreeSearch implements TreeSearch {
     private Game rules;
@@ -21,28 +22,32 @@ public class BasicTreeSearch implements TreeSearch {
     @Override
     public Action searchTree(State state) {
         try {            
-            Action best_move  = randomMove(state);
-            if(best_move == null)
-                throw new Exception("No available moves");
-
+            Action best_move = null;
             float best_move_eval = -9999;
             List<Action> moves = GameHelper.availableMoves(state);
 
-            for(Action m : moves) {
-                State s = rules.checkMove(state, m);
-                float e = evaluate(s);
 
+            for(Action m : moves) {
+                System.out.println();
+                State clone_state = state.clone();
+                State s = rules.checkMove(clone_state, m);
+                float e = evaluate(s);
+                
                 if(e > best_move_eval) {
                     best_move = m;
                     best_move_eval = e;
                 }
             }
+
+            System.out.println("Move:, "+best_move);
+            System.out.println("Eval: "+best_move_eval);
+            
             return best_move;
         }
         catch (Exception e) {
-            return null;
+            System.out.println("EEEEEEEEEEEEEEE "+ e.getMessage());
+            return randomMove(state);
         }
-
     }
 
     /* Basic heuristic, normalized between [-1, +1], more pieces -> more points */
@@ -56,7 +61,7 @@ public class BasicTreeSearch implements TreeSearch {
             eval = state.getNumberOf(Pawn.BLACK) - state.getNumberOf(Pawn.WHITE) * 2;
         }
 
-        return eval / 16;
+        return eval / 16 + (new Random().nextInt(10)/10); // random factor to cosider different moves
     }
 
     public Boolean hasMoreTime() {
