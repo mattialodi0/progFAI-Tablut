@@ -13,14 +13,14 @@ public class GameHelper {
 
     public GameHelper(Turn t, Game r) {
         playerColor = t;
-        rules = r;        
+        rules = r;
     }
 
     public static List<Action> availableMoves(State state) {
         List<Action> moves = new ArrayList<Action>();
         List<int[]> pawns = populatePawnList(state);
 
-        for(int[] p : pawns) {
+        for (int[] p : pawns) {
             moves.addAll(getPawnMoves(state, p));
         }
 
@@ -48,8 +48,7 @@ public class GameHelper {
                         buf[1] = j;
                         pawns.add(buf);
                     }
-                }
-                else {
+                } else {
                     if (state.getPawn(i, j).equalsPawn(State.Pawn.BLACK.toString())) {
                         buf = new int[2];
                         buf[0] = i;
@@ -84,8 +83,8 @@ public class GameHelper {
     private static List<Action> getPawnMoves(State state, int[] pawn) {
         List<Action> pawnMoves = new ArrayList<Action>();
 
-        for(int i=0; i<state.getBoard().length; i++) {
-            for(int j=0; j<state.getBoard().length; j++) {
+        for (int i = 0; i < state.getBoard().length; i++) {
+            for (int j = 0; j < state.getBoard().length; j++) {
                 try {
                     String from = state.getBox(i, j);
                     String to = state.getBox(pawn[0], pawn[1]);
@@ -93,11 +92,25 @@ public class GameHelper {
 
                     rules.checkMove(state, move);
                     pawnMoves.add(move);
+                } catch (Exception e) {
                 }
-                catch(Exception e) {}
             }
         }
-        
         return pawnMoves;
+    }
+
+    // you call it from negmax search so you have to do it only one time and then
+    // you pass it by parameter to specific heuristics functions
+    public static int[] getKingPosition(State state) {
+        int[] res = new int[2];
+        for (int i = 0; i < state.getBoard().length; i++) {
+            for (int j = 0; j < state.getBoard().length; j++) {
+                if (state.getPawn(i, j).equalsPawn(State.Pawn.KING.toString())) {
+                    res[0] = i;
+                    res[1] = j;
+                }
+            }
+        }
+        return res;
     }
 }
