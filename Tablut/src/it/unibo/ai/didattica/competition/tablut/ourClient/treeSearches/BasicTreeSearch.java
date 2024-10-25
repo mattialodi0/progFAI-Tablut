@@ -24,7 +24,7 @@ public class BasicTreeSearch implements TreeSearch {
     @Override
     public Action searchTree(State state) {
         try {            
-            Action best_move = randomMove(state);
+            Action best_move = null;
             float best_move_eval = -9999;
             List<Action> moves = GameHelper.availableMoves(state);
 

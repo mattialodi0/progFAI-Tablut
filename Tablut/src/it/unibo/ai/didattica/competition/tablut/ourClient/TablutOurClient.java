@@ -104,7 +104,6 @@ public class TablutOurClient extends TablutClient {
 		}
 
 		searchStrategy = new BasicTreeSearch(rules);
-		gameHelper = new GameHelper(this.getPlayer(), rules);
 
 		System.out.println("You are player " + this.getPlayer().toString() + "!");
 
