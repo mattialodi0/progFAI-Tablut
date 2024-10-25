@@ -1,4 +1,4 @@
-package it.unibo.ai.didattica.competition.tablut.ourClient;
+package it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches;
 
 import java.util.List;
 import java.util.Random;
@@ -8,15 +8,16 @@ import it.unibo.ai.didattica.competition.tablut.domain.Game;
 import it.unibo.ai.didattica.competition.tablut.domain.State;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Pawn;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
+import it.unibo.ai.didattica.competition.tablut.ourClient.GameHelper;
+import it.unibo.ai.didattica.competition.tablut.ourClient.evaluations.Evaluations;
 import it.unibo.ai.didattica.competition.tablut.ourClient.interfaces.TreeSearch;
+
 
 /* Visit only the first level of the tree */
 public class BasicTreeSearch implements TreeSearch {
-    private Turn playerColor;
     private Game rules;
 
-    public BasicTreeSearch(Turn t, Game r) {
-        this.playerColor = t;
+    public BasicTreeSearch(Game r) {
         this.rules = r;
     }
 
@@ -24,41 +25,31 @@ public class BasicTreeSearch implements TreeSearch {
     public Action searchTree(State state) {
         try {            
             Action best_move = randomMove(state);
-            if(best_move == null)
-                throw new Exception("No available moves");
-
             float best_move_eval = -9999;
             List<Action> moves = GameHelper.availableMoves(state);
 
-            for(Action m : moves) {
-                State s = rules.checkMove(state, m);
-                float e = evaluate(s);
 
+            for(Action m : moves) {
+                System.out.println();
+                State clone_state = state.clone();
+                State s = rules.checkMove(clone_state, m);
+                float e = Evaluations.evaluateMaterial(s);
+                
                 if(e > best_move_eval) {
                     best_move = m;
                     best_move_eval = e;
                 }
             }
+
+            System.out.println("Move:, "+best_move);
+            System.out.println("Eval: "+best_move_eval);
+            
             return best_move;
         }
         catch (Exception e) {
-            return null;
+            System.out.println("EEEEEEEEEEEEEEE "+ e.getMessage());
+            return randomMove(state);
         }
-
-    }
-
-    /* Basic heuristic, normalized between [-1, +1], more pieces -> more points */
-    @Override
-    public float evaluate(State state) {
-        float eval = 0;
-
-        if (state.getTurn() == Turn.WHITE) {
-            eval = state.getNumberOf(Pawn.WHITE) * 2 - state.getNumberOf(Pawn.BLACK);
-        } else {
-            eval = state.getNumberOf(Pawn.BLACK) - state.getNumberOf(Pawn.WHITE) * 2;
-        }
-
-        return eval / 16;
     }
 
     public Boolean hasMoreTime() {
@@ -70,7 +61,7 @@ public class BasicTreeSearch implements TreeSearch {
 		boolean found = false;
 		Action a = null;
 		try {
-			a = new Action("z0", "z0", State.Turn.WHITE);
+			a = new Action("z0", "z0", state.getTurn());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -92,7 +83,7 @@ public class BasicTreeSearch implements TreeSearch {
 
 
             try {
-                a = new Action(from, to, State.Turn.WHITE);
+                a = new Action(from, to, state.getTurn());
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
@@ -103,7 +94,7 @@ public class BasicTreeSearch implements TreeSearch {
             } catch (Exception e) {}
 
         }
-        
+
         return a;
     }
 }

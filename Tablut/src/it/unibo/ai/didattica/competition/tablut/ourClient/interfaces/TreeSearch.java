@@ -8,8 +8,5 @@ public interface TreeSearch {
     /* Alg. to search the game tree for the best move */
     public Action searchTree(State state);  //Hpw tp be able to write another class that uses different parameters?
 
-    /* Evaluates a state returning a float value */
-    float evaluate(State state);
-    
-     Boolean hasMoreTime();
+    Boolean hasMoreTime();
 } 

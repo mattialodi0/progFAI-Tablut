@@ -111,6 +111,7 @@ public class GameAshtonTablut implements Game {
 	public State checkMove(State state, Action a)
 			throws BoardException, ActionException, StopException, PawnException, DiagonalException, ClimbingException,
 			ThroneException, OccupitedException, ClimbingCitadelException, CitadelException {
+loggGame.setLevel(Level.OFF);
 		this.loggGame.fine(a.toString());
 		// controllo la mossa
 		if (a.getTo().length() != 2 || a.getFrom().length() != 2) {
@@ -319,6 +320,8 @@ public class GameAshtonTablut implements Game {
 
 		this.loggGame.fine("Stato:\n" + state.toString());
 		System.out.println("Stato:\n" + state.toString());
+
+loggGame.setLevel(Level.FINE);
 
 		return state;
 	}

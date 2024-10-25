@@ -7,10 +7,18 @@ self play, MCTS		https://medium.com/@samgill1256/reinforcement-learning-in-chess
 
 
 
+DONE:
+lookup table
+
+TODO:
+tree searches
+evaluations
+
+test framework
+py function calling
+
 
 pseudocode:
-
-Client functioning: 
 
 0. checks the state for win/lose/draw   (state.getTurn())
 1. get the game state   (as matrix or array)
@@ -32,30 +40,3 @@ Client functioning:
             restart
           else:
             next level
-
-TODO functions:
-makeMove()
-backtrack()
-win()
-
-checkTime()
-
-treeSearch()
-evaluate()  //heuristic no ML
-
-What to include in the heuristics:
-
-White:
- Number of eaten Blacks
- Number of white alive
- Number of different path the King can make to reach a safe tile or distance of the white king from the escape tiles 
- Protecting the king when its under attack
- Degrees of freedom for the king
- Penalty when number of blacks around is high
-
-Black:
- Number of black pawns still on the board
- Convergence at the middle of the board
- Number of eaten White
- Number of black pawns near King or maybe distance of the black pawn and white king
- Number of blocked exits for the White King
