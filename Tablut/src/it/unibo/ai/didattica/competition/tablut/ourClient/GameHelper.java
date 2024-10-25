@@ -92,25 +92,126 @@ public class GameHelper {
         return empty;
     }
 
-    // terrible implementation, but good enough for now
-    private static List<Action> getPawnMoves(State state, int[] pawn) {
-        List<Action> pawnMoves = new ArrayList<Action>();
-        List<int[]> empty = populateEmptyList(state);
+    // check if the pawn is moving on an occupied cell
+    public static boolean isObstacle(State state, int row, int col) {
+        Pawn p = state.getPawn(row, col);
+        // Considera ostacoli: pedine e caselle proibite
+        return !p.equalsPawn(State.Pawn.EMPTY.toString());
+    }
 
-        for (int[] e : empty) {
-            try {
-                String from = state.getBox(pawn[0], pawn[1]);
-                String to = state.getBox(e[0], e[1]);
-                Action move = new Action(from, to, state.getTurn());
-                
-                State clone_state = state.clone();
-                rules.checkMove(clone_state, move);
-                pawnMoves.add(move);
-            } catch (Exception ex) {
-                // System.out.println(ex.getMessage());
+    // check if a white pawn is moving on a camp or castle
+    public static boolean isCamp(Set<String> s, int row, int col){
+        return campSet.contains(row + "," + col);
+    }
+
+    // if the move is legit, then add the move in the list of moves
+    public static void addMoveIfValid(State state, int[] pawn, int targetRow, int targetCol, List<Action> moves){
+        String from = state.getBox(pawn[0], pawn[1]);
+        String to = state.getBox(targetRow, targetCol);
+
+        Action move = new Action(from, to, state.getTurn());
+
+        moves.add(move);
+    }
+
+    
+    public static List<Action> getPawnMoves(State state, int[] pawn) {
+        List<Action> pawnMoves = new ArrayList<Action>();
+        int row = pawn[0];
+        int column = pawn[1];
+
+        // i need to check if that a white pawn does not move on a camp
+        int[][] camps = {  
+            //camps on the top
+            { 0, 4 },  
+            { 0, 5 },
+            { 0, 6 }, 
+            { 1 , 5},
+
+            //camps on the bottom
+            { state.getBoard().length(), 4 },  
+            { state.getBoard().length(), 5 },
+            { state.getBoard().length(), 6 },    
+            { state.getBoard().length() - 1, 5 },
+
+            //camps on the left
+            { 4, 0 },
+            { 5, 0 },
+            { 6, 0 },
+            { 5, 1 },
+
+            //camps on the right
+            { 4, state.getBoard().length() },
+            { 5, state.getBoard().length() },
+            { 6, state.getBoard().length() },
+            { 5, state.getBoard().length() - 1 },
+
+            // castle tail
+            { 5, 5 },
+
+        };
+
+        // use hashmap to find faster if pawn wants to move on a camp o castle
+        private static Set<String> campSet = new HashSet<>();
+
+        static {
+            for (int[] camp : camps) {
+                campSet.add(camp[0] + "," + camp[1]); 
             }
+        }
+
+        // for each move i can go either up, or down, or left, or right
+        // i first fix the column, and move up and down, then i fix the row
+        // and go left and right.
+        // i check every time if i find an obstacle.
+
+        // Going upward
+        for (int i = row - 1; i >= 0; i--) {
+            if (isObstacle(state, i, column)) break; 
+            if (state.getPawn(i, column).equalsPawn(State.Pawn.WHITE.toString())){
+                if (isCamp(campSet, i, column)){
+                    break;
+                } 
+            }
+            addMoveIfValid(state, pawn, i, column, pawnMoves);
+        }
+
+        // Going downward
+        for (int i = row + 1; i < state.getBoard().length; i++) {
+            if (isObstacle(state, i, column)) break;
+            if (state.getPawn(i, column).equalsPawn(State.Pawn.WHITE.toString())){
+                if (isCamp(campSet, i, column)){
+                     break;
+                }
+            }
+            
+            addMoveIfValid(state, pawn, i, column, pawnMoves);
+        }
+
+        // Going to the left
+        for (int j = column - 1; j >= 0; j--) {
+            if (isObstacle(state, row, j)) break;
+            if (state.getPawn(row, j).equalsPawn(State.Pawn.WHITE.toString())){
+                if (isCamp(campSet, i, column)){
+                    break;
+                } 
+            }
+            addMoveIfValid(state, pawn, row, j, pawnMoves);
+        }
+
+        // Going to the right
+        for (int j = column + 1; j < state.getBoard().length; j++) {
+            if (isObstacle(state, row, j)) break;
+            if (state.getPawn(row, j).equalsPawn(State.Pawn.WHITE.toString())){
+                if (isCamp(campSet, i, column)){
+                    break;
+                } 
+            }
+            addMoveIfValid(state, pawn, row, j, pawnMoves);
         }
 
         return pawnMoves;
     }
 }
+
+
