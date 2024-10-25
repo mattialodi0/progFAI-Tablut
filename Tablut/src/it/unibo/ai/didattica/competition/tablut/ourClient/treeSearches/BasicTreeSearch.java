@@ -1,4 +1,4 @@
-package it.unibo.ai.didattica.competition.tablut.ourClient;
+package it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches;
 
 import java.util.List;
 import java.util.Random;
@@ -8,6 +8,8 @@ import it.unibo.ai.didattica.competition.tablut.domain.Game;
 import it.unibo.ai.didattica.competition.tablut.domain.State;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Pawn;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
+import it.unibo.ai.didattica.competition.tablut.ourClient.GameHelper;
+import it.unibo.ai.didattica.competition.tablut.ourClient.evaluations.Evaluations;
 import it.unibo.ai.didattica.competition.tablut.ourClient.interfaces.TreeSearch;
 
 
@@ -22,7 +24,7 @@ public class BasicTreeSearch implements TreeSearch {
     @Override
     public Action searchTree(State state) {
         try {            
-            Action best_move = null;
+            Action best_move = randomMove(state);
             float best_move_eval = -9999;
             List<Action> moves = GameHelper.availableMoves(state);
 
@@ -31,7 +33,7 @@ public class BasicTreeSearch implements TreeSearch {
                 System.out.println();
                 State clone_state = state.clone();
                 State s = rules.checkMove(clone_state, m);
-                float e = evaluate(s);
+                float e = Evaluations.evaluateMaterial(s);
                 
                 if(e > best_move_eval) {
                     best_move = m;
@@ -48,20 +50,6 @@ public class BasicTreeSearch implements TreeSearch {
             System.out.println("EEEEEEEEEEEEEEE "+ e.getMessage());
             return randomMove(state);
         }
-    }
-
-    /* Basic heuristic, normalized between [-1, +1], more pieces -> more points */
-    @Override
-    public float evaluate(State state) {
-        float eval = 0;
-
-        if (state.getTurn() == Turn.WHITE) {
-            eval = state.getNumberOf(Pawn.WHITE) * 2 - state.getNumberOf(Pawn.BLACK);
-        } else {
-            eval = state.getNumberOf(Pawn.BLACK) - state.getNumberOf(Pawn.WHITE) * 2;
-        }
-
-        return eval / 16 + (new Random().nextInt(10)/10); // random factor to cosider different moves
     }
 
     public Boolean hasMoreTime() {

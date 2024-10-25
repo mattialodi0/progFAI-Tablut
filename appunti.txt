@@ -7,10 +7,18 @@ self play, MCTS		https://medium.com/@samgill1256/reinforcement-learning-in-chess
 
 
 
+DONE:
+lookup table
+
+TODO:
+tree searches
+evaluations
+
+test framework
+py function calling
+
 
 pseudocode:
-
-Client functioning: 
 
 0. checks the state for win/lose/draw   (state.getTurn())
 1. get the game state   (as matrix or array)
@@ -32,13 +40,3 @@ Client functioning:
             restart
           else:
             next level
-
-TODO functions:
-makeMove()
-backtrack()
-win()
-
-checkTime()
-
-treeSearch()
-evaluate()  //heuristic no ML
