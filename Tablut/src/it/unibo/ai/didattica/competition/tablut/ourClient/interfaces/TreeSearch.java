@@ -8,8 +8,5 @@ public interface TreeSearch {
     /* Alg. to search the game tree for the best move */
     Action searchTree(State state);
 
-    /* Evaluates a state returning a float value */
-    float evaluate(State state);
-    
-     Boolean hasMoreTime();
+    Boolean hasMoreTime();
 } 

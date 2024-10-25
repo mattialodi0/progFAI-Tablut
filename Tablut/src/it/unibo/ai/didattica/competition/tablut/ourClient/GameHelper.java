@@ -35,9 +35,6 @@ public class GameHelper {
         return moves;
     }
 
-    public static State makeMove(State state, Action a) { 
-        return null;
-    }
 
     public static Boolean win(State state) {
         if (playerColor == Turn.WHITE)
