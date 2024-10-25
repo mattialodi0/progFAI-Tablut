@@ -20,7 +20,7 @@ public class NegMaxTreeSearch implements TreeSearch {
 
     @Override
     public Action searchTree(State state) {
-        negMaxSearch(state, 4, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, 1, true);
+        negMaxSearch(state, 3, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, 1, true);
         return this.getBestAction();
     }
 
@@ -100,11 +100,11 @@ public class NegMaxTreeSearch implements TreeSearch {
             int escapes = HeuristicsWhite.escapesOpen(emptyTiles, kingPos);
             int directions = HeuristicsWhite.freedomOfMovement(emptyTiles, kingPos);
             // Normalize it between 0 - 1
-            return directions + conv + kingReachable + escapes + alivePawns + eatenPawns;
+            return directions - conv + kingReachable + escapes + alivePawns + eatenPawns;
         } else if (state.getTurn().equals(State.Turn.BLACK)) { // black heuristics
             int exitsBlocked = HeuristicsBlack.exitsBlocked(emptyTiles, escapeTiles, kingPos);
             // Normalize between 0 - 1
-            return conv + kingReachable + exitsBlocked + alivePawns + eatenPawns;
+            return kingReachable - conv + exitsBlocked + alivePawns + eatenPawns;
         }
         return 0;
     }

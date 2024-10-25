@@ -61,6 +61,8 @@ public class GameHelper {
         return pawns;
     }
 
+    // Just the available empty, for the white don't show the black citadels.
+    // Care not to return also the throne!
     public static List<int[]> populateEmptyList(State state) {
         List<int[]> empty = new ArrayList<int[]>();
 
@@ -99,8 +101,6 @@ public class GameHelper {
         return pawnMoves;
     }
 
-    // you call it from negmax search so you have to do it only one time and then
-    // you pass it by parameter to specific heuristics functions
     public static int[] getKingPosition(State state) {
         int[] res = new int[2];
         for (int i = 0; i < state.getBoard().length; i++) {
