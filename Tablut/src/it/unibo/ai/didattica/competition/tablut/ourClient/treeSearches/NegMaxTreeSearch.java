@@ -4,8 +4,10 @@ import it.unibo.ai.didattica.competition.tablut.domain.Action;
 import it.unibo.ai.didattica.competition.tablut.domain.Game;
 import it.unibo.ai.didattica.competition.tablut.domain.State;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
+import it.unibo.ai.didattica.competition.tablut.ourClient.GameHelper;
 import it.unibo.ai.didattica.competition.tablut.ourClient.evaluations.Evaluations;
 import it.unibo.ai.didattica.competition.tablut.ourClient.interfaces.TreeSearch;
+import java.util.List;
 
 
 public class NegMaxTreeSearch implements TreeSearch {
@@ -28,13 +30,13 @@ public class NegMaxTreeSearch implements TreeSearch {
     // in the attribute of the class. Player is always +1 at the beginning.
     // isRoot is used to check when it has sense to update the bestMove attribute so
     // it's not updated in every recursive call
-    public float negMaxSearch(State state, int depth, float alpha, float beta, int player, Boolean isRoot) {
+    private float negMaxSearch(State state, int depth, float alpha, float beta, int player, Boolean isRoot) {
 
         // call to some function that checks the possible moves, if there are no
         // possible moves the array is empty, becuase it means that the game ends.
-        Action[] moves = availableActions(state);
+        List<Action> moves = GameHelper.availableMoves(state);
 
-        if (depth == 0 || moves.length == 0) {
+        if (depth == 0 || moves.isEmpty()) {
             return Evaluations.evaluateAdvanced(state, t);
         }
         float score = Float.NEGATIVE_INFINITY;
@@ -74,13 +76,6 @@ public class NegMaxTreeSearch implements TreeSearch {
     @Override
     public Boolean hasMoreTime() {
         // TODO Auto-generated method stub
-        return null;
-    }
-
-    // if the Turn == WW, BW, D return an empty list. Given a state we can get the
-    // Turn with getTurn()
-    public Action[] availableActions(State state) {
-        state.getTurn();
         return null;
     }
 

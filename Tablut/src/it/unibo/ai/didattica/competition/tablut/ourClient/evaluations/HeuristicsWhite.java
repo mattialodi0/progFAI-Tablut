@@ -8,10 +8,7 @@ public class HeuristicsWhite extends Heuristics {
 
         // add something that helps the other pawns and not only the king
 
-        // add something that considers only the distance of the king from the nearest
-        // escape tile. Manhattan distance
-
-        // How much escape tiles can be reached
+        // How many escape tiles can the king reach in one move
         public static int escapesOpen(List<int[]> emptyTiles, int[] kingPosition) {
                 List<int[]> escapingTiles = Arrays.asList(
                                 new int[] { 0, 1 },
@@ -33,14 +30,12 @@ public class HeuristicsWhite extends Heuristics {
                 List<int[]> availableEscapingTiles = escapingTiles.stream()
                                 .filter(emptyTiles::contains)
                                 .collect(Collectors.toList());
-                int escapesOpen = numberOfPawnsToReachKing(availableEscapingTiles, emptyTiles, kingPosition);
+                int escapesOpen = numberToReachGoal(availableEscapingTiles, kingPosition, emptyTiles);
                 return escapesOpen;
         }
 
+        // How many degrees of freedom does the king have
         public static int freedomOfMovement(List<int[]> emptyTiles, int[] kingPosition) {
-
-                // Maybe better because the other way it was a double scan. Depends how much
-                // more efficient are the streams
                 int freeTilesNear = 0;
                 for (int[] empty : emptyTiles) {
                         if ((Math.abs(empty[0] - kingPosition[0]) == 1 && empty[1] == kingPosition[1])
