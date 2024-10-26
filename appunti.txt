@@ -13,6 +13,7 @@ lookup table
 TODO:
 tree searches
 evaluations
+camp check on populateEmpty for white
 
 test framework
 py function calling

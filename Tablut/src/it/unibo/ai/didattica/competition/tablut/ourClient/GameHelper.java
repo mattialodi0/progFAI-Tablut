@@ -11,6 +11,7 @@ import it.unibo.ai.didattica.competition.tablut.domain.State;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Pawn;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
 
+
 public class GameHelper {
     private static Turn playerColor;
 
@@ -18,6 +19,7 @@ public class GameHelper {
         playerColor = t;
     }
 
+    /* Compute the list of available moves of a player */
     public static List<Action> availableMoves(State state) {
         List<Action> moves = new ArrayList<Action>();
         List<int[]> pawns = populatePawnList(state);
@@ -30,18 +32,33 @@ public class GameHelper {
             e.printStackTrace();
         }
 
-        System.out.println("A P: " + pawns.size());
-        System.out.println("A M: " + moves.size());
-        System.out.println( "move: " + moves.get(0).getTurn() + " " + moves.get(0).getFrom() + "->" + moves.get(0).getTo());
+        // System.out.println("Turn: " + state.getTurn());
+        // System.out.println("Av. Pawns: " + pawns.size());   // should be 9 for white
+        // System.out.println("Av. Moves: " + moves.size());
+        // System.out.println( "move: " + moves.get(0).getTurn() + " " + moves.get(0).getFrom() + "->" + moves.get(0).getTo());
 
         return moves;
     }
 
-    public static Boolean win(State state) {
-        if (playerColor == Turn.WHITE)
-            return state.getTurn() == Turn.WHITEWIN;
-        else
-            return state.getTurn() == Turn.BLACKWIN;
+    public static int[] getKingPosition(State state) {
+        int[] res = new int[2];
+        for (int i = 0; i < state.getBoard().length; i++) {
+            for (int j = 0; j < state.getBoard().length; j++) {
+                if (state.getPawn(i, j).equalsPawn(State.Pawn.KING.toString())) {
+                    res[0] = i;
+                    res[1] = j;
+                }
+            }
+        }
+        return res;
+    }
+
+    /* Plays a move and update a state */
+    public static void makeMove(State state, Action move) {
+        // TODO
+
+        // Game.movePawn()
+        // check for capures and endgames
     }
 
     public static List<int[]> populatePawnList(State state) {
@@ -50,7 +67,7 @@ public class GameHelper {
         int[] buf;
         for (int i = 0; i < state.getBoard().length; i++) {
             for (int j = 0; j < state.getBoard().length; j++) {
-                if (playerColor == Turn.WHITE) {
+                if (state.getTurn() == Turn.WHITE) {
                     if (state.getPawn(i, j).equalsPawn(State.Pawn.WHITE.toString())
                             || state.getPawn(i, j).equalsPawn(State.Pawn.KING.toString())) {
                         buf = new int[2];
@@ -92,30 +109,18 @@ public class GameHelper {
         return empty;
     }
 
-    // check if the pawn is moving on an occupied cell
-    public static boolean isObstacle(State state, int row, int col) {
-        Pawn p = state.getPawn(row, col);
-        // Considera ostacoli: pedine e caselle proibite
-        return !p.equalsPawn(State.Pawn.EMPTY.toString());
+    public static Boolean win(State state) {
+        if (playerColor == Turn.WHITE)
+            return state.getTurn() == Turn.WHITEWIN;
+        else
+            return state.getTurn() == Turn.BLACKWIN;
     }
 
-    // check if a white pawn is moving on a camp or castle
-    public static boolean isCamp(Set<String> s, int row, int col) {
-        return s.contains(row + "," + col);
-    }
 
-    // if the move is legit, then add the move in the list of moves
-    public static void addMoveIfValid(State state, int[] pawn, int targetRow, int targetCol, List<Action> moves)
-            throws IOException {
-        String from = state.getBox(pawn[0], pawn[1]);
-        String to = state.getBox(targetRow, targetCol);
+    // aux functions
 
-        Action move = new Action(from, to, state.getTurn());
-
-        moves.add(move);
-    }
-
-    public static List<Action> getPawnMoves(State state, int[] pawn) throws IOException {
+    /* Compute the list of available moves for a single pawn */
+    private static List<Action> getPawnMoves(State state, int[] pawn) throws IOException {
         List<Action> pawnMoves = new ArrayList<Action>();
         int row = pawn[0];
         int column = pawn[1];
@@ -214,16 +219,27 @@ public class GameHelper {
         return pawnMoves;
     }
 
-    public static int[] getKingPosition(State state) {
-        int[] res = new int[2];
-        for (int i = 0; i < state.getBoard().length; i++) {
-            for (int j = 0; j < state.getBoard().length; j++) {
-                if (state.getPawn(i, j).equalsPawn(State.Pawn.KING.toString())) {
-                    res[0] = i;
-                    res[1] = j;
-                }
-            }
-        }
-        return res;
+    // check if the pawn is moving on an occupied cell
+    private static boolean isObstacle(State state, int row, int col) {
+        Pawn p = state.getPawn(row, col);
+        // Considera ostacoli: pedine e caselle proibite
+        return !p.equalsPawn(State.Pawn.EMPTY.toString());
     }
+
+    // check if a white pawn is moving on a camp or castle
+    private static boolean isCamp(Set<String> s, int row, int col) {
+        return s.contains(row + "," + col);
+    }
+
+    // if the move is legit, then add the move in the list of moves
+    private static void addMoveIfValid(State state, int[] pawn, int targetRow, int targetCol, List<Action> moves)
+            throws IOException {
+        String from = state.getBox(pawn[0], pawn[1]);
+        String to = state.getBox(targetRow, targetCol);
+
+        Action move = new Action(from, to, state.getTurn());
+
+        moves.add(move);
+    }
+
 }

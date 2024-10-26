@@ -6,8 +6,6 @@ import java.io.IOException;
 import it.unibo.ai.didattica.competition.tablut.domain.Action;
 import it.unibo.ai.didattica.competition.tablut.domain.Game;
 import it.unibo.ai.didattica.competition.tablut.domain.State;
-import it.unibo.ai.didattica.competition.tablut.domain.State.Pawn;
-import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
 import it.unibo.ai.didattica.competition.tablut.ourClient.GameHelper;
 import it.unibo.ai.didattica.competition.tablut.ourClient.evaluations.Evaluations;
 import it.unibo.ai.didattica.competition.tablut.ourClient.interfaces.TreeSearch;
@@ -33,7 +31,7 @@ public class BasicTreeSearch implements TreeSearch {
                 System.out.println();
                 State clone_state = state.clone();
                 State s = rules.checkMove(clone_state, m);
-                float e = Evaluations.evaluateMaterial(s);
+                float e = Evaluations.evaluateMaterial(s, state.getTurn());
                 
                 if(e > best_move_eval) {
                     best_move = m;
