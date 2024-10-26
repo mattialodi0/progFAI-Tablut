@@ -12,23 +12,25 @@ import it.unibo.ai.didattica.competition.tablut.ourClient.Heuristics;
 import it.unibo.ai.didattica.competition.tablut.ourClient.HeuristicsBlack;
 import it.unibo.ai.didattica.competition.tablut.ourClient.HeuristicsWhite;
 
+
 public class Evaluations {
     
     /* Basic heuristic, normalized between [-1, +1], more pieces -> more points */
-    public static float evaluateMaterial(State state) {
+    public static float evaluateMaterial(State state, Turn t) {
         float eval = 0;
 
-        if (state.getTurn() == Turn.WHITE) {
+        if (t == Turn.WHITE) {
             eval = state.getNumberOf(Pawn.WHITE) * 2 - state.getNumberOf(Pawn.BLACK);
         } else {
             eval = state.getNumberOf(Pawn.BLACK) - state.getNumberOf(Pawn.WHITE) * 2;
         }
 
         // addition of a random factor to cosider different moves
-        return eval / 16 + (new Random().nextInt(10)/10); 
+        Random rand = new Random();
+        return eval / 16 + (rand.nextFloat()/10); 
     }
 
-    
+    /* Tomaz heuristic */
     public static float evaluateAdvanced(State state, Turn t) {
         if (state.getTurn().equals(Turn.DRAW)) {
             return 0;
@@ -64,5 +66,19 @@ public class Evaluations {
             return kingReachable - conv + exitsBlocked + alivePawns + eatenPawns;
         }
         return 0;
+    }
+
+    /* Patient evaluation for white, tries to keep the position and waits, not openiing lines to the king  */
+    public static float evaluatePatient(State state)  { return evaluatePatient(state, Turn.WHITE); }
+    public static float evaluatePatient(State state, Turn t)  {
+        // TODO
+        return 0f;
+    }
+
+    /* Aggressive evaluation for black, always tries to capture pieces */
+    public static float evaluateAggressive(State state) { return evaluateAggressive(state, Turn.BLACK); }
+    public static float evaluateAggressive(State state, Turn t) {
+        // TODO
+        return 0f;
     }
 }
