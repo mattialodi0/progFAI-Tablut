@@ -1,12 +1,12 @@
-package it.unibo.ai.didattica.competition.tablut.ourClient;
+package it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches;
 
 import it.unibo.ai.didattica.competition.tablut.domain.Action;
 import it.unibo.ai.didattica.competition.tablut.domain.Game;
 import it.unibo.ai.didattica.competition.tablut.domain.State;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
+import it.unibo.ai.didattica.competition.tablut.ourClient.evaluations.Evaluations;
 import it.unibo.ai.didattica.competition.tablut.ourClient.interfaces.TreeSearch;
-import java.util.ArrayList;
-import java.util.List;
+
 
 public class NegMaxTreeSearch implements TreeSearch {
 
@@ -35,7 +35,7 @@ public class NegMaxTreeSearch implements TreeSearch {
         Action[] moves = availableActions(state);
 
         if (depth == 0 || moves.length == 0) {
-            return evaluate(state);
+            return Evaluations.evaluateAdvanced(state, t);
         }
         float score = Float.NEGATIVE_INFINITY;
         State prevNode = state.clone(); // If clone doesn't do a depp copy it's not ok when returning to prevState.
@@ -69,44 +69,6 @@ public class NegMaxTreeSearch implements TreeSearch {
             }
         }
         return score;
-    }
-
-    @Override
-    public float evaluate(State state) {
-        if (state.getTurn().equals(Turn.DRAW)) {
-            return 0;
-        } else if (state.getTurn().equals(Turn.WHITEWIN) && t.equals(Turn.WHITE)) {
-            return 1;
-        } else if (state.getTurn().equals(Turn.WHITEWIN) && t.equals(Turn.BLACK)) {
-            return -1;
-        } else if (state.getTurn().equals(Turn.BLACKWIN) && t.equals(Turn.WHITE)) {
-            return -1;
-        } else if (state.getTurn().equals(Turn.BLACKWIN) && t.equals(Turn.BLACK)) {
-            return 1;
-        }
-        int[] kingPos = GameHelper.getKingPosition(state);
-        List<int[]> emptyTiles = GameHelper.populateEmptyList(state);
-        List<int[]> escapeTiles = new ArrayList<>();
-
-        // Common heuristics, everyone will be computed accordingly to who is calling it
-        int alivePawns = Heuristics.numAlive(state);
-        int eatenPawns = Heuristics.numEaten(state);
-        int kingReachable = Heuristics.numberOfPawnsToReachKing(GameHelper.populatePawnList(state), emptyTiles,
-                kingPos);
-        float conv = Heuristics.convergenceMiddle(GameHelper.populatePawnList(state));
-
-        // white heuristics
-        if (state.getTurn().equals(State.Turn.WHITE)) {
-            int escapes = HeuristicsWhite.escapesOpen(emptyTiles, kingPos);
-            int directions = HeuristicsWhite.freedomOfMovement(emptyTiles, kingPos);
-            // Normalize it between 0 - 1
-            return directions - conv + kingReachable + escapes + alivePawns + eatenPawns;
-        } else if (state.getTurn().equals(State.Turn.BLACK)) { // black heuristics
-            int exitsBlocked = HeuristicsBlack.exitsBlocked(emptyTiles, escapeTiles, kingPos);
-            // Normalize between 0 - 1
-            return kingReachable - conv + exitsBlocked + alivePawns + eatenPawns;
-        }
-        return 0;
     }
 
     @Override
