@@ -2,8 +2,6 @@ package it.unibo.ai.didattica.competition.tablut.ourClient;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
 import it.unibo.ai.didattica.competition.tablut.client.TablutClient;
 import it.unibo.ai.didattica.competition.tablut.domain.*;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;

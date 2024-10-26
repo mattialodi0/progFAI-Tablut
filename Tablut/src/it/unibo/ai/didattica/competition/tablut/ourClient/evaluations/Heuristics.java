@@ -1,4 +1,4 @@
-package it.unibo.ai.didattica.competition.tablut.ourClient;
+package it.unibo.ai.didattica.competition.tablut.ourClient.evaluations;
 
 import it.unibo.ai.didattica.competition.tablut.domain.State;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Pawn;

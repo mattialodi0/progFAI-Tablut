@@ -1,4 +1,4 @@
-package it.unibo.ai.didattica.competition.tablut.ourClient;
+package it.unibo.ai.didattica.competition.tablut.ourClient.evaluations;
 
 import java.util.Arrays;
 import java.util.List;

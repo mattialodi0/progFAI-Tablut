@@ -8,9 +8,6 @@ import it.unibo.ai.didattica.competition.tablut.domain.State;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Pawn;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
 import it.unibo.ai.didattica.competition.tablut.ourClient.GameHelper;
-import it.unibo.ai.didattica.competition.tablut.ourClient.Heuristics;
-import it.unibo.ai.didattica.competition.tablut.ourClient.HeuristicsBlack;
-import it.unibo.ai.didattica.competition.tablut.ourClient.HeuristicsWhite;
 
 
 public class Evaluations {
