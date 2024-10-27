@@ -9,8 +9,10 @@ self play, MCTS		https://medium.com/@samgill1256/reinforcement-learning-in-chess
 
 DONE:
 lookup table
+BasicSearch
 
 TODO:
+research
 tree searches
 evaluations
 camp check on populateEmpty for white

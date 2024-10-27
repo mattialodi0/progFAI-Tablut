@@ -5,9 +5,9 @@ import java.net.UnknownHostException;
 import it.unibo.ai.didattica.competition.tablut.client.TablutClient;
 import it.unibo.ai.didattica.competition.tablut.domain.*;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
-import it.unibo.ai.didattica.competition.tablut.ourClient.interfaces.TreeSearch;
 import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.BasicTreeSearch;
 import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.NegMaxTreeSearch;
+import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.TreeSearch;
 
 /**
  * 

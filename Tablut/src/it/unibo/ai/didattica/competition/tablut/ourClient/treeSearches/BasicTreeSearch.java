@@ -8,7 +8,6 @@ import it.unibo.ai.didattica.competition.tablut.domain.Game;
 import it.unibo.ai.didattica.competition.tablut.domain.State;
 import it.unibo.ai.didattica.competition.tablut.ourClient.GameHelper;
 import it.unibo.ai.didattica.competition.tablut.ourClient.evaluations.Evaluations;
-import it.unibo.ai.didattica.competition.tablut.ourClient.interfaces.TreeSearch;
 
 
 /* Visit only the first level of the tree */

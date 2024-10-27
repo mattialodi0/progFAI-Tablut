@@ -9,7 +9,6 @@ import it.unibo.ai.didattica.competition.tablut.domain.State;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
 import it.unibo.ai.didattica.competition.tablut.ourClient.GameHelper;
 import it.unibo.ai.didattica.competition.tablut.ourClient.evaluations.Evaluations;
-import it.unibo.ai.didattica.competition.tablut.ourClient.interfaces.TreeSearch;
 
 
 public class NegMaxTreeSearch implements TreeSearch {

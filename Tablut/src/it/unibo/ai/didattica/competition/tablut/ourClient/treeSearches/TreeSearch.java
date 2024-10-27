@@ -1,4 +1,4 @@
-package it.unibo.ai.didattica.competition.tablut.ourClient.interfaces;
+package it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches;
 
 import it.unibo.ai.didattica.competition.tablut.domain.Action;
 import it.unibo.ai.didattica.competition.tablut.domain.State;
