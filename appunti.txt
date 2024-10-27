@@ -41,3 +41,10 @@ pseudocode:
             restart
           else:
             next level
+
+
+
+Lesson:
+github use
+writing good code
+how not to use chatGPT

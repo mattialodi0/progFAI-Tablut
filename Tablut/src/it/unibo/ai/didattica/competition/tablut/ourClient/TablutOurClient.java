@@ -105,6 +105,7 @@ public class TablutOurClient extends TablutClient {
 
 		System.out.println("You are player " + this.getPlayer().toString() + "!");
 
+		int i=0;
 		while (true) {
 			try {
 				this.read();
