@@ -9,7 +9,6 @@ import it.unibo.ai.didattica.competition.tablut.ourClient.evaluations.Evaluation
 import it.unibo.ai.didattica.competition.tablut.ourClient.interfaces.TreeSearch;
 import java.util.List;
 
-
 public class NegMaxTreeSearch implements TreeSearch {
 
     private Action bestAction; // Here the best move is stored
@@ -32,21 +31,14 @@ public class NegMaxTreeSearch implements TreeSearch {
     // it's not updated in every recursive call
     private float negMaxSearch(State state, int depth, float alpha, float beta, int player, Boolean isRoot) {
 
-        // call to some function that checks the possible moves, if there are no
-        // possible moves the array is empty, becuase it means that the game ends.
         List<Action> moves = GameHelper.availableMoves(state);
 
         if (depth == 0 || moves.isEmpty()) {
             return Evaluations.evaluateAdvanced(state, t);
         }
         float score = Float.NEGATIVE_INFINITY;
-        State prevNode = state.clone(); // If clone doesn't do a depp copy it's not ok when returning to prevState.
-                                        // Maybe do by ourselve a deepCopy or is it to costly? Maybe better to make a
-                                        // move that changes the game state back. Just invert from and to of the Action
-                                        // I think it deepCopies everything apart from the Turn? I don't think this is
-                                        // a problem, because availableActions is done before
-        // Even if clone() works as a deep copy maybe it's not efficient. Try reversing
-        // the move? But again, maybe doing the checkMove twice is even more difficult
+        State prevNode = state.clone(); // To check if the clone does a deep copy, so if prevNode is actually completely
+                                        // the previos node
         for (Action a : moves) {
             try {
                 state = rules.checkMove(state, a);
