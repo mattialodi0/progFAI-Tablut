@@ -28,7 +28,8 @@ public class NegMaxTreeSearch implements TreeSearch {
     // Returns the score of the root node - state. The best Action will be stored
     // in the attribute of the class. Player is always +1 at the beginning.
     // isRoot is used to check when it has sense to update the bestMove attribute so
-    // it's not updated in every recursive call
+    // it's not updated in every recursive call.
+    // The parameter player doesn't have any usage!
     private float negMaxSearch(State state, int depth, float alpha, float beta, int player, Boolean isRoot) {
 
         List<Action> moves = GameHelper.availableMoves(state);
@@ -36,6 +37,9 @@ public class NegMaxTreeSearch implements TreeSearch {
         if (depth == 0 || moves.isEmpty()) {
             return Evaluations.evaluateAdvanced(state, t);
         }
+
+        // Check if is in the lookup table!
+
         float score = Float.NEGATIVE_INFINITY;
         State prevNode = state.clone(); // To check if the clone does a deep copy, so if prevNode is actually completely
                                         // the previos node
@@ -45,6 +49,7 @@ public class NegMaxTreeSearch implements TreeSearch {
             } catch (Exception e) {
                 // TODO!
             }
+
             // call the other player
             float cur = -negMaxSearch(state, depth - 1, -beta, -alpha, -player, false);
             if (cur > score) {
