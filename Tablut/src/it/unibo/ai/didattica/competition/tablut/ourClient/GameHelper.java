@@ -19,31 +19,31 @@ public class GameHelper {
     // i need to check if that a white pawn does not move on a camp
     private static int[][] camps = {
             // camps on the top
+            { 0, 3 },
             { 0, 4 },
             { 0, 5 },
-            { 0, 6 },
-            { 1, 5 },
+            { 1, 4 },
 
             // camps on the bottom
+            { 8, 3 },
             { 8, 4 },
             { 8, 5 },
-            { 8, 6 },
-            { 7, 5 },
+            { 7, 4 },
 
             // camps on the left
+            { 3, 0 },
             { 4, 0 },
             { 5, 0 },
-            { 6, 0 },
-            { 5, 1 },
+            { 4, 1 },
 
             // camps on the right
+            { 3, 8 },
             { 4, 8 },
             { 5, 8 },
-            { 6, 8 },
-            { 5, 7 },
+            { 4, 7 },
 
             // castle tail
-            { 5, 5 },
+            { 4, 4 },
 
     };
 
@@ -144,7 +144,7 @@ public class GameHelper {
 
         return empty;
     }
-
+ 
     public static List<Action> getPawnMoves(State state, int[] pawn) {
         List<Action> pawnMoves = new ArrayList<Action>();
         int row = pawn[0];
@@ -189,6 +189,7 @@ public class GameHelper {
         return pawnMoves;
     }
 
+    
     // check if the pawn is moving on an occupied cell
     private static boolean isObstacle(State state, int row, int col) {
         Pawn p = state.getPawn(row, col);
