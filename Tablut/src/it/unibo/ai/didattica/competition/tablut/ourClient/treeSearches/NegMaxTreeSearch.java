@@ -1,5 +1,8 @@
 package it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import it.unibo.ai.didattica.competition.tablut.domain.Action;
 import it.unibo.ai.didattica.competition.tablut.domain.Game;
 import it.unibo.ai.didattica.competition.tablut.domain.State;
@@ -13,10 +16,11 @@ public class NegMaxTreeSearch implements TreeSearch {
 
     private Action bestAction; // Here the best move is stored
     private final Game rules;
-    private Turn t;
+    private Turn turn;
 
-    public NegMaxTreeSearch(Game rules) {
+    public NegMaxTreeSearch(Game rules, Turn t) {
         this.rules = rules;
+        this.turn = t;
     }
 
     @Override
@@ -32,10 +36,12 @@ public class NegMaxTreeSearch implements TreeSearch {
     // The parameter player doesn't have any usage!
     private float negMaxSearch(State state, int depth, float alpha, float beta, int player, Boolean isRoot) {
 
-        List<Action> moves = GameHelper.availableMoves(state);
+        // call to some function that checks the possible moves, if there are no
+        // possible moves the array is empty, becuase it means that the game ends.
+        List<Action> moves = availableActions(state);
 
-        if (depth == 0 || moves.isEmpty()) {
-            return Evaluations.evaluateMaterial(state, t);
+        if (depth == 0 || moves.size() == 0) {
+            return Evaluations.evaluateAdvanced(state, turn);
         }
 
         // Check if is in the lookup table!
@@ -73,7 +79,16 @@ public class NegMaxTreeSearch implements TreeSearch {
     @Override
     public Boolean hasMoreTime() {
         // TODO Auto-generated method stub
-        return null;
+        return true;
+    }
+
+    // if the Turn == WW, BW, D return an empty list. Given a state we can get the
+    // Turn with getTurn()
+    public List<Action> availableActions(State state) {
+        if(state.getTurn() == Turn.WHITEWIN || state.getTurn() == Turn.BLACKWIN || state.getTurn() == Turn.DRAW)
+            return new ArrayList<Action>();
+        else
+            return GameHelper.availableMoves(state);
     }
 
     public Action getBestAction() {
