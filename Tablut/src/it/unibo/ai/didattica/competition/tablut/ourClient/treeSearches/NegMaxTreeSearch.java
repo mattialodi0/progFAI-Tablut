@@ -21,7 +21,7 @@ public class NegMaxTreeSearch implements TreeSearch {
 
     @Override
     public Action searchTree(State state) {
-        negMaxSearch(state, 3, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, 1, true);
+        negMaxSearch(state, 4, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, 1, true);
         return this.getBestAction();
     }
 
@@ -35,7 +35,7 @@ public class NegMaxTreeSearch implements TreeSearch {
         List<Action> moves = GameHelper.availableMoves(state);
 
         if (depth == 0 || moves.isEmpty()) {
-            return Evaluations.evaluateAdvanced(state, t);
+            return Evaluations.evaluateMaterial(state, t);
         }
 
         // Check if is in the lookup table!

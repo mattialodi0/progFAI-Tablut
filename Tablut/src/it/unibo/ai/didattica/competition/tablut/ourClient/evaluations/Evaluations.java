@@ -30,13 +30,13 @@ public class Evaluations {
         if (state.getTurn().equals(Turn.DRAW)) {
             return 0;
         } else if (state.getTurn().equals(Turn.WHITEWIN) && t.equals(Turn.WHITE)) {
-            return 1;
+            return Float.POSITIVE_INFINITY;
         } else if (state.getTurn().equals(Turn.WHITEWIN) && t.equals(Turn.BLACK)) {
-            return -1;
+            return Float.NEGATIVE_INFINITY;
         } else if (state.getTurn().equals(Turn.BLACKWIN) && t.equals(Turn.WHITE)) {
-            return -1;
+            return Float.NEGATIVE_INFINITY;
         } else if (state.getTurn().equals(Turn.BLACKWIN) && t.equals(Turn.BLACK)) {
-            return 1;
+            return Float.POSITIVE_INFINITY;
         }
         int[] kingPos = GameHelper.getKingPosition(state);
         List<int[]> emptyTiles = GameHelper.populateEmptyList(state);
