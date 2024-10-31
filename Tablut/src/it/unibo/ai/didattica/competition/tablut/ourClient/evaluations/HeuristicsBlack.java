@@ -3,24 +3,26 @@ package it.unibo.ai.didattica.competition.tablut.ourClient.evaluations;
 import java.util.Arrays;
 import java.util.List;
 
+import it.unibo.ai.didattica.competition.tablut.domain.State;
+
 public class HeuristicsBlack extends Heuristics {
 
-    public static int exitsBlocked(List<int[]> emptyTiles, int[] kingPosition) {
-        return (16 - HeuristicsWhite.escapesOpen(emptyTiles, kingPosition));
+    public static float exitsBlocked(List<int[]> emptyTiles, int[] kingPosition) {
+        return -HeuristicsWhite.escapesOpen(emptyTiles, kingPosition);
     }
 
-    // How many black tiles are in the close proximity of the king
+    // How many black tiles are in the close proximity of the king.
     public static int pawnsNearKing(List<int[]> pawns, int[] kingPosition) {
 
         int numberPawns = 0;
-  
+
         for (int[] pawn : pawns) {
             if ((Math.abs(pawn[0] - kingPosition[0]) == 1 && pawn[1] == kingPosition[1])
                     || (Math.abs(pawn[1] - kingPosition[1]) == 1 && pawn[0] == kingPosition[0])) {
                 numberPawns++;
             }
         }
-        return numberPawns;
+        return ((2 * numberPawns) / 4) - 1;
     }
 
     // The manhattan distance of every black pawn from the king. The empty tiles are
@@ -29,8 +31,8 @@ public class HeuristicsBlack extends Heuristics {
         return 0;
     }
 
-    
-    public static int numberOfPawnsToReachKing(List<int[]> pawns, int[] kingPosition, List<int[]> empty) {
+    // Checks how many pawns can touch the king with one move.
+    public static float numberOfPawnsToReachKing(List<int[]> pawns, int[] kingPosition, List<int[]> empty, State state) {
         int pawnCount = 0;
 
         for (int[] pawn : pawns) {
@@ -38,10 +40,9 @@ public class HeuristicsBlack extends Heuristics {
                 pawnCount += 1;
             }
         }
-        return pawnCount;
+        return (2 * pawnCount / numAlive(state)) - 1;
     }
 
-    // Checks how many pawns can touch the king with one move. Notice that I didn't
     protected static Boolean canComeNearKing(int[] pawn, int[] king, List<int[]> empty) {
 
         int[][] directions = {

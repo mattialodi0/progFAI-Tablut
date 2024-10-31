@@ -40,25 +40,22 @@ public class Evaluations {
         }
         int[] kingPos = GameHelper.getKingPosition(state);
         List<int[]> emptyTiles = GameHelper.populateEmptyList(state);
-        List<int[]> escapeTiles = new ArrayList<>();
+        // List<int[]> escapeTiles = new ArrayList<>();
 
         // Common heuristics, everyone will be computed accordingly to who is calling it
-        int alivePawns = Heuristics.numAlive(state);
-        int eatenPawns = Heuristics.numEaten(state);
-        float conv = Heuristics.convergenceMiddle(GameHelper.populatePawnList(state));
-
+        float alivePawns = Heuristics.numAlive(state);
+        float eatenPawns = Heuristics.numEaten(state);
         // white heuristics
         if (state.getTurn().equals(State.Turn.WHITE)) {
-            int escapes = HeuristicsWhite.escapesOpen(emptyTiles, kingPos);
-            int directions = HeuristicsWhite.freedomOfMovement(emptyTiles, kingPos);
-            // Normalize it between 0 - 1
-            return directions - conv + escapes + alivePawns + eatenPawns;
+            float escapesAccessible = HeuristicsWhite.escapesOpen(emptyTiles, kingPos);
+            float freedomKing = HeuristicsWhite.freedomOfMovement(emptyTiles, kingPos);
+            return freedomKing + escapesAccessible + alivePawns + eatenPawns;
+
         } else if (state.getTurn().equals(State.Turn.BLACK)) { // black heuristics
-            int exitsBlocked = HeuristicsBlack.exitsBlocked(emptyTiles, kingPos);
-            int kingReachable = HeuristicsBlack.numberOfPawnsToReachKing(GameHelper.populatePawnList(state),
-                    kingPos, emptyTiles);
-            // Normalize between 0 - 1
-            return kingReachable - conv + exitsBlocked + alivePawns + eatenPawns;
+            float exitsBlocked = HeuristicsBlack.exitsBlocked(emptyTiles, kingPos);
+            float kingReachable = HeuristicsBlack.numberOfPawnsToReachKing(GameHelper.populatePawnList(state),
+                    kingPos, emptyTiles, state);
+            return alivePawns + eatenPawns;
         }
         return 0;
     }

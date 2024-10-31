@@ -9,7 +9,7 @@ public class HeuristicsWhite extends Heuristics {
         // add something that helps the other pawns and not only the king
 
         // How many escape tiles can the king reach in one move
-        public static int escapesOpen(List<int[]> emptyTiles, int[] kingPosition) {
+        public static float escapesOpen(List<int[]> emptyTiles, int[] kingPosition) {
                 List<int[]> escapingTiles = Arrays.asList(
                                 new int[] { 0, 1 },
                                 new int[] { 0, 2 },
@@ -31,11 +31,11 @@ public class HeuristicsWhite extends Heuristics {
                                 .filter(emptyTiles::contains)
                                 .collect(Collectors.toList());
                 int escapesOpen = numberToReachGoal(availableEscapingTiles, kingPosition, emptyTiles);
-                return escapesOpen;
+                return (2 * escapesOpen / 16) - 1;
         }
 
         // How many degrees of freedom does the king have
-        public static int freedomOfMovement(List<int[]> emptyTiles, int[] kingPosition) {
+        public static float freedomOfMovement(List<int[]> emptyTiles, int[] kingPosition) {
                 int freeTilesNear = 0;
                 for (int[] empty : emptyTiles) {
                         if ((Math.abs(empty[0] - kingPosition[0]) == 1 && empty[1] == kingPosition[1])
@@ -43,7 +43,7 @@ public class HeuristicsWhite extends Heuristics {
                                 freeTilesNear++;
                         }
                 }
-                return freeTilesNear;
+                return (2 * freeTilesNear / 4) - 1;
                 /*
                  * List<int[]> toCheckTiles = Arrays.asList(
                  * new int[] { kingPosition[0] + 1, kingPosition[1] },

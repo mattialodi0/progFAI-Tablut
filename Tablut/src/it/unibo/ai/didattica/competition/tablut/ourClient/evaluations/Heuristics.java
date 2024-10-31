@@ -8,19 +8,20 @@ import java.util.List;
 
 public class Heuristics {
 
-    public static int numAlive(State state) {
+    // not that important lower scale in the evaluation
+    public static float numAlive(State state) {
         if (state.getTurn().equals(Turn.WHITE)) {
-            return state.getNumberOf(Pawn.WHITE) + 1;
+            return ((2 * state.getNumberOf(Pawn.WHITE)) / 9) - 1;
         } else {
-            return state.getNumberOf(Pawn.BLACK);
+            return ((2 * state.getNumberOf(Pawn.BLACK)) / 16) - 1;
         }
     }
 
-    public static int numEaten(State state) {
+    public static float numEaten(State state) {
         if (state.getTurn().equals(Turn.WHITE)) {
-            return state.getNumberOf(Pawn.BLACK) - 16;
+            return ((2 * state.getNumberOf(Pawn.BLACK)) / 16) - 1;
         } else {
-            return state.getNumberOf(Pawn.WHITE) - 9;
+            return ((2 * state.getNumberOf(Pawn.WHITE)) / 9) - 1;
         }
     }
 
@@ -32,7 +33,7 @@ public class Heuristics {
             distance += Math.abs(pawn[0] - 4) + Math.abs(pawn[1] - 4);
         }
         return distance;
-    }   
+    }
 
     // Takes the list of goals and start position, counts how many goals can the
     // start reach with one move

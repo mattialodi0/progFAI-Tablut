@@ -36,19 +36,16 @@ public class NegMaxTreeSearch implements TreeSearch {
     // The parameter player doesn't have any usage!
     private float negMaxSearch(State state, int depth, float alpha, float beta, int player, Boolean isRoot) {
 
-        // call to some function that checks the possible moves, if there are no
-        // possible moves the array is empty, becuase it means that the game ends.
         List<Action> moves = availableActions(state);
 
         if (depth == 0 || moves.size() == 0) {
-            return Evaluations.evaluateAdvanced(state, turn);
+            return Evaluations.evaluateMaterial(state, turn);
         }
 
         // Check if is in the lookup table!
 
         float score = Float.NEGATIVE_INFINITY;
-        State prevNode = state.clone(); // To check if the clone does a deep copy, so if prevNode is actually completely
-                                        // the previos node
+        State prevNode = state.clone(); 
         for (Action a : moves) {
             try {
                 state = rules.checkMove(state, a);
