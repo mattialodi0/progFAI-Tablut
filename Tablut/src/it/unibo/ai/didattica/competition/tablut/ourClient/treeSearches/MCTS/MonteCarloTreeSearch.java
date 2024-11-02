@@ -12,79 +12,89 @@ public class MonteCarloTreeSearch implements TreeSearch {
         this.rules = r;
     }
 
-    
     @Override
     public Action searchTree(State state) {
         // v1
         // MCTSNode root = new MCTSNode(state.clone());
 
         // while(hasMoreTime()) {
-        //     MCTSNode leaf = traverse(root);
-        //     MCTSNode simulation_result = rollout(leaf);
-        //     backpropagate(leaf, simulation_result);
+        // MCTSNode leaf = traverse(root);
+        // MCTSNode simulation_result = rollout(leaf);
+        // backpropagate(leaf, simulation_result);
         // }
 
         // return root.bestChildAction();
 
-
         // v2
-        /* root_node  = Node(None, None)
-  while time remains:
-    n, s = root_node, copy.deepcopy(state)
-    while not n.is_leaf():    # select leaf
-      n = tree_policy_child(n)
-      s.addmove(n.move)
-    n.expand_node(s)          # expand
-    n = tree_policy_child(n)
-    while not terminal(s):    # simulate
-      s = simulation_policy_child(s)
-    result = evaluate(s)
-    while n.has_parent():     # propagate
-      n.update(result)
-      n = n.parent
+        MCTSNode root = new MCTSNode(state.clone());
+        root.expand();
 
-return best_move(tree) */
+        while (hasMoreTime()) {
+            // select promising node
+            MCTSNode promising_node = null;
+
+            // expand
+            if (!promising_node.isLeaf()) {
+                promising_node.expand();
+            }
+            
+            // explore
+            MCTSNode node_to_explore = promising_node;
+            if (promising_node.hasChildren()) {
+                node_to_explore = promising_node.getRandomChild();
+            }
+
+            // simulate
+            int result = simulateRandomPlayout(node_to_explore);
+            node_to_explore.backPropogate(result);
+        }
+        
+        return root.bestChildAction();
     }
 
-
-    /* v2
+    /*
+     * v2
+     * 
+     * private int simulateRandomPlayout(MCTSNode node) {}
+     * 
      * 
      */
-    
+
     @Override
     public Boolean hasMoreTime() {
         return true;
     }
 
-    /* v1
-    // node traversal
-    private MCTSNode traverse(MCTSNode node) {
-        while(!fullyExpanded(node)) {
-            node = bestUTC();
-        }
-
-        // in case no children are present / node is terminal 
-        return pick_unvisited(node.children) or node 
-    }
-
-    // randomly select a child node
-    private MCTSNode rollout(MCTSNode node) {
-        while(non_terminal(node)) {
-            node = rollout_policy(node);
-        }
-
-        return result(node);
-    }
-
-    private MCTSNode rollout_policy(MCTSNode node) {
-        return pick_random(node.children);
-    }
-
-    private void backpropagate(MCTSNode node, MCTSNode result) {
-        if(node.isRoot())
-            return;
-        node.stats = update_stats(node, result);
-        backpropagate(node.parent);
-    }
-    */
+    /*
+     * v1
+     * // node traversal
+     * private MCTSNode traverse(MCTSNode node) {
+     * while(!fullyExpanded(node)) {
+     * node = bestUTC();
+     * }
+     * 
+     * // in case no children are present / node is terminal
+     * return pick_unvisited(node.children) or node
+     * }
+     * 
+     * // randomly select a child node
+     * private MCTSNode rollout(MCTSNode node) {
+     * while(non_terminal(node)) {
+     * node = rollout_policy(node);
+     * }
+     * 
+     * return result(node);
+     * }
+     * 
+     * private MCTSNode rollout_policy(MCTSNode node) {
+     * return pick_random(node.children);
+     * }
+     * 
+     * private void backpropagate(MCTSNode node, MCTSNode result) {
+     * if(node.isRoot())
+     * return;
+     * node.stats = update_stats(node, result);
+     * backpropagate(node.parent);
+     * }
+     */
 }

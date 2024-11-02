@@ -5,6 +5,7 @@ import java.util.List;
 
 import it.unibo.ai.didattica.competition.tablut.domain.Action;
 import it.unibo.ai.didattica.competition.tablut.domain.State;
+import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
 import it.unibo.ai.didattica.competition.tablut.ourClient.GameHelper;
 
 public class MCTSNode {
@@ -38,10 +39,14 @@ public class MCTSNode {
     }
 
     public Boolean isLeaf() {
-        return this.children.size() == 0;
+        return this.state.getTurn() == Turn.WHITEWIN || this.state.getTurn() == Turn.BLACKWIN || this.state.getTurn() == Turn.DRAW;
     }
 
-    public void expandNode() {
+    public Boolean hasChildren() {
+        return this.children.size() > 0;
+    }
+
+    public void expand() {
         List<Action> availableMoves = GameHelper.availableMoves(this.state);
         this.children = new ArrayList<MCTSNode>();
 
@@ -64,14 +69,18 @@ public class MCTSNode {
             return null;
         else {
             MCTSNode best_child = null;
-            int best_child_visit = 0;
+            float best_child_ratio = 0;
             for(MCTSNode c: children) {
-                if(c.visits >= best_child_visit) {
+                if((c.wins/c.visits) >= best_child_ratio) {     // TODO change best child policy
                     best_child = c;
-                    best_child_visit = c.visits;
+                    best_child_ratio = (c.visits/c.visits);
                 }
             }
             return best_child.move;
         }
+    }
+
+    public void backPropogate(int result) {
+        // TODO
     }
 }
