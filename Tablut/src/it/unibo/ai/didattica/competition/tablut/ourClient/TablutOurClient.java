@@ -42,7 +42,7 @@ public class TablutOurClient extends TablutClient {
 	public static void main(String[] args) throws UnknownHostException, IOException, ClassNotFoundException {
 		int gametype = 4;
 		String role = "";
-		String name = "random";
+		String name = "our";
 		String ipAddress = "localhost";
 		int timeout = 60;
 		// TODO: change the behavior?
