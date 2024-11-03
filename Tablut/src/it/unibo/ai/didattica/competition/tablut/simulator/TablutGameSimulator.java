@@ -54,21 +54,18 @@ public class TablutGameSimulator {
 
 	private Turn runGame()  {
 		State state;
-		Game game;
 		int time = 60;
 		int moveCache = -1;
 		Action move;
-		int errors = 0;
 		int repeated = 0;
-		Boolean endgame = false;
 		int turns = 0;
 
 		// state & game setup
-		new StateTablut();
+		state = new StateTablut();
 		state.setTurn(State.Turn.WHITE);
 
 		// game loop
-		while (turns < 10000) {
+		while (turns < 1000) {
 			// black move
 			move = blackMove(state);
 			if(TablutGame.checkMove(state, move))
@@ -95,6 +92,8 @@ public class TablutGameSimulator {
 			// 	Thread.sleep(1000);
 			// 	counter++;
 			// }
+
+			turns++;
 		}
 
 		return state.getTurn();
