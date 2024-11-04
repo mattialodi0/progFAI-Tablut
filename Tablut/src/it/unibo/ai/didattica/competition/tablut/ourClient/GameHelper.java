@@ -89,14 +89,7 @@ public class GameHelper {
         return res;
     }
 
-    /* Plays a move and update a state */
-    public static void makeMove(State state, Action move) {
-        // TODO
-
-        // Game.movePawn()
-        // check for capures and endgames
-    }
-
+    
     public static List<int[]> populatePawnList(State state) {
         List<int[]> pawns = new ArrayList<int[]>();
 
