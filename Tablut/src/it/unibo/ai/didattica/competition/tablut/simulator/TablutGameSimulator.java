@@ -14,6 +14,7 @@ import it.unibo.ai.didattica.competition.tablut.ourClient.GameHelper;
 import it.unibo.ai.didattica.competition.tablut.domain.StateTablut;
 
 public class TablutGameSimulator {
+	private TablutGameSimulator.Timer timer;
 
 	TablutGameSimulator() {
 		int game_reps = 100;
@@ -21,6 +22,8 @@ public class TablutGameSimulator {
 		int blackWins = 0;
 		int draws = 0;
 		int errors = 0;
+		int time = 60;
+		this.timer = new Timer(time);
 
 		for (int i = 0; i < game_reps; i++) {
 			Turn res = null;
@@ -54,11 +57,11 @@ public class TablutGameSimulator {
 
 	private Turn runGame()  {
 		State state;
-		int time = 60;
 		int moveCache = -1;
 		Action move;
 		int repeated = 0;
 		int turns = 0;
+		
 
 		// state & game setup
 		state = new StateTablut();
@@ -68,16 +71,24 @@ public class TablutGameSimulator {
 		while (turns < 1000) {
 			// black move
 			move = blackMove(state);
-			if(TablutGame.checkMove(state, move))
+			if(TablutGame.checkMove(state, move)){
+				this.timer.start();
 				TablutGame.makeMove(state, move);
+				System.out.println("Tempo trascorso:"+ this.timer.getTimer());
+
+			}
+			
 
 			if(TablutGame.isGameover(state))
 				break;
 
 			// white move
 			move = whiteMove(state);
-			if(TablutGame.checkMove(state, move))
+			if(TablutGame.checkMove(state, move)){
+				this.timer.start();
 				TablutGame.makeMove(state, move);
+				System.out.println("Tempo trascorso:"+ this.timer.getTimer());
+			}
 
 
 			if(TablutGame.isGameover(state))
@@ -152,7 +163,7 @@ public class TablutGameSimulator {
 				}
 
 				try {
-					checkMove(state, a);
+					TablutGame.checkMove(state, a);
 					found = true;
 				} catch (Exception e) {
 
@@ -214,7 +225,7 @@ public class TablutGameSimulator {
 
 				System.out.println("try: " + a.toString());
 				try {
-					checkMove(state, a);
+					TablutGame.checkMove(state, a);
 					found = true;
 				} catch (Exception e) {
 
@@ -227,4 +238,26 @@ public class TablutGameSimulator {
 
 		return null;
 	}
+
+	private static class Timer {
+        private long duration;
+        private long startTime;
+
+        public Timer(int maxSeconds) {
+            this.duration = (long)(1000 * maxSeconds);
+        }
+
+        public void start() {
+            this.startTime = System.currentTimeMillis();
+        }
+
+        public double getTimer() {
+            return (double)(System.currentTimeMillis() - this.startTime)/1000;
+        }
+
+        public boolean timeOutOccurred() {
+            boolean overTime = System.currentTimeMillis() > this.startTime + this.duration;
+            return overTime;
+        }
+    }
 }

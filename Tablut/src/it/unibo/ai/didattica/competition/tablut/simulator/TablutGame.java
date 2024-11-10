@@ -12,6 +12,7 @@ public class TablutGame {
     private static List<String> citadels;
     private static int movesWithutCapturing = 0;
 
+
     static {
         citadels = new ArrayList<String>();
         citadels.add("a4");
@@ -36,8 +37,8 @@ public class TablutGame {
     public static void makeMove(State state, Action move) {
         // move pawn
         state = movePawn(state, move);
-
-        // check for capures and endgames
+		
+        // check for captures and endgames
         if (state.getTurn().equalsTurn("W")) {
 			state = checkCaptureBlack(state, move);
 		} else if (state.getTurn().equalsTurn("B")) {
@@ -570,12 +571,14 @@ public class TablutGame {
 				&& state.getPawn(a.getRowTo() + 1, a.getColumnTo()).equalsPawn("W")
 				&& (state.getPawn(a.getRowTo() + 2, a.getColumnTo()).equalsPawn("B")
 						|| state.getPawn(a.getRowTo() + 2, a.getColumnTo()).equalsPawn("T")
-						|| this.citadels.contains(state.getBox(a.getRowTo() + 2, a.getColumnTo()))
+						|| citadels.contains(state.getBox(a.getRowTo() + 2, a.getColumnTo()))
 						|| (state.getBox(a.getRowTo() + 2, a.getColumnTo()).equals("e5")))) {
 			state.removePawn(a.getRowTo() + 1, a.getColumnTo());
 			movesWithutCapturing = -1;
 		}
 		return state;
 	}
+
+	
 
 }
