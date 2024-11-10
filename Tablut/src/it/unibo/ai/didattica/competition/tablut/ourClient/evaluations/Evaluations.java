@@ -9,11 +9,25 @@ import it.unibo.ai.didattica.competition.tablut.domain.State.Pawn;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
 import it.unibo.ai.didattica.competition.tablut.ourClient.GameHelper;
 
-
 public class Evaluations {
-    
-    /* Basic heuristic, normalized between [-1, +1], more pieces -> more points */
+
+    /* Basic heuristic, normalized between, more pieces -> more points */
     public static float evaluateMaterial(State state, Turn t) {
+        // if(!t.equals(Turn.WHITE))
+            // System.out.println(t);
+
+        if (state.getTurn().equals(Turn.DRAW)) {
+            return 0;
+        } else if (state.getTurn().equals(Turn.WHITEWIN) && t.equals(Turn.WHITE)) {
+            return Float.POSITIVE_INFINITY;
+        } else if (state.getTurn().equals(Turn.WHITEWIN) && t.equals(Turn.BLACK)) {
+            return Float.NEGATIVE_INFINITY;
+        } else if (state.getTurn().equals(Turn.BLACKWIN) && t.equals(Turn.WHITE)) {
+            return Float.NEGATIVE_INFINITY;
+        } else if (state.getTurn().equals(Turn.BLACKWIN) && t.equals(Turn.BLACK)) {
+            return Float.POSITIVE_INFINITY;
+        }
+
         float eval = 0;
 
         if (t == Turn.WHITE) {
@@ -24,7 +38,7 @@ public class Evaluations {
 
         // addition of a random factor to cosider different moves
         Random rand = new Random();
-        return eval / 16 + (rand.nextFloat()/10); 
+        return eval + (rand.nextFloat() / 1000);
     }
 
     /* Tomaz heuristic */
@@ -56,26 +70,59 @@ public class Evaluations {
             int escapes = HeuristicsWhite.escapesOpen(emptyTiles, kingPos);
             int directions = HeuristicsWhite.freedomOfMovement(emptyTiles, kingPos);
             // Normalize it between 0 - 1
-            return directions - conv + kingReachable + escapes + alivePawns + eatenPawns;
+            return (directions - conv + kingReachable + escapes + alivePawns + eatenPawns) / 100;
         } else if (state.getTurn().equals(State.Turn.BLACK)) { // black heuristics
             int exitsBlocked = HeuristicsBlack.exitsBlocked(emptyTiles, escapeTiles, kingPos);
             // Normalize between 0 - 1
-            return kingReachable - conv + exitsBlocked + alivePawns + eatenPawns;
+            return (kingReachable - conv + exitsBlocked + alivePawns + eatenPawns) / 100;
         }
         return 0;
     }
 
-    /* Patient evaluation for white, tries to keep the position and waits, not openiing lines to the king  */
-    public static float evaluatePatient(State state)  { return evaluatePatient(state, Turn.WHITE); }
-    public static float evaluatePatient(State state, Turn t)  {
+    /*
+     * Patient evaluation for white, tries to keep the position and waits, not
+     * openiing lines to the king
+     */
+    public static float evaluatePatient(State state) {
+        return evaluatePatient(state, Turn.WHITE);
+    }
+
+    public static float evaluatePatient(State state, Turn t) {
         // TODO
         return 0f;
     }
 
     /* Aggressive evaluation for black, always tries to capture pieces */
-    public static float evaluateAggressive(State state) { return evaluateAggressive(state, Turn.BLACK); }
+    public static float evaluateAggressive(State state) {
+        return evaluateAggressive(state, Turn.BLACK);
+    }
+
     public static float evaluateAggressive(State state, Turn t) {
         // TODO
         return 0f;
+    }
+
+    public static float evaluateAlgiseWhite(State state) {
+        int black_pawns = 0;
+        int white_pawns = 0;
+        int free_way_for_king = 0;
+        int black_near_king = 0;
+        int king_pos = 0;
+        int strategic_free = 0;
+
+
+
+        return (float) ((black_pawns * 12) + (white_pawns * 22) + (free_way_for_king * 50) + (black_near_king * 6)
+                + (king_pos * 0.4) + (strategic_free));
+    }
+
+    public static float evaluateAlgiseBlack(State state) {
+        int black_pawns = 0;
+        int white_pawns = 0;
+        int free_way_for_king = 0;
+        int black_near_king = 0;
+        int surround = 0;
+
+        return (float) ((black_pawns * 5) + (white_pawns * 10) + (free_way_for_king * 15) + (black_near_king * 9) + (surround * 900));
     }
 }

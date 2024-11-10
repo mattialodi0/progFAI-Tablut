@@ -10,22 +10,29 @@ import it.unibo.ai.didattica.competition.tablut.domain.Game;
 import it.unibo.ai.didattica.competition.tablut.domain.State;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
 import it.unibo.ai.didattica.competition.tablut.domain.StateTablut;
+import it.unibo.ai.didattica.competition.tablut.ourClient.interfaces.TreeSearch;
+import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.NMTS;
 
 // TODO: draw check and timeout
 public class TablutGameSimulator {
-	public static void main(String[] args) {
-		System.out.println("Starting simulation (Rand vs Rand)");
 
+	private int MAX_TURNS = 1000;
+	private int MATCHES = 10;
+
+
+	public static void main(String[] args) {
 		TablutGameSimulator sim = new TablutGameSimulator();
 		sim.run();
 	}
 
 	public void run() {
-		int game_reps = 1000;
+		int game_reps = MATCHES;
 		int whiteWins = 0;
 		int blackWins = 0;
 		int draws = 0;
 		int errors = 0;
+
+		System.out.println("Starting simulation (NMTS vs Rand)");
 
 		for (int i = 0; i < game_reps; i++) {
 			Turn res = null;
@@ -55,6 +62,9 @@ public class TablutGameSimulator {
 		System.out.println("Black wins - " + blackWins);
 		System.out.println("Draws - " + draws);
 		System.out.println("Erorrs - " + errors);
+		System.out.println(" ");
+		// System.out.println("Max eval: " + NMTS.maxEval);
+		// System.out.println("Min eval: " + NMTS.minEval);
 	}
 
 	private Turn runGame() throws Exception {
@@ -74,7 +84,7 @@ public class TablutGameSimulator {
 		// System.out.println(state.toString());
 
 		// game loop
-		while (turns < 1000) {
+		while (turns < MAX_TURNS) {
 			try {
 				// white move
 				move = whiteMove(state.clone());
@@ -92,13 +102,6 @@ public class TablutGameSimulator {
 				if (TablutGame.checkMove(state, move)) {
 					TablutGame.makeMove(state, move);
 				}
-				// System.out.println("Move: " + move.toString());
-				// r = new GameAshtonTablut(state, 99, 0, "garbage", "fake", "fake");
-				// r.checkMove(state, move);
-				// if (TablutGame.checkMove(state, move)) {
-				// System.out.println("ok move");
-				// state = TablutGame.makeMove(state, move);
-				// }
 
 				// System.out.println(state.toString());
 				if (TablutGame.isGameover(state))
@@ -106,18 +109,6 @@ public class TablutGameSimulator {
 
 			} catch (Exception e) {
 			}
-
-			// System.out.println("State:");
-			// System.out.println(state.toString());
-			// t = new Thread();
-			// t.start();
-
-			// // timer for the move
-			// int counter = 0;
-			// while (counter < time && t.isAlive()) {
-			// Thread.sleep(1000);
-			// counter++;
-			// }
 
 			turns++;
 		}
@@ -127,7 +118,19 @@ public class TablutGameSimulator {
 		return state.getTurn();
 	}
 
-	private Action whiteMove(State state) {
+	private Action whiteMove(State state) { 
+		TreeSearch searchStrategy = new NMTS(Turn.WHITE);
+		return searchStrategy.searchTree(state);
+	}
+	
+	private Action blackMove(State state) {
+		return randMove(state);
+		// Action a = randMove(state);
+		// System.out.println("Eval: "+ Evaluations.evaluateMaterial(TablutGame.makeMove(state, a), state.getTurn()));
+		// return a;
+	}
+
+	private Action randMove(State state) {
 		List<int[]> pawns = new ArrayList<int[]>();
 		List<int[]> empty = new ArrayList<int[]>();
 
@@ -191,14 +194,7 @@ public class TablutGameSimulator {
 
 			return a;
 		}
-		return null;
-	}
-
-	private Action blackMove(State state) {
-		List<int[]> pawns = new ArrayList<int[]>();
-		List<int[]> empty = new ArrayList<int[]>();
-
-		if (state.getTurn().equals(StateTablut.Turn.BLACK)) {
+		else if (state.getTurn().equals(StateTablut.Turn.BLACK)) {
 			int[] buf;
 			for (int i = 0; i < state.getBoard().length; i++) {
 				for (int j = 0; j < state.getBoard().length; j++) {
@@ -253,6 +249,7 @@ public class TablutGameSimulator {
 			}
 			return a;
 		}
-		return null;
+		else 
+			return null;
 	}
 }
