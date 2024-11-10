@@ -580,4 +580,6 @@ public class TablutGame {
 		return state;
 	}
 
+	
+
 }

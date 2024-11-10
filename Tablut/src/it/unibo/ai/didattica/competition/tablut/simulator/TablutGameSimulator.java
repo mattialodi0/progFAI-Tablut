@@ -31,6 +31,8 @@ public class TablutGameSimulator {
 		int blackWins = 0;
 		int draws = 0;
 		int errors = 0;
+		int time = 60;
+		this.timer = new Timer(time);
 
 		System.out.println("Starting simulation (NMTS vs Rand)");
 
@@ -69,7 +71,6 @@ public class TablutGameSimulator {
 
 	private Turn runGame() throws Exception {
 		State state;
-		int time = 60;
 		int moveCache = -1;
 		Action move;
 		int repeated = 0;
@@ -252,4 +253,26 @@ public class TablutGameSimulator {
 		else 
 			return null;
 	}
+
+	private static class Timer {
+        private long duration;
+        private long startTime;
+
+        public Timer(int maxSeconds) {
+            this.duration = (long)(1000 * maxSeconds);
+        }
+
+        public void start() {
+            this.startTime = System.currentTimeMillis();
+        }
+
+        public double getTimer() {
+            return (double)(System.currentTimeMillis() - this.startTime)/1000;
+        }
+
+        public boolean timeOutOccurred() {
+            boolean overTime = System.currentTimeMillis() > this.startTime + this.duration;
+            return overTime;
+        }
+    }
 }
