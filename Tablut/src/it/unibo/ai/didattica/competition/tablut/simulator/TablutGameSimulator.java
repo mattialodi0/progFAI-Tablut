@@ -7,17 +7,21 @@ import java.util.Random;
 
 import it.unibo.ai.didattica.competition.tablut.domain.Action;
 import it.unibo.ai.didattica.competition.tablut.domain.Game;
-import it.unibo.ai.didattica.competition.tablut.domain.GameAshtonTablut;
 import it.unibo.ai.didattica.competition.tablut.domain.State;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
-import it.unibo.ai.didattica.competition.tablut.ourClient.GameHelper;
 import it.unibo.ai.didattica.competition.tablut.domain.StateTablut;
 
+// TODO: draw check and timeout
 public class TablutGameSimulator {
-	private TablutGameSimulator.Timer timer;
+	public static void main(String[] args) {
+		System.out.println("Starting simulation (Rand vs Rand)");
 
-	TablutGameSimulator() {
-		int game_reps = 100;
+		TablutGameSimulator sim = new TablutGameSimulator();
+		sim.run();
+	}
+
+	public void run() {
+		int game_reps = 1000;
 		int whiteWins = 0;
 		int blackWins = 0;
 		int draws = 0;
@@ -55,57 +59,71 @@ public class TablutGameSimulator {
 		System.out.println("Erorrs - " + errors);
 	}
 
-	private Turn runGame()  {
+	private Turn runGame() throws Exception {
 		State state;
 		int moveCache = -1;
 		Action move;
 		int repeated = 0;
 		int turns = 0;
-		
+		Game r;
 
 		// state & game setup
 		state = new StateTablut();
 		state.setTurn(State.Turn.WHITE);
 
+		// System.out.println("Initial state");
+		// System.out.println(state.toString());
+
 		// game loop
 		while (turns < 1000) {
-			// black move
-			move = blackMove(state);
-			if(TablutGame.checkMove(state, move)){
-				this.timer.start();
-				TablutGame.makeMove(state, move);
-				System.out.println("Tempo trascorso:"+ this.timer.getTimer());
+			try {
+				// white move
+				move = whiteMove(state.clone());
+				// System.out.println("Move: " + move.toString());
+				if (TablutGame.checkMove(state, move)) {
+					TablutGame.makeMove(state, move);
+				}
 
+				// System.out.println(state.toString());
+				if (TablutGame.isGameover(state))
+					break;
+
+				// black move
+				move = blackMove(state.clone());
+				if (TablutGame.checkMove(state, move)) {
+					TablutGame.makeMove(state, move);
+				}
+				// System.out.println("Move: " + move.toString());
+				// r = new GameAshtonTablut(state, 99, 0, "garbage", "fake", "fake");
+				// r.checkMove(state, move);
+				// if (TablutGame.checkMove(state, move)) {
+				// System.out.println("ok move");
+				// state = TablutGame.makeMove(state, move);
+				// }
+
+				// System.out.println(state.toString());
+				if (TablutGame.isGameover(state))
+					break;
+
+			} catch (Exception e) {
 			}
-			
 
-			if(TablutGame.isGameover(state))
-				break;
-
-			// white move
-			move = whiteMove(state);
-			if(TablutGame.checkMove(state, move)){
-				this.timer.start();
-				TablutGame.makeMove(state, move);
-				System.out.println("Tempo trascorso:"+ this.timer.getTimer());
-			}
-
-
-			if(TablutGame.isGameover(state))
-				break;
-
+			// System.out.println("State:");
+			// System.out.println(state.toString());
 			// t = new Thread();
 			// t.start();
 
 			// // timer for the move
 			// int counter = 0;
 			// while (counter < time && t.isAlive()) {
-			// 	Thread.sleep(1000);
-			// 	counter++;
+			// Thread.sleep(1000);
+			// counter++;
 			// }
 
 			turns++;
 		}
+
+		// System.out.println("endgame " + state.getTurn().toString());
 
 		return state.getTurn();
 	}
@@ -162,17 +180,18 @@ public class TablutGameSimulator {
 					e1.printStackTrace();
 				}
 
-				try {
-					TablutGame.checkMove(state, a);
+				if (TablutGame.checkMove(state, a))
 					found = true;
-				} catch (Exception e) {
-
-				}
+				// try {
+				// Game r = new GameAshtonTablut(state, 99, 0, "garbage", "fake", "fake");
+				// r.checkMove(state, a);
+				// found = true;
+				// } catch (Exception e) {
+				// }
 			}
 
 			return a;
 		}
-
 		return null;
 	}
 
@@ -208,7 +227,7 @@ public class TablutGameSimulator {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			;
+
 			while (!found) {
 				selected = pawns.get(new Random().nextInt(pawns.size() - 1));
 				String from = state.getBox(selected[0], selected[1]);
@@ -223,19 +242,18 @@ public class TablutGameSimulator {
 					e1.printStackTrace();
 				}
 
-				System.out.println("try: " + a.toString());
-				try {
-					TablutGame.checkMove(state, a);
+				if (TablutGame.checkMove(state, a))
 					found = true;
-				} catch (Exception e) {
-
-				}
+				// try {
+				// Game r = new GameAshtonTablut(state, 99, 0, "garbage", "fake", "fake");
+				// r.checkMove(state, a);
+				// found = true;
+				// } catch (Exception e) {
+				// }
 
 			}
-
 			return a;
 		}
-
 		return null;
 	}
 
