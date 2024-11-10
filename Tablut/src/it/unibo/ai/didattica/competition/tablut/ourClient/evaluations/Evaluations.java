@@ -1,6 +1,5 @@
 package it.unibo.ai.didattica.competition.tablut.ourClient.evaluations;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -46,35 +45,32 @@ public class Evaluations {
         if (state.getTurn().equals(Turn.DRAW)) {
             return 0;
         } else if (state.getTurn().equals(Turn.WHITEWIN) && t.equals(Turn.WHITE)) {
-            return 1;
+            return Float.POSITIVE_INFINITY;
         } else if (state.getTurn().equals(Turn.WHITEWIN) && t.equals(Turn.BLACK)) {
-            return -1;
+            return Float.NEGATIVE_INFINITY;
         } else if (state.getTurn().equals(Turn.BLACKWIN) && t.equals(Turn.WHITE)) {
-            return -1;
+            return Float.NEGATIVE_INFINITY;
         } else if (state.getTurn().equals(Turn.BLACKWIN) && t.equals(Turn.BLACK)) {
-            return 1;
+            return Float.POSITIVE_INFINITY;
         }
         int[] kingPos = GameHelper.getKingPosition(state);
         List<int[]> emptyTiles = GameHelper.populateEmptyList(state);
-        List<int[]> escapeTiles = new ArrayList<>();
+        // List<int[]> escapeTiles = new ArrayList<>();
 
         // Common heuristics, everyone will be computed accordingly to who is calling it
-        int alivePawns = Heuristics.numAlive(state);
-        int eatenPawns = Heuristics.numEaten(state);
-        int kingReachable = Heuristics.numberOfPawnsToReachKing(GameHelper.populatePawnList(state), emptyTiles,
-                kingPos);
-        float conv = Heuristics.convergenceMiddle(GameHelper.populatePawnList(state));
-
+        float alivePawns = Heuristics.numAlive(state);
+        float eatenPawns = Heuristics.numEaten(state);
         // white heuristics
         if (state.getTurn().equals(State.Turn.WHITE)) {
-            int escapes = HeuristicsWhite.escapesOpen(emptyTiles, kingPos);
-            int directions = HeuristicsWhite.freedomOfMovement(emptyTiles, kingPos);
-            // Normalize it between 0 - 1
-            return (directions - conv + kingReachable + escapes + alivePawns + eatenPawns) / 100;
+            float escapesAccessible = HeuristicsWhite.escapesOpen(emptyTiles, kingPos);
+            float freedomKing = HeuristicsWhite.freedomOfMovement(emptyTiles, kingPos);
+            return freedomKing + escapesAccessible + alivePawns + eatenPawns;
+
         } else if (state.getTurn().equals(State.Turn.BLACK)) { // black heuristics
-            int exitsBlocked = HeuristicsBlack.exitsBlocked(emptyTiles, escapeTiles, kingPos);
-            // Normalize between 0 - 1
-            return (kingReachable - conv + exitsBlocked + alivePawns + eatenPawns) / 100;
+            float exitsBlocked = HeuristicsBlack.exitsBlocked(emptyTiles, kingPos);
+            float kingReachable = HeuristicsBlack.numberOfPawnsToReachKing(GameHelper.populatePawnList(state),
+                    kingPos, emptyTiles, state);
+            return alivePawns + eatenPawns;
         }
         return 0;
     }

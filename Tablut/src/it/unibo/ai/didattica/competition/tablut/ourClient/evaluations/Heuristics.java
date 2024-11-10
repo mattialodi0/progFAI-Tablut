@@ -8,21 +8,20 @@ import java.util.List;
 
 public class Heuristics {
 
-    public static int numAlive(State state) {
+    // not that important lower scale in the evaluation
+    public static float numAlive(State state) {
         if (state.getTurn().equals(Turn.WHITE)) {
-            return state.getNumberOf(Pawn.WHITE) + 1; // because the king is not counted and if we came to this point he
-                                                      // is still on the table
+            return ((2 * state.getNumberOf(Pawn.WHITE)) / 9) - 1;
         } else {
-            return state.getNumberOf(Pawn.BLACK);
+            return ((2 * state.getNumberOf(Pawn.BLACK)) / 16) - 1;
         }
     }
 
-    // number of eaten could also not be considered for the white
-    public static int numEaten(State state) {
+    public static float numEaten(State state) {
         if (state.getTurn().equals(Turn.WHITE)) {
-            return state.getNumberOf(Pawn.BLACK) - 16;
+            return ((2 * state.getNumberOf(Pawn.BLACK)) / 16) - 1;
         } else {
-            return state.getNumberOf(Pawn.WHITE) - 9;
+            return ((2 * state.getNumberOf(Pawn.WHITE)) / 9) - 1;
         }
     }
 
@@ -36,47 +35,22 @@ public class Heuristics {
         return distance;
     }
 
-    // Maybe this is interesting only for the blacks, the white have to pose more
-    // attention to the fact that the king is free
-    public static int pawnsNearKing(List<int[]> pawns, int[] kingPosition) {
+    // Takes the list of goals and start position, counts how many goals can the
+    // start reach with one move
+    public static int numberToReachGoal(List<int[]> goals, int[] start, List<int[]> empty) {
 
-        int numberPawns = 0;
+        int reachedGoals = 0;
 
-        for (int[] pawn : pawns) {
-            if ((Math.abs(pawn[0] - kingPosition[0]) == 1 && pawn[1] == kingPosition[1])
-                    || (Math.abs(pawn[1] - kingPosition[1]) == 1 && pawn[0] == kingPosition[0])) {
-                numberPawns++;
+        for (int[] goal : goals) {
+            if (ableToReach(start, goal, empty)) {
+                reachedGoals += 1;
             }
         }
-        return numberPawns;
-
-        // Less efficient
-        /*
-         * List<int[]> toCheckTiles = Arrays.asList(
-         * new int[] { kingPosition[0] + 1, kingPosition[1] },
-         * new int[] { kingPosition[0] - 1, kingPosition[1] },
-         * new int[] { kingPosition[0], kingPosition[1] + 1 },
-         * new int[] { kingPosition[0], kingPosition[1] - 1 });
-         * int pawnsNear = (int) toCheckTiles.stream().filter(item1 -> pawns.stream()
-         * .anyMatch(item2 -> Arrays.equals(item1, item2)))
-         * .count();
-         * return pawnsNear;
-         */
+        return reachedGoals;
     }
 
-    // Not efficient, but I think it could be very helpful.
-    public static int numberOfPawnsToReachKing(List<int[]> pawns, List<int[]> empty, int[] kingPosition) {
-        int pawnCount = 0;
-
-        for (int[] pawn : pawns) {
-            if (canReach(pawn, kingPosition, empty)) {
-                pawnCount += 1;
-            }
-        }
-        return pawnCount;
-    }
-
-    private static Boolean canReach(int[] pawn, int[] king, List<int[]> empty) {
+    // The function checks if the start can reach the goal in one move
+    protected static Boolean ableToReach(int[] start, int[] goal, List<int[]> empty) {
 
         int[][] directions = {
                 { 1, 0 },
@@ -84,13 +58,19 @@ public class Heuristics {
                 { 0, 1 },
                 { 0, -1 }
         };
+
         for (int[] direction : directions) {
-            int x = pawn[0];
-            int y = pawn[1];
+            int x = start[0];
+            int y = start[1];
 
             while (true) {
                 x += direction[0];
                 y += direction[1];
+
+                // check if out of the board
+                if (x < 0 || x > 8 || y < 0 || y > 8) {
+                    break;
+                }
 
                 // check if it is not an empty tile
                 int[] pos = new int[] { x, y };
@@ -98,13 +78,8 @@ public class Heuristics {
                     break;
                 }
 
-                if (x < 0 || x > 8 || y < 0 || y > 8) {
-                    break;
-                }
-
-                // check if near the king
-                if ((Math.abs(x - king[0]) == 1 && y == king[1]) ||
-                        (Math.abs(y - king[1]) == 1 && x == king[0])) {
+                // check if on the goal
+                if ((x == goal[0]) && (y == goal[1])) {
                     return true;
                 }
             }
