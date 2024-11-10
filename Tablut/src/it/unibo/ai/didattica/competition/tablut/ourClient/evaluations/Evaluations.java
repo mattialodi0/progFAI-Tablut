@@ -13,8 +13,8 @@ public class Evaluations {
 
     /* Basic heuristic, normalized between, more pieces -> more points */
     public static float evaluateMaterial(State state, Turn t) {
-        // if(!t.equals(Turn.WHITE))
-            // System.out.println(t);
+        if(!t.equals(Turn.WHITE))
+            System.out.println(t);
 
         if (state.getTurn().equals(Turn.DRAW)) {
             return 0;

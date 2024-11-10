@@ -25,7 +25,7 @@ public class NMTS implements TreeSearch {
 
     @Override
     public Action searchTree(State state) {
-        negMaxSearch(state, 6, Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY, 1, true);
+        negMaxSearch(state, 6, Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY, 1, true);
         
         // System.out.println("Eval: "+ Evaluations.evaluateMaterial(TablutGame.makeMove(state, getBestAction()), turn));
         // System.out.println("Move: "+ getBestAction());

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeoutException;
 
 import it.unibo.ai.didattica.competition.tablut.domain.Action;
 import it.unibo.ai.didattica.competition.tablut.domain.Game;
@@ -18,7 +19,8 @@ public class TablutGameSimulator {
 
 	private int MAX_TURNS = 1000;
 	private int MATCHES = 10;
-
+	int time = 60;
+	Timer timer = new Timer(time);
 
 	public static void main(String[] args) {
 		TablutGameSimulator sim = new TablutGameSimulator();
@@ -31,8 +33,6 @@ public class TablutGameSimulator {
 		int blackWins = 0;
 		int draws = 0;
 		int errors = 0;
-		int time = 60;
-		this.timer = new Timer(time);
 
 		System.out.println("Starting simulation (NMTS vs Rand)");
 
@@ -71,11 +71,11 @@ public class TablutGameSimulator {
 
 	private Turn runGame() throws Exception {
 		State state;
-		int moveCache = -1;
+		// int moveCache = -1;
 		Action move;
-		int repeated = 0;
+		// int repeated = 0;
 		int turns = 0;
-		Game r;
+		// Game r;
 
 		// state & game setup
 		state = new StateTablut();
@@ -88,7 +88,13 @@ public class TablutGameSimulator {
 		while (turns < MAX_TURNS) {
 			try {
 				// white move
+				timer.start();
 				move = whiteMove(state.clone());
+				if(timer.timeOutOccurred()){
+					throw new TimeoutException("The move took too long and exceeded the allowed time limit.");
+				}
+				//System.out.println("Time W: " + timer.getTimer());
+
 				// System.out.println("Move: " + move.toString());
 				if (TablutGame.checkMove(state, move)) {
 					TablutGame.makeMove(state, move);
@@ -99,7 +105,13 @@ public class TablutGameSimulator {
 					break;
 
 				// black move
+				timer.start();
 				move = blackMove(state.clone());
+				if(timer.timeOutOccurred()){
+					throw new TimeoutException("The move took too long and exceeded the allowed time limit.");
+				}
+				//System.out.println("Time B: " + timer.getTimer());
+
 				if (TablutGame.checkMove(state, move)) {
 					TablutGame.makeMove(state, move);
 				}
