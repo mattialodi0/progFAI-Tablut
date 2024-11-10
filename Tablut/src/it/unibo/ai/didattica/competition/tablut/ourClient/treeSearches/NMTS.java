@@ -15,7 +15,7 @@ import it.unibo.ai.didattica.competition.tablut.simulator.TablutGame;
 public class NMTS implements TreeSearch {
 
     public static float maxEval = Float.NEGATIVE_INFINITY;
-    public static float minEval = Float.NEGATIVE_INFINITY;
+    public static float minEval = Float.POSITIVE_INFINITY;
     private Action bestAction; // Here the best move is stored
     private Turn turn;
 
@@ -45,7 +45,8 @@ public class NMTS implements TreeSearch {
 
         if (depth == 0 || moves.size() == 0) {
             // return Evaluations.evaluateAdvanced(state, turn);
-            return Evaluations.evaluateAdvanced(state, state.getTurn());
+            // return Evaluations.evaluateAdvanced(state, state.getTurn());
+            return Evaluations.evaluateMaterial(state, state.getTurn());
         }
         
         float score = Float.NEGATIVE_INFINITY;

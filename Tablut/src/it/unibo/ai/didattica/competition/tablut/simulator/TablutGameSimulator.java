@@ -7,19 +7,21 @@ import java.util.Random;
 import java.util.concurrent.TimeoutException;
 
 import it.unibo.ai.didattica.competition.tablut.domain.Action;
-import it.unibo.ai.didattica.competition.tablut.domain.Game;
 import it.unibo.ai.didattica.competition.tablut.domain.State;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
 import it.unibo.ai.didattica.competition.tablut.domain.StateTablut;
 import it.unibo.ai.didattica.competition.tablut.ourClient.interfaces.TreeSearch;
+import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.MMTS;
 import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.NMTS;
+
 
 // TODO: draw check and timeout
 public class TablutGameSimulator {
 
 	private int MAX_TURNS = 1000;
-	private int MATCHES = 10;
+	private int MATCHES = 100;
 	int time = 60;
+
 	Timer timer = new Timer(time);
 
 	public static void main(String[] args) {
@@ -65,28 +67,23 @@ public class TablutGameSimulator {
 		System.out.println("Draws - " + draws);
 		System.out.println("Erorrs - " + errors);
 		System.out.println(" ");
-		System.out.println("Max eval: " + NMTS.maxEval);
-		System.out.println("Min eval: " + NMTS.minEval);
+		System.out.println("Max eval: " + MMTS.maxEval);
+		System.out.println("Min eval: " + MMTS.minEval);
 	}
 
-	private Turn runGame() throws Exception {
+	private Turn runGame() throws TimeoutException {
 		State state;
-		// int moveCache = -1;
 		Action move;
-		// int repeated = 0;
 		int turns = 0;
-		// Game r;
+		// int moveCache = -1;
+		// int repeated = 0;
 
 		// state & game setup
 		state = new StateTablut();
 		state.setTurn(State.Turn.WHITE);
 
-		// System.out.println("Initial state");
-		// System.out.println(state.toString());
-
 		// game loop
 		while (turns < MAX_TURNS) {
-			try {
 				// white move
 				timer.start();
 				move = whiteMove(state.clone());
@@ -120,9 +117,6 @@ public class TablutGameSimulator {
 				if (TablutGame.isGameover(state))
 					break;
 
-			} catch (Exception e) {
-			}
-
 			turns++;
 		}
 
@@ -132,7 +126,8 @@ public class TablutGameSimulator {
 	}
 
 	private Action whiteMove(State state) { 
-		TreeSearch searchStrategy = new NMTS(Turn.WHITE);
+		// TreeSearch searchStrategy = new NMTS(Turn.WHITE);
+		TreeSearch searchStrategy = new MMTS(6); 
 		return searchStrategy.searchTree(state);
 	}
 	
@@ -197,12 +192,6 @@ public class TablutGameSimulator {
 
 				if (TablutGame.checkMove(state, a))
 					found = true;
-				// try {
-				// Game r = new GameAshtonTablut(state, 99, 0, "garbage", "fake", "fake");
-				// r.checkMove(state, a);
-				// found = true;
-				// } catch (Exception e) {
-				// }
 			}
 
 			return a;
@@ -252,12 +241,6 @@ public class TablutGameSimulator {
 
 				if (TablutGame.checkMove(state, a))
 					found = true;
-				// try {
-				// Game r = new GameAshtonTablut(state, 99, 0, "garbage", "fake", "fake");
-				// r.checkMove(state, a);
-				// found = true;
-				// } catch (Exception e) {
-				// }
 
 			}
 			return a;

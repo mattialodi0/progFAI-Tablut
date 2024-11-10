@@ -261,7 +261,7 @@ public class TablutGame {
 		// cambio il turno
 		if (state.getTurn().equalsTurn(State.Turn.WHITE.toString())) {
 			state.setTurn(State.Turn.BLACK);
-		} else {
+		} else if(state.getTurn().equalsTurn(State.Turn.BLACK.toString())) {
 			state.setTurn(State.Turn.WHITE);
 		}
 

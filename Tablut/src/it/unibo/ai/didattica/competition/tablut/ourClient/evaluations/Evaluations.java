@@ -12,18 +12,22 @@ public class Evaluations {
 
     /* Basic heuristic, normalized between, more pieces -> more points */
     public static float evaluateMaterial(State state, Turn t) {
-        if(!t.equals(Turn.WHITE))
-            System.out.println(t);
+        // if(!t.equals(Turn.WHITE))
+            // System.out.println(t);
 
         if (state.getTurn().equals(Turn.DRAW)) {
             return 0;
         } else if (state.getTurn().equals(Turn.WHITEWIN) && t.equals(Turn.WHITE)) {
+            System.out.println("AAAAAAAAAA");
             return Float.POSITIVE_INFINITY;
         } else if (state.getTurn().equals(Turn.WHITEWIN) && t.equals(Turn.BLACK)) {
+            System.out.println("BBBBBBBBBB");
             return Float.NEGATIVE_INFINITY;
         } else if (state.getTurn().equals(Turn.BLACKWIN) && t.equals(Turn.WHITE)) {
+            System.out.println("BBBBBBBBBB");
             return Float.NEGATIVE_INFINITY;
         } else if (state.getTurn().equals(Turn.BLACKWIN) && t.equals(Turn.BLACK)) {
+            System.out.println("AAAAAAAAAA");
             return Float.POSITIVE_INFINITY;
         }
 
@@ -37,7 +41,7 @@ public class Evaluations {
         
         // addition of a random factor to cosider different moves
         Random rand = new Random();
-        return eval+ (rand.nextFloat() / 1000);
+        return eval + (rand.nextFloat() / 1000);
     }
 
     /* Tomaz heuristic */
