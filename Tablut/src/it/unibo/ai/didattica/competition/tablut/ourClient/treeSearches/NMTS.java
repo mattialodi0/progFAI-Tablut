@@ -45,7 +45,7 @@ public class NMTS implements TreeSearch {
 
         if (depth == 0 || moves.size() == 0) {
             // return Evaluations.evaluateAdvanced(state, turn);
-            return Evaluations.evaluateMaterial(state, state.getTurn());
+            return Evaluations.evaluateAdvanced(state, state.getTurn());
         }
         
         float score = Float.NEGATIVE_INFINITY;

@@ -65,8 +65,8 @@ public class TablutGameSimulator {
 		System.out.println("Draws - " + draws);
 		System.out.println("Erorrs - " + errors);
 		System.out.println(" ");
-		// System.out.println("Max eval: " + NMTS.maxEval);
-		// System.out.println("Min eval: " + NMTS.minEval);
+		System.out.println("Max eval: " + NMTS.maxEval);
+		System.out.println("Min eval: " + NMTS.minEval);
 	}
 
 	private Turn runGame() throws Exception {

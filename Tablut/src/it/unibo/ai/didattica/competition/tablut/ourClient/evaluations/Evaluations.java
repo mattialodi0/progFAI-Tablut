@@ -35,10 +35,10 @@ public class Evaluations {
         } else {
             eval = state.getNumberOf(Pawn.BLACK) - state.getNumberOf(Pawn.WHITE) * 2;
         }
-
+        
         // addition of a random factor to cosider different moves
         Random rand = new Random();
-        return eval + (rand.nextFloat() / 1000);
+        return eval+ (rand.nextFloat() / 1000);
     }
 
     /* Tomaz heuristic */
