@@ -13,7 +13,7 @@ public class Evaluations {
     /* Basic heuristic, normalized between, more pieces -> more points */
     public static float evaluateMaterial(State state, Turn t) {
         // if(!t.equals(Turn.WHITE))
-            // System.out.println(t);
+        // System.out.println(t);
 
         if (state.getTurn().equals(Turn.DRAW)) {
             return 0;
@@ -38,43 +38,42 @@ public class Evaluations {
         } else {
             eval = state.getNumberOf(Pawn.BLACK) - state.getNumberOf(Pawn.WHITE) * 2;
         }
-        
+
         // addition of a random factor to cosider different moves
         Random rand = new Random();
         return eval + (rand.nextFloat() / 1000);
     }
 
-    /* Tomaz heuristic */
-    public static float evaluateAdvanced(State state, Turn t) {
-        if (state.getTurn().equals(Turn.DRAW)) {
-            return 0;
-        } else if (state.getTurn().equals(Turn.WHITEWIN) && t.equals(Turn.WHITE)) {
-            return Float.POSITIVE_INFINITY;
-        } else if (state.getTurn().equals(Turn.WHITEWIN) && t.equals(Turn.BLACK)) {
-            return Float.NEGATIVE_INFINITY;
-        } else if (state.getTurn().equals(Turn.BLACKWIN) && t.equals(Turn.WHITE)) {
-            return Float.NEGATIVE_INFINITY;
-        } else if (state.getTurn().equals(Turn.BLACKWIN) && t.equals(Turn.BLACK)) {
-            return Float.POSITIVE_INFINITY;
-        }
-        int[] kingPos = GameHelper.getKingPosition(state);
-        List<int[]> emptyTiles = GameHelper.populateEmptyList(state);
-        // List<int[]> escapeTiles = new ArrayList<>();
+    /*
+     * The check if the win or not to be done separately. Can be best to pass also
+     * the weights in some way to be able to do automatic gridSearch
+     */
+    public static double evaluateAdvanced(State state, Turn t) {
+        if (state.getTurn().equals(Turn.WHITE)) {
 
-        // Common heuristics, everyone will be computed accordingly to who is calling it
-        float alivePawns = Heuristics.numAlive(state);
-        float eatenPawns = Heuristics.numEaten(state);
-        // white heuristics
-        if (state.getTurn().equals(State.Turn.WHITE)) {
-            float escapesAccessible = HeuristicsWhite.escapesOpen(emptyTiles, kingPos);
-            float freedomKing = HeuristicsWhite.freedomOfMovement(emptyTiles, kingPos);
-            return freedomKing + escapesAccessible + alivePawns + eatenPawns;
+            double[] gameWeights = new double[4];
 
-        } else if (state.getTurn().equals(State.Turn.BLACK)) { // black heuristics
-            float exitsBlocked = HeuristicsBlack.exitsBlocked(emptyTiles, kingPos);
-            float kingReachable = HeuristicsBlack.numberOfPawnsToReachKing(GameHelper.populatePawnList(state),
-                    kingPos, emptyTiles, state);
-            return alivePawns + eatenPawns;
+            gameWeights[0] = 35.2;
+            gameWeights[1] = 18.0;
+            gameWeights[2] = 5.0;
+            gameWeights[3] = 42.0;
+
+            HeuristicsWhite heuristic = new HeuristicsWhite(gameWeights);
+
+            return heuristic.evaluate(state);
+            
+        } else if(state.getTurn().equals(Turn.BLACK)){
+            double[] gameWeights = new double[6];
+
+            gameWeights[0] = 25.2;
+            gameWeights[1] = 45.0;
+            gameWeights[2] = 15.0;
+            gameWeights[3] = 10.0;
+            gameWeights[4] = 15.0;
+            gameWeights[5] = 20.0;
+
+            HeuristicsBlack heuristic = new HeuristicsBlack(gameWeights);
+            return heuristic.evaluate(state);
         }
         return 0;
     }
@@ -110,8 +109,6 @@ public class Evaluations {
         int king_pos = 0;
         int strategic_free = 0;
 
-
-
         return (float) ((black_pawns * 12) + (white_pawns * 22) + (free_way_for_king * 50) + (black_near_king * 6)
                 + (king_pos * 0.4) + (strategic_free));
     }
@@ -123,6 +120,7 @@ public class Evaluations {
         int black_near_king = 0;
         int surround = 0;
 
-        return (float) ((black_pawns * 5) + (white_pawns * 10) + (free_way_for_king * 15) + (black_near_king * 9) + (surround * 900));
+        return (float) ((black_pawns * 5) + (white_pawns * 10) + (free_way_for_king * 15) + (black_near_king * 9)
+                + (surround * 900));
     }
 }

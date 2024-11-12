@@ -1,17 +1,70 @@
 package it.unibo.ai.didattica.competition.tablut.ourClient.evaluations;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import it.unibo.ai.didattica.competition.tablut.domain.State;
+import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
+import it.unibo.ai.didattica.competition.tablut.ourClient.GameHelper;
 
 public class HeuristicsBlack extends Heuristics {
 
-    public static float exitsBlocked(List<int[]> emptyTiles, int[] kingPosition) {
-        return -HeuristicsWhite.escapesOpen(emptyTiles, kingPosition);
+    private double[] weights;
+
+    public HeuristicsBlack(double[] weights) {
+        this.weights = weights;
     }
 
-    // How many black tiles are in the close proximity of the king.
+    public double evaluate(State state) {
+
+        int[] kingPos = GameHelper.getKingPosition(state);
+        List<int[]> emptyTiles = GameHelper.populateEmptyList(state);
+
+        float alivePawns = numAlive(state);
+        float eatenPawns = numEaten(state);
+        float exitsBlocked = exitsBlocked(emptyTiles, kingPos);
+        float kingReachable = numberReachableGoals(GameHelper.populatePawnList(state),
+                kingPos, emptyTiles);
+        int nearKing = pawnsNearKing(GameHelper.populatePawnList(state), kingPos);
+        State newState = state.clone();
+        newState.setTurn(state.getTurn().equals(Turn.WHITE) ? Turn.BLACK : Turn.WHITE);
+        int possCaptures = possibleCaptures(GameHelper.populatePawnList(state),
+                GameHelper.populatePawnList(newState), emptyTiles);
+        return weights[0] * alivePawns + weights[1] * eatenPawns + weights[2] * kingReachable
+                + weights[3] * exitsBlocked + weights[4] * nearKing + weights[5] * possCaptures;
+    }
+
+    // Computes the number of exits the king can reach and returns 4 - the number.
+    // Is 0 if the king can reach 4 exits, and 4 if all the exits are closed for the
+    // king.
+    public static float exitsBlocked(List<int[]> emptyTiles, int[] kingPosition) {
+        List<int[]> escapingTiles = Arrays.asList(
+                new int[] { 0, 1 },
+                new int[] { 0, 2 },
+                new int[] { 0, 6 },
+                new int[] { 0, 7 },
+                new int[] { 1, 0 },
+                new int[] { 1, 8 },
+                new int[] { 2, 0 },
+                new int[] { 2, 8 },
+                new int[] { 6, 8 },
+                new int[] { 7, 8 },
+                new int[] { 6, 0 },
+                new int[] { 7, 0 },
+                new int[] { 8, 1 },
+                new int[] { 8, 2 },
+                new int[] { 8, 6 },
+                new int[] { 8, 7 });
+        List<int[]> availableEscapingTiles = escapingTiles.stream()
+                .filter(emptyTiles::contains)
+                .collect(Collectors.toList());
+        int escapesOpen = numberReachableGoals(availableEscapingTiles, kingPosition, emptyTiles);
+        return 4 - escapesOpen;
+    }
+
+    // Returns the number of black pawns near the king
     public static int pawnsNearKing(List<int[]> pawns, int[] kingPosition) {
 
         int numberPawns = 0;
@@ -22,60 +75,6 @@ public class HeuristicsBlack extends Heuristics {
                 numberPawns++;
             }
         }
-        return ((2 * numberPawns) / 4) - 1;
-    }
-
-    // The manhattan distance of every black pawn from the king. The empty tiles are
-    // useful if we will consider also where the blacks can move
-    public static float distanceFromKing(List<int[]> emptyTiles, List<int[]> blackPawns, int[] kingPosition) {
-        return 0;
-    }
-
-    // Checks how many pawns can touch the king with one move.
-    public static float numberOfPawnsToReachKing(List<int[]> pawns, int[] kingPosition, List<int[]> empty, State state) {
-        int pawnCount = 0;
-
-        for (int[] pawn : pawns) {
-            if (canComeNearKing(pawn, kingPosition, empty)) {
-                pawnCount += 1;
-            }
-        }
-        return (2 * pawnCount / numAlive(state)) - 1;
-    }
-
-    protected static Boolean canComeNearKing(int[] pawn, int[] king, List<int[]> empty) {
-
-        int[][] directions = {
-                { 1, 0 },
-                { -1, 0 },
-                { 0, 1 },
-                { 0, -1 }
-        };
-        for (int[] direction : directions) {
-            int x = pawn[0];
-            int y = pawn[1];
-
-            while (true) {
-                x += direction[0];
-                y += direction[1];
-
-                // check if it is not an empty tile
-                int[] pos = new int[] { x, y };
-                if (!empty.stream().anyMatch(tile -> Arrays.equals(pos, tile))) {
-                    break;
-                }
-
-                if (x < 0 || x > 8 || y < 0 || y > 8) {
-                    break;
-                }
-
-                // check if near the king
-                if ((Math.abs(x - king[0]) == 1 && y == king[1]) ||
-                        (Math.abs(y - king[1]) == 1 && x == king[0])) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return numberPawns;
     }
 }
