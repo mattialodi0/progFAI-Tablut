@@ -21,7 +21,7 @@ public class MMTS implements TreeSearch {
     public static float maxEval = Float.NEGATIVE_INFINITY;
     public static float minEval = Float.POSITIVE_INFINITY;
     private int depth;
-    private int threshold = 0;
+    private int threshold = 2;
     public int leafs = 0;
     public int evals = 0;
     public LookupTable lookup = new LookupTable();
@@ -35,7 +35,7 @@ public class MMTS implements TreeSearch {
         List<Action> moves = GameHelper.availableMoves(state);
 
         if (moves.size() == 0)
-            System.out.println("u fucked up");
+            System.out.println("big prolbem...");
 
         Action bestAction = null;
         State saved_state = state.clone();
@@ -64,8 +64,12 @@ public class MMTS implements TreeSearch {
             }
         }
 
-        System.out.println("Leafs visited: " + leafs);
-        System.out.println("Lookup hit: " + (leafs - evals) + " - " + (((leafs - evals) * 100) / leafs) + "%");
+        try {
+            // System.out.println("Leafs visited: " + leafs);
+            // System.out.println("Lookup hit: " + (leafs - evals) + " - " + (((leafs - evals) * 100) / leafs) + "%");
+            // System.out.println("Lookup dels: " + lookup.i);
+        } catch (Exception e) {
+        }
 
         return bestAction;
     }
@@ -102,7 +106,10 @@ public class MMTS implements TreeSearch {
 
         List<Action> moves = GameHelper.availableMoves(state);
         if (moves.size() == 0) {
-            // System.out.println("u fucked up");
+            System.out.println("----------------");
+            System.out.println(state.toString());
+            System.out.println("----------------");
+            
             return 0;
         }
         State saved_state = state.clone();

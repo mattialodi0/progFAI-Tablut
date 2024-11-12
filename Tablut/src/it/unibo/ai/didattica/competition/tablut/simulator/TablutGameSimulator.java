@@ -19,7 +19,7 @@ import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.NMTS;
 public class TablutGameSimulator {
 
 	private int MAX_TURNS = 1000;
-	private int MATCHES = 1;
+	private int MATCHES = 10;
 	int time = 60;
 
 	Timer timer = new Timer(time);
@@ -114,7 +114,7 @@ public class TablutGameSimulator {
 			if (timer.timeOutOccurred()) {
 				throw new TimeoutException("The move took too long and exceeded the allowed time limit.");
 			}
-			System.out.println("Time: " + timer.getTimer());
+			// System.out.println("Time: " + timer.getTimer());
 
 			if (TablutGame.checkMove(state, move)) {
 				TablutGame.makeMove(state, move);
@@ -138,7 +138,7 @@ public class TablutGameSimulator {
 	}
 	
 	private Action blackMove(State state) {
-		TreeSearch searchStrategy = new MMTS(5);
+		TreeSearch searchStrategy = new MMTS(3);
 		return searchStrategy.searchTree(state);
 	}
 
