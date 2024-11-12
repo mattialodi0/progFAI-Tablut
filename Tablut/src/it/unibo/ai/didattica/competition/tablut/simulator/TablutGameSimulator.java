@@ -10,16 +10,16 @@ import it.unibo.ai.didattica.competition.tablut.domain.Action;
 import it.unibo.ai.didattica.competition.tablut.domain.State;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
 import it.unibo.ai.didattica.competition.tablut.domain.StateTablut;
+import it.unibo.ai.didattica.competition.tablut.ourClient.LookupTable;
 import it.unibo.ai.didattica.competition.tablut.ourClient.interfaces.TreeSearch;
 import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.MMTS;
 import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.NMTS;
-
 
 // TODO: draw check and timeout
 public class TablutGameSimulator {
 
 	private int MAX_TURNS = 1000;
-	private int MATCHES = 100;
+	private int MATCHES = 1;
 	int time = 60;
 
 	Timer timer = new Timer(time);
@@ -43,6 +43,8 @@ public class TablutGameSimulator {
 			try {
 				res = runGame();
 			} catch (Exception e) {
+				System.out.print(res);
+				e.printStackTrace();
 			}
 
 			switch (res) {
@@ -66,9 +68,9 @@ public class TablutGameSimulator {
 		System.out.println("Black wins - " + blackWins);
 		System.out.println("Draws - " + draws);
 		System.out.println("Erorrs - " + errors);
-		System.out.println(" ");
-		System.out.println("Max eval: " + MMTS.maxEval);
-		System.out.println("Min eval: " + MMTS.minEval);
+		// System.out.println(" ");
+		// System.out.println("Max eval: " + MMTS.maxEval);
+		// System.out.println("Min eval: " + MMTS.minEval);
 	}
 
 	private Turn runGame() throws TimeoutException {
@@ -81,41 +83,46 @@ public class TablutGameSimulator {
 		// state & game setup
 		state = new StateTablut();
 		state.setTurn(State.Turn.WHITE);
+		LookupTable lookup = new LookupTable();
 
 		// game loop
-		while (turns < MAX_TURNS) {
+		while (true) {
+			if (turns > this.MAX_TURNS) {
+				return Turn.DRAW;	// draw if exceed MAX_TURNS
+			}
+
 				// white move
 				timer.start();
-				move = whiteMove(state.clone());
-				if(timer.timeOutOccurred()){
-					throw new TimeoutException("The move took too long and exceeded the allowed time limit.");
-				}
-				//System.out.println("Time W: " + timer.getTimer());
+			move = whiteMove(state.clone());
+			if (timer.timeOutOccurred()) {
+				throw new TimeoutException("The move took too long and exceeded the allowed time limit.");
+			}
+			// System.out.println("Time W: " + timer.getTimer());
 
-				// System.out.println("Move: " + move.toString());
-				if (TablutGame.checkMove(state, move)) {
-					TablutGame.makeMove(state, move);
-				}
+			// System.out.println("Move: " + move.toString());
+			if (TablutGame.checkMove(state, move)) {
+				TablutGame.makeMove(state, move);
+			}
 
-				// System.out.println(state.toString());
-				if (TablutGame.isGameover(state))
-					break;
+			// System.out.println(state.toString());
+			if (TablutGame.isGameover(state))
+				break;
 
-				// black move
-				timer.start();
-				move = blackMove(state.clone());
-				if(timer.timeOutOccurred()){
-					throw new TimeoutException("The move took too long and exceeded the allowed time limit.");
-				}
-				//System.out.println("Time B: " + timer.getTimer());
+			// black move
+			timer.start();
+			move = blackMove(state.clone());
+			if (timer.timeOutOccurred()) {
+				throw new TimeoutException("The move took too long and exceeded the allowed time limit.");
+			}
+			System.out.println("Time: " + timer.getTimer());
 
-				if (TablutGame.checkMove(state, move)) {
-					TablutGame.makeMove(state, move);
-				}
+			if (TablutGame.checkMove(state, move)) {
+				TablutGame.makeMove(state, move);
+			}
 
-				// System.out.println(state.toString());
-				if (TablutGame.isGameover(state))
-					break;
+			// System.out.println(state.toString());
+			if (TablutGame.isGameover(state))
+				break;
 
 			turns++;
 		}
@@ -125,17 +132,14 @@ public class TablutGameSimulator {
 		return state.getTurn();
 	}
 
-	private Action whiteMove(State state) { 
+	private Action whiteMove(State state) {
 		// TreeSearch searchStrategy = new NMTS(Turn.WHITE);
-		TreeSearch searchStrategy = new MMTS(6); 
-		return searchStrategy.searchTree(state);
+		return randMove(state);
 	}
 	
 	private Action blackMove(State state) {
-		return randMove(state);
-		// Action a = randMove(state);
-		// System.out.println("Eval: "+ Evaluations.evaluateMaterial(TablutGame.makeMove(state, a), state.getTurn()));
-		// return a;
+		TreeSearch searchStrategy = new MMTS(5);
+		return searchStrategy.searchTree(state);
 	}
 
 	private Action randMove(State state) {
@@ -195,8 +199,7 @@ public class TablutGameSimulator {
 			}
 
 			return a;
-		}
-		else if (state.getTurn().equals(StateTablut.Turn.BLACK)) {
+		} else if (state.getTurn().equals(StateTablut.Turn.BLACK)) {
 			int[] buf;
 			for (int i = 0; i < state.getBoard().length; i++) {
 				for (int j = 0; j < state.getBoard().length; j++) {
@@ -244,30 +247,29 @@ public class TablutGameSimulator {
 
 			}
 			return a;
-		}
-		else 
+		} else
 			return null;
 	}
 
 	private static class Timer {
-        private long duration;
-        private long startTime;
+		private long duration;
+		private long startTime;
 
-        public Timer(int maxSeconds) {
-            this.duration = (long)(1000 * maxSeconds);
-        }
+		public Timer(int maxSeconds) {
+			this.duration = (long) (1000 * maxSeconds);
+		}
 
-        public void start() {
-            this.startTime = System.currentTimeMillis();
-        }
+		public void start() {
+			this.startTime = System.currentTimeMillis();
+		}
 
-        public double getTimer() {
-            return (double)(System.currentTimeMillis() - this.startTime)/1000;
-        }
+		public double getTimer() {
+			return (double) (System.currentTimeMillis() - this.startTime) / 1000;
+		}
 
-        public boolean timeOutOccurred() {
-            boolean overTime = System.currentTimeMillis() > this.startTime + this.duration;
-            return overTime;
-        }
-    }
+		public boolean timeOutOccurred() {
+			boolean overTime = System.currentTimeMillis() > this.startTime + this.duration;
+			return overTime;
+		}
+	}
 }

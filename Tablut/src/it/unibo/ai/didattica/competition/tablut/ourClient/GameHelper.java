@@ -67,12 +67,6 @@ public class GameHelper {
             moves.addAll(getPawnMoves(state, p));
         }
 
-        // System.out.println("Turn: " + state.getTurn());
-        // System.out.println("Av. Pawns: " + pawns.size()); // should be 9 for white
-        // System.out.println("Av. Moves: " + moves.size());
-        // System.out.println( "move: " + moves.get(0).getTurn() + " " +
-        // moves.get(0).getFrom() + "->" + moves.get(0).getTo());
-
         return moves;
     }
 

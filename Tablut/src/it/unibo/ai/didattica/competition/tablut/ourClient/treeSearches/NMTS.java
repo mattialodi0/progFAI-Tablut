@@ -18,6 +18,7 @@ public class NMTS implements TreeSearch {
     public static float minEval = Float.POSITIVE_INFINITY;
     private Action bestAction; // Here the best move is stored
     private Turn turn;
+    public static int leafs = 0;
 
     public NMTS(Turn t) {
         this.turn = t;
@@ -25,10 +26,11 @@ public class NMTS implements TreeSearch {
 
     @Override
     public Action searchTree(State state) {
-        negMaxSearch(state, 6, Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY, 1, true);
+        negMaxSearch(state, 3, Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY, 1, true);
         
         // System.out.println("Eval: "+ Evaluations.evaluateMaterial(TablutGame.makeMove(state, getBestAction()), turn));
         // System.out.println("Move: "+ getBestAction());
+        System.out.println("Leafs visited: "+ leafs);
 
         return this.getBestAction();
     }
@@ -46,7 +48,8 @@ public class NMTS implements TreeSearch {
         if (depth == 0 || moves.size() == 0) {
             // return Evaluations.evaluateAdvanced(state, turn);
             // return Evaluations.evaluateAdvanced(state, state.getTurn());
-            return Evaluations.evaluateMaterial(state, state.getTurn());
+            leafs++;
+            return Evaluations.evaluateMaterial(state);
         }
         
         float score = Float.NEGATIVE_INFINITY;
@@ -76,9 +79,9 @@ public class NMTS implements TreeSearch {
             }
             // Undo move -> return in the current state
             state = prevNode;
-            if (alpha >= beta) {
-                break;
-            }
+            // if (alpha >= beta) {
+            //     break;
+            // }
         }
         return score;
     }

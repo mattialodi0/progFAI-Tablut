@@ -2,13 +2,21 @@ package it.unibo.ai.didattica.competition.tablut.ourClient;
 
 import java.util.HashMap;
 
+/* 
+ * board can be rotated but the eval stays the same,
+ * might be worthy to check this
+ */
+
 public class LookupTable {
-    private int MAX_DIM = 10000;
+    private int MAX_DIM = 1000;
     private HashMap<String, Float> visited_states;
 
     public LookupTable() {
         visited_states = new HashMap<String, Float>();
-        visited_states = new HashMap<String, Float>();
+    }
+    
+    public int dim() {
+        return visited_states.size();
     }
 
     public Float lookForVisitedState(String state_str) {

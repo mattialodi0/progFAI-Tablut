@@ -11,34 +11,19 @@ import it.unibo.ai.didattica.competition.tablut.ourClient.GameHelper;
 public class Evaluations {
 
     /* Basic heuristic, normalized between, more pieces -> more points */
-    public static float evaluateMaterial(State state, Turn t) {
-        // if(!t.equals(Turn.WHITE))
-            // System.out.println(t);
-
+    public static float evaluateMaterial(State state) {
         if (state.getTurn().equals(Turn.DRAW)) {
             return 0;
-        } else if (state.getTurn().equals(Turn.WHITEWIN) && t.equals(Turn.WHITE)) {
-            System.out.println("AAAAAAAAAA");
+        } else if (state.getTurn().equals(Turn.WHITEWIN)) {
             return Float.POSITIVE_INFINITY;
-        } else if (state.getTurn().equals(Turn.WHITEWIN) && t.equals(Turn.BLACK)) {
-            System.out.println("BBBBBBBBBB");
+        } else if (state.getTurn().equals(Turn.BLACKWIN)) {
             return Float.NEGATIVE_INFINITY;
-        } else if (state.getTurn().equals(Turn.BLACKWIN) && t.equals(Turn.WHITE)) {
-            System.out.println("BBBBBBBBBB");
-            return Float.NEGATIVE_INFINITY;
-        } else if (state.getTurn().equals(Turn.BLACKWIN) && t.equals(Turn.BLACK)) {
-            System.out.println("AAAAAAAAAA");
-            return Float.POSITIVE_INFINITY;
         }
 
         float eval = 0;
 
-        if (t == Turn.WHITE) {
-            eval = state.getNumberOf(Pawn.WHITE) * 2 - state.getNumberOf(Pawn.BLACK);
-        } else {
-            eval = state.getNumberOf(Pawn.BLACK) - state.getNumberOf(Pawn.WHITE) * 2;
-        }
-        
+        eval = state.getNumberOf(Pawn.WHITE) * 2 - state.getNumberOf(Pawn.BLACK);
+
         // addition of a random factor to cosider different moves
         Random rand = new Random();
         return eval + (rand.nextFloat() / 1000);
@@ -48,15 +33,12 @@ public class Evaluations {
     public static float evaluateAdvanced(State state, Turn t) {
         if (state.getTurn().equals(Turn.DRAW)) {
             return 0;
-        } else if (state.getTurn().equals(Turn.WHITEWIN) && t.equals(Turn.WHITE)) {
+        } else if (state.getTurn().equals(Turn.WHITEWIN)) {
             return Float.POSITIVE_INFINITY;
-        } else if (state.getTurn().equals(Turn.WHITEWIN) && t.equals(Turn.BLACK)) {
+        } else if (state.getTurn().equals(Turn.BLACKWIN)) {
             return Float.NEGATIVE_INFINITY;
-        } else if (state.getTurn().equals(Turn.BLACKWIN) && t.equals(Turn.WHITE)) {
-            return Float.NEGATIVE_INFINITY;
-        } else if (state.getTurn().equals(Turn.BLACKWIN) && t.equals(Turn.BLACK)) {
-            return Float.POSITIVE_INFINITY;
         }
+
         int[] kingPos = GameHelper.getKingPosition(state);
         List<int[]> emptyTiles = GameHelper.populateEmptyList(state);
         // List<int[]> escapeTiles = new ArrayList<>();
@@ -100,29 +82,5 @@ public class Evaluations {
     public static float evaluateAggressive(State state, Turn t) {
         // TODO
         return 0f;
-    }
-
-    public static float evaluateAlgiseWhite(State state) {
-        int black_pawns = 0;
-        int white_pawns = 0;
-        int free_way_for_king = 0;
-        int black_near_king = 0;
-        int king_pos = 0;
-        int strategic_free = 0;
-
-
-
-        return (float) ((black_pawns * 12) + (white_pawns * 22) + (free_way_for_king * 50) + (black_near_king * 6)
-                + (king_pos * 0.4) + (strategic_free));
-    }
-
-    public static float evaluateAlgiseBlack(State state) {
-        int black_pawns = 0;
-        int white_pawns = 0;
-        int free_way_for_king = 0;
-        int black_near_king = 0;
-        int surround = 0;
-
-        return (float) ((black_pawns * 5) + (white_pawns * 10) + (free_way_for_king * 15) + (black_near_king * 9) + (surround * 900));
     }
 }
