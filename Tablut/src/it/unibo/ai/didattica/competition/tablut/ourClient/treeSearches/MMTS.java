@@ -86,8 +86,8 @@ public class MMTS implements TreeSearch {
         if (depth <= 0) {
             Float eval = lookup.lookForVisitedState(state.boardString());
             if (eval == null) {
-                // eval = Evaluations.evaluateMaterial(state, isWhite);
-                eval = Evaluations.evaluateAdvanced(state, state.getTurn());
+                eval = Evaluations.evaluateMaterial(state);
+                // eval = Evaluations.evaluateAdvanced(state, state.getTurn());
                 lookup.insertVisitededState(state.boardString(), eval);
                 this.evals++;
             }
@@ -106,12 +106,9 @@ public class MMTS implements TreeSearch {
 
         List<Action> moves = GameHelper.availableMoves(state);
         if (moves.size() == 0) {
-            System.out.println("----------------");
-            System.out.println(state.toString());
-            System.out.println("----------------");
-            
             return 0;
         }
+
         State saved_state = state.clone();
         List<Action> moves_evals = moves;
 
@@ -120,8 +117,8 @@ public class MMTS implements TreeSearch {
         List<Float> evals = new ArrayList<>();
         for (Action m : moves) {
             state = TablutGame.makeMove(state, m);
-            // evals.add(Evaluations.evaluateMaterial(state, isWhite));
-            evals.add(Evaluations.evaluateAdvanced(state, state.getTurn()));
+            evals.add(Evaluations.evaluateMaterial(state));
+            // evals.add(Evaluations.evaluateAdvanced(state, state.getTurn()));
             state = saved_state;
         }
         moves_evals = orderByEval(moves, evals);
