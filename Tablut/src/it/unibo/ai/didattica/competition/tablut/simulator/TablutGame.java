@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import it.unibo.ai.didattica.competition.tablut.domain.Action;
 import it.unibo.ai.didattica.competition.tablut.domain.State;
+import it.unibo.ai.didattica.competition.tablut.domain.State.Pawn;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
 
 public class TablutGame {
@@ -331,6 +332,9 @@ public class TablutGame {
 				state.setTurn(State.Turn.WHITEWIN);
 			}
 		}
+		if(state.getNumberOf(Pawn.BLACK) == 0)
+			state.setTurn(State.Turn.WHITEWIN);
+
 		// TODO: implement the winning condition of the capture of the last
 		// black checker
 
@@ -348,6 +352,9 @@ public class TablutGame {
 		checkCaptureBlackKingLeft(state, a);
 		checkCaptureBlackKingDown(state, a);
 		checkCaptureBlackKingUp(state, a);
+
+		if(state.getNumberOf(Pawn.WHITE) == 0 && state.getNumberOf(Pawn.KING) == 0)
+			state.setTurn(State.Turn.BLACKWIN);
 
 		movesWithutCapturing++;
 		return state;

@@ -53,7 +53,7 @@ public class MinMaxSearch implements TreeSearch {
         // even though we know we will not take any of them
 
         if (depth == 0 || moves.size() == 0) {
-            return Evaluations.evaluateMaterial(state, state.getTurn());
+            return Evaluations.evaluateMaterial(state);
         }
 
         // Check if is in the lookup table!
@@ -85,7 +85,7 @@ public class MinMaxSearch implements TreeSearch {
         List<Action> moves = availableActions(state);
 
         if (depth == 0 | moves.size() == 0) {
-            return Evaluations.evaluateMaterial(state, state.getTurn());
+            return Evaluations.evaluateMaterial(state);
         }
 
         float maxScore = Float.NEGATIVE_INFINITY;

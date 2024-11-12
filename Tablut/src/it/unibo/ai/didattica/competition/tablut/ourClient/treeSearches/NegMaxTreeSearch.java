@@ -39,7 +39,7 @@ public class NegMaxTreeSearch implements TreeSearch {
         List<Action> moves = availableActions(state);
 
         if (depth == 0 || moves.size() == 0) {
-            return Evaluations.evaluateMaterial(state, turn);
+            return Evaluations.evaluateMaterial(state);
         }
 
         // Check if is in the lookup table!

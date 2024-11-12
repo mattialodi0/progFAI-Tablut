@@ -11,45 +11,37 @@ import it.unibo.ai.didattica.competition.tablut.ourClient.GameHelper;
 public class Evaluations {
 
     /* Basic heuristic, normalized between, more pieces -> more points */
-    public static float evaluateMaterial(State state, Turn t) {
-        // if(!t.equals(Turn.WHITE))
-        // System.out.println(t);
-
+    public static float evaluateMaterial(State state) {
         if (state.getTurn().equals(Turn.DRAW)) {
             return 0;
-        } else if (state.getTurn().equals(Turn.WHITEWIN) && t.equals(Turn.WHITE)) {
-            System.out.println("AAAAAAAAAA");
+        } else if (state.getTurn().equals(Turn.WHITEWIN)) {
             return Float.POSITIVE_INFINITY;
-        } else if (state.getTurn().equals(Turn.WHITEWIN) && t.equals(Turn.BLACK)) {
-            System.out.println("BBBBBBBBBB");
+        } else if (state.getTurn().equals(Turn.BLACKWIN)) {
             return Float.NEGATIVE_INFINITY;
-        } else if (state.getTurn().equals(Turn.BLACKWIN) && t.equals(Turn.WHITE)) {
-            System.out.println("BBBBBBBBBB");
-            return Float.NEGATIVE_INFINITY;
-        } else if (state.getTurn().equals(Turn.BLACKWIN) && t.equals(Turn.BLACK)) {
-            System.out.println("AAAAAAAAAA");
-            return Float.POSITIVE_INFINITY;
         }
 
         float eval = 0;
 
-        if (t == Turn.WHITE) {
-            eval = state.getNumberOf(Pawn.WHITE) * 2 - state.getNumberOf(Pawn.BLACK);
-        } else {
-            eval = state.getNumberOf(Pawn.BLACK) - state.getNumberOf(Pawn.WHITE) * 2;
-        }
+        eval = state.getNumberOf(Pawn.WHITE) * 2 - state.getNumberOf(Pawn.BLACK);
 
         // addition of a random factor to cosider different moves
         Random rand = new Random();
         return eval + (rand.nextFloat() / 1000);
     }
 
-    /*
-     * The check if the win or not to be done separately. Can be best to pass also
-     * the weights in some way to be able to do automatic gridSearch
-     */
+    /* Tomaz heuristic */
     public static double evaluateAdvanced(State state, Turn t) {
-        if (state.getTurn().equals(Turn.WHITE)) {
+        if (state.getTurn().equals(Turn.DRAW)) {
+            return 0;
+        } else if (state.getTurn().equals(Turn.WHITEWIN)) {
+            return Float.POSITIVE_INFINITY;
+        } else if (state.getTurn().equals(Turn.BLACKWIN)) {
+            return Float.NEGATIVE_INFINITY;
+        }
+
+        int[] kingPos = GameHelper.getKingPosition(state);
+        List<int[]> emptyTiles = GameHelper.populateEmptyList(state);
+        // List<int[]> escapeTiles = new ArrayList<>();
 
             double[] gameWeights = new double[4];
 
