@@ -11,13 +11,13 @@ import it.unibo.ai.didattica.competition.tablut.ourClient.GameHelper;
 
 public class HeuristicsBlack extends Heuristics {
 
-    private double[] weights;
+    private Float[] weights;
 
-    public HeuristicsBlack(double[] weights) {
+    public HeuristicsBlack(Float[] weights) {
         this.weights = weights;
     }
 
-    public double evaluate(State state) {
+    public float evaluate(State state) {
 
         int[] kingPos = GameHelper.getKingPosition(state);
         List<int[]> emptyTiles = GameHelper.populateEmptyList(state);

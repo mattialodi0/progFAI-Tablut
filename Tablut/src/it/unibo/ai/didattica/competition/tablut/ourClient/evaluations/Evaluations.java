@@ -30,7 +30,7 @@ public class Evaluations {
     }
 
     /* Tomaz heuristic */
-    public static double evaluateAdvanced(State state, Turn t) {
+    public static float evaluateAdvanced(State state, Turn t) {
         if (state.getTurn().equals(Turn.DRAW)) {
             return 0;
         } else if (state.getTurn().equals(Turn.WHITEWIN)) {
@@ -43,26 +43,26 @@ public class Evaluations {
         List<int[]> emptyTiles = GameHelper.populateEmptyList(state);
         // List<int[]> escapeTiles = new ArrayList<>();
 
-            double[] gameWeights = new double[4];
+        if (state.getTurn().equals(Turn.WHITE)){
+            Float[] gameWeights = new Float[4];
 
-            gameWeights[0] = 35.2;
-            gameWeights[1] = 18.0;
-            gameWeights[2] = 5.0;
-            gameWeights[3] = 42.0;
+            gameWeights[0] = 35.1f;
+            gameWeights[1] = 18f;
+            gameWeights[2] = 5f;
+            gameWeights[3] = 42.0f;
 
             HeuristicsWhite heuristic = new HeuristicsWhite(gameWeights);
 
-            return heuristic.evaluate(state);
-            
+            return heuristic.evaluate(state);    
         } else if(state.getTurn().equals(Turn.BLACK)){
-            double[] gameWeights = new double[6];
+            Float[] gameWeights = new Float[6];
 
-            gameWeights[0] = 25.2;
-            gameWeights[1] = 45.0;
-            gameWeights[2] = 15.0;
-            gameWeights[3] = 10.0;
-            gameWeights[4] = 15.0;
-            gameWeights[5] = 20.0;
+            gameWeights[0] = 25.2f;
+            gameWeights[1] = 45.0f;
+            gameWeights[2] = 15.0f;
+            gameWeights[3] = 10.0f;
+            gameWeights[4] = 15.0f;
+            gameWeights[5] = 20.0f;
 
             HeuristicsBlack heuristic = new HeuristicsBlack(gameWeights);
             return heuristic.evaluate(state);
