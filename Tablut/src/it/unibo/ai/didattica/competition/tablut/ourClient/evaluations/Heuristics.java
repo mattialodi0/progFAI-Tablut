@@ -52,7 +52,7 @@ public class Heuristics {
     }
 
     // The function checks if the start can reach the goal in one move
-    protected static Boolean canReach(int[] start, int[] goal, List<int[]> empty) {
+    public static Boolean canReach(int[] start, int[] goal, List<int[]> empty) {
 
         int[][] directions = {
                 { 1, 0 },

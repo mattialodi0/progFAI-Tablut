@@ -176,6 +176,60 @@ public class GameHelper {
         return pawnMoves;
     }
 
+
+    /* serve per SemiRandom per vedere se una mossa è valida o no. E' uguale al metodo sopra ma ritorna true or false */
+    public static boolean canPawnMove(State state, int[] pawn, int prow, int pcol) {
+        List<Action> pawnMoves = new ArrayList<Action>();
+        int row = pawn[0];
+        int column = pawn[1];
+
+        // for each move i can go either up, or down, or left, or right
+        // i first fix the column, and move up and down, then i fix the row
+        // and go left and right.
+        // i check every time if i find an obstacle.
+
+        // Going upward
+        for (int i = row - 1; i >= 0; i--) {
+            if (isObstacle(state, i, column) || isCamp(i, column)){
+                return false;
+            }
+
+            addMoveIfValid(state, pawn, i, column, pawnMoves);
+        }
+
+        // Going downward
+        for (int i = row + 1; i < state.getBoard().length; i++) {
+            if (isObstacle(state, i, column) || isCamp(i, column)){
+                return false;
+            }
+
+            addMoveIfValid(state, pawn, i, column, pawnMoves);
+        }
+
+        // Going to the left
+        for (int j = column - 1; j >= 0; j--) {
+            if (isObstacle(state, row, j) || isCamp(row, j)) return false;
+            
+            addMoveIfValid(state, pawn, row, j, pawnMoves);
+        }
+
+        // Going to the right
+        for (int j = column + 1; j < state.getBoard().length; j++) {
+            if (isObstacle(state, row, j) || isCamp(row, j)) return false;
+
+
+            addMoveIfValid(state, pawn, row, j, pawnMoves);
+        }
+        
+        // per ogni azione che il pedone può compiere, verifico che ci sia quella nella cella vuota (per completare la cattura a diamante)
+        for(Action a: pawnMoves){
+            if (a.getColumnTo()==pcol && a.getRowFrom()==prow) return true;
+        }
+        return false;
+    }
+
+
+
     // check if the pawn is moving on an occupied cell
     private static boolean isObstacle(State state, int row, int col) {
         Pawn p = state.getPawn(row, col);

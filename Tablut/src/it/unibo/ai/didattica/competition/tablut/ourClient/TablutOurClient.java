@@ -7,6 +7,7 @@ import it.unibo.ai.didattica.competition.tablut.domain.*;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
 import it.unibo.ai.didattica.competition.tablut.ourClient.interfaces.TreeSearch;
 import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.BasicTreeSearch;
+import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.MMTS;
 import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.NegMaxTreeSearch;
 
 /**
@@ -103,11 +104,11 @@ public class TablutOurClient extends TablutClient {
 		}
 
 		// searchStrategy = new BasicTreeSearch(rules);
-		searchStrategy = new NegMaxTreeSearch(rules, this.getPlayer());
+		searchStrategy = new MMTS(3);
+		SemiRandom semiRandom = new SemiRandom();
 
 		System.out.println("You are player " + this.getPlayer().toString() + "!");
 
-		int i=0;
 		while (true) {
 			try {
 				this.read();
@@ -126,6 +127,7 @@ public class TablutOurClient extends TablutClient {
 
 			if (this.getPlayer().equals(Turn.WHITE)) {
 				if (state.getTurn().equals(StateTablut.Turn.WHITE)) {
+					//Action best_move = semiRandom.randMove(state);
 					Action best_move = searchStrategy.searchTree(state);
 
 					System.out.println("Mossa scelta: " + best_move.toString());
@@ -156,7 +158,8 @@ public class TablutOurClient extends TablutClient {
 			} 
 			else if ((this.getPlayer().equals(Turn.BLACK)
 					&& this.getCurrentState().getTurn().equals(StateTablut.Turn.BLACK))) {
-				Action best_move = searchStrategy.searchTree(state);
+						//Action best_move = searchStrategy.searchTree(state);
+						Action best_move = semiRandom.randMove(state);
 
 				try {
 					rules.checkMove(state, best_move);
@@ -170,6 +173,19 @@ public class TablutOurClient extends TablutClient {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				
+			}
+			else if (state.getTurn().equals(StateTablut.Turn.WHITE)) {
+				System.out.println("Waiting for your opponent move... ");
+			} else if (state.getTurn().equals(StateTablut.Turn.WHITEWIN)) {
+				System.out.println("YOU LOSE!");
+				System.exit(0);
+			} else if (state.getTurn().equals(StateTablut.Turn.BLACKWIN)) {
+				System.out.println("YOU WIN!");
+				System.exit(0);
+			} else if (state.getTurn().equals(StateTablut.Turn.DRAW)) {
+				System.out.println("DRAW!");
+				System.exit(0);
 			}
 		}
 	}

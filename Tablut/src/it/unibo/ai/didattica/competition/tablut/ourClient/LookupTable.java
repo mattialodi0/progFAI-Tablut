@@ -33,7 +33,7 @@ public class LookupTable {
 
     public void insertVisitededState(String state_str, float eval) {
         if (visited_states.size() < MAX_DIM)
-            visited_states.put(state_str, new Float(eval));
+            visited_states.put(state_str, (float)(eval));
 
         if (this.dim() >= MAX_DIM) {
             Random r = new Random();
