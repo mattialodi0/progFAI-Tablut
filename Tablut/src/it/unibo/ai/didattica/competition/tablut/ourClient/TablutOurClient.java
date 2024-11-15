@@ -103,9 +103,8 @@ public class TablutOurClient extends TablutClient {
 				System.exit(4);
 		}
 
-		// searchStrategy = new BasicTreeSearch(rules);
-		searchStrategy = new MMTS(3);
-		SemiRandom semiRandom = new SemiRandom();
+		searchStrategy = new MMTS(1);
+		// SemiRandom semiRandom = new SemiRandom();
 
 		System.out.println("You are player " + this.getPlayer().toString() + "!");
 
@@ -158,8 +157,8 @@ public class TablutOurClient extends TablutClient {
 			} 
 			else if ((this.getPlayer().equals(Turn.BLACK)
 					&& this.getCurrentState().getTurn().equals(StateTablut.Turn.BLACK))) {
-						//Action best_move = searchStrategy.searchTree(state);
-						Action best_move = semiRandom.randMove(state);
+						Action best_move = searchStrategy.searchTree(state);
+						// Action best_move = semiRandom.randMove(state);
 
 				try {
 					rules.checkMove(state, best_move);

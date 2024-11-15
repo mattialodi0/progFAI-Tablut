@@ -22,11 +22,11 @@ public class Evaluations {
 
         float eval = 0;
 
-        eval = state.getNumberOf(Pawn.WHITE) * 2 - state.getNumberOf(Pawn.BLACK);
+        Random random = new Random();
+        eval = ((state.getNumberOf(Pawn.WHITE) * 2) - state.getNumberOf(Pawn.BLACK)) + (random.nextFloat()/1000);
 
-        // addition of a random factor to cosider different moves
-        Random rand = new Random();
-        return eval + (rand.nextFloat() / 1000);
+        return (float) Math.atan(eval*5); 
+        // return eval;
     }
 
     /* Tomaz heuristic */
