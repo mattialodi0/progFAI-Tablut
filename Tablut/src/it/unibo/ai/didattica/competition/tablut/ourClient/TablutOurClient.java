@@ -7,7 +7,7 @@ import it.unibo.ai.didattica.competition.tablut.domain.*;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
 import it.unibo.ai.didattica.competition.tablut.ourClient.interfaces.TreeSearch;
 import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.BasicTreeSearch;
-import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.MMTS;
+import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.MinMaxTreeSearch;
 import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.NegMaxTreeSearch;
 
 /**
@@ -19,7 +19,6 @@ public class TablutOurClient extends TablutClient {
 
 	private int game;
 	private TreeSearch searchStrategy;
-	private GameHelper gameHelper;
 
 	public TablutOurClient(String player, String name, int gameChosen, int timeout, String ipAddress)
 			throws UnknownHostException, IOException {
@@ -103,8 +102,7 @@ public class TablutOurClient extends TablutClient {
 				System.exit(4);
 		}
 
-		searchStrategy = new MMTS(1);
-		// SemiRandom semiRandom = new SemiRandom();
+		searchStrategy = new MinMaxTreeSearch(5);
 
 		System.out.println("You are player " + this.getPlayer().toString() + "!");
 
@@ -126,7 +124,6 @@ public class TablutOurClient extends TablutClient {
 
 			if (this.getPlayer().equals(Turn.WHITE)) {
 				if (state.getTurn().equals(StateTablut.Turn.WHITE)) {
-					//Action best_move = semiRandom.randMove(state);
 					Action best_move = searchStrategy.searchTree(state);
 
 					System.out.println("Mossa scelta: " + best_move.toString());
@@ -158,8 +155,6 @@ public class TablutOurClient extends TablutClient {
 			else if ((this.getPlayer().equals(Turn.BLACK)
 					&& this.getCurrentState().getTurn().equals(StateTablut.Turn.BLACK))) {
 						Action best_move = searchStrategy.searchTree(state);
-						// Action best_move = semiRandom.randMove(state);
-
 				try {
 					rules.checkMove(state, best_move);
 				} catch (Exception e) {

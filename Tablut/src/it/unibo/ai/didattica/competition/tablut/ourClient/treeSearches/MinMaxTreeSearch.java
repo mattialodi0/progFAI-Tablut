@@ -9,6 +9,7 @@ import it.unibo.ai.didattica.competition.tablut.domain.Game;
 import it.unibo.ai.didattica.competition.tablut.domain.GameAshtonTablut;
 import it.unibo.ai.didattica.competition.tablut.domain.State;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
+import it.unibo.ai.didattica.competition.tablut.domain.StateTablut;
 import it.unibo.ai.didattica.competition.tablut.ourClient.GameHelper;
 import it.unibo.ai.didattica.competition.tablut.ourClient.LookupTable;
 import it.unibo.ai.didattica.competition.tablut.ourClient.evaluations.Evaluations;
@@ -18,7 +19,7 @@ import it.unibo.ai.didattica.competition.tablut.simulator.TablutGame;
 /*
  * Implementation of the Minmax alg. with AlphaBeta pruning, lookuptable, and limited brenches
  */
-public class MMTS implements TreeSearch {
+public class MinMaxTreeSearch implements TreeSearch {
 
     public static float maxEval = Float.NEGATIVE_INFINITY;
     public static float minEval = Float.POSITIVE_INFINITY;
@@ -27,62 +28,73 @@ public class MMTS implements TreeSearch {
     public int nodes = 0;
     public int lookups = 0;
     public int lookups_hits = 0;
-    
+    public int nont_hits = 0;
 
     private int depth;
     public LookupTable lookup = new LookupTable();
 
-    public MMTS(int depth) {
+    public MinMaxTreeSearch(int depth) {
         this.depth = depth;
     }
 
     @Override
     public Action searchTree(State state) {
+        Action bestAction = null;
+        State saved_state = state.clone();
+        float score = 0;
+        float alpha = Float.NEGATIVE_INFINITY;
+        float beta = Float.POSITIVE_INFINITY;
+
         List<Action> moves = GameHelper.availableMoves(state);
 
         if (moves.size() == 0)
             System.out.println("big prolbem...");
 
-        Action bestAction = null;
-        State saved_state = state.clone();
-        float score = 0;
-
         if (state.getTurn() == Turn.WHITE) {
             score = Float.NEGATIVE_INFINITY;
             for (Action m : moves) {
                 state = TablutGame.makeMove(state, m);
-                float cur = MiniMax(state, this.depth - 1, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, false);
+                
+                float cur = MiniMax(state, this.depth - 1, alpha, beta, false);
                 if (cur >= score) {
                     score = cur;
                     bestAction = m;
                 }
-                state = saved_state;
+                alpha = Math.max(alpha, cur);
+                if (beta <= alpha)
+                    break;
+                state = saved_state.clone();
             }
-        } else {
+        } else if (state.getTurn() == Turn.BLACK) {
             score = Float.POSITIVE_INFINITY;
             for (Action m : moves) {
                 state = TablutGame.makeMove(state, m);
-                float cur = MiniMax(state, this.depth - 1, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, true);
+                float cur = MiniMax(state, this.depth - 1, alpha, beta, true);
                 if (cur <= score) {
                     score = cur;
                     bestAction = m;
                 }
-                state = saved_state;
+                beta = Math.min(beta, cur);
+                if (beta <= alpha)
+                    break;
+                state = saved_state.clone();
             }
+        } else {
+            System.out.println("big prolbem...");
         }
 
         // debug prints
         try {
-            System.out.println(" ");
+            // System.out.println(" ");
             // System.out.println("score "+score);
             // System.out.println("move"+bestAction);
             // System.out.println(TablutGame.makeMove(state, bestAction).toString());
-            System.out.println("Nodes visited: " + nodes);
-            System.out.println("Total lookups: " + lookups);
+            // System.out.println("Nodes visited: " + nodes);
+            // System.out.println("Total lookups: " + lookups);
             int perc = ((lookups_hits * 100) / lookups);
-            System.out.println("Lookup hits:   " + lookups_hits + " - " + perc + "%");
-            // avgs += perc;
-            // avgs_num++;
+            // System.out.println("Lookup hits: " + lookups_hits + " - " + perc + "%");
+            avgs += perc;
+            avgs_num++;
         } catch (Exception e) {
         }
 
@@ -106,26 +118,39 @@ public class MMTS implements TreeSearch {
         } else if (state.getTurn().equals(Turn.BLACKWIN)) {
             return Float.NEGATIVE_INFINITY;
         }
-        
-        Float eval = lookup.lookForVisitedState(state.boardString());
-        this.lookups++;
-        if (eval != null) {
-            this.lookups_hits++;
+
+        // Float eval = lookup.lookForVisitedState(state.boardString());
+        // this.lookups++;
+        // if (eval != null) {
+        //     this.lookups_hits++;
+        //     return eval;
+        // }
+        // // max depth reached
+        // else if (depth <= 0) {
+        //     eval = Evaluations.evaluateMaterial(state);
+        //     // eval = Evaluations.evaluateAdvanced(state, state.getTurn());
+        //     lookup.insertVisitededState(state.boardString(), eval);
+        //     return eval;
+        // }
+
+        if (depth <= 0) {
+            Float eval = lookup.lookForVisitedState(state.boardString());
+            if (eval == null) {
+                eval = Evaluations.evaluateMaterial(state);
+                // eval = Evaluations.evaluateAdvanced(state, state.getTurn());
+                lookup.insertVisitededState(state.boardString(), eval);
+                this.lookups_hits++;
+            }
+            this.lookups++;
             return eval;
         }
-        // max depth reached
-        else if (depth <= 0) {
-            eval = Evaluations.evaluateMaterial(state);
-            // eval = Evaluations.evaluateAdvanced(state, state.getTurn());
-            lookup.insertVisitededState(state.boardString(), eval);
-            return eval;
-        }
-        
+
+
         List<Action> moves = GameHelper.availableMoves(state);
         if (moves.size() == 0) {
             return 0;
         }
-        
+
         State saved_state = state.clone();
         List<Action> moves_evals = moves;
 
@@ -135,7 +160,7 @@ public class MMTS implements TreeSearch {
             state = TablutGame.makeMove(state, m);
             evals.add(Evaluations.evaluateMaterial(state));
             // evals.add(Evaluations.evaluateAdvanced(state, state.getTurn()));
-            state = saved_state;
+            state = saved_state.clone();
         }
         moves_evals = orderByEval(moves, evals);
 
@@ -145,14 +170,14 @@ public class MMTS implements TreeSearch {
             for (Action m : moves_evals) {
                 if (i > branchingFactor(this.depth - depth))
                     break;
+
                 state = TablutGame.makeMove(state, m);
                 float cur = MiniMax(state, depth - 1, alpha, beta, false);
-                if (cur >= max_score) {
-                    max_score = cur;
-                }
-                state = saved_state.clone();
+                max_score = Math.max(max_score, cur);
+                alpha = Math.max(alpha, cur);
                 if (beta <= alpha)
                     break;
+                state = saved_state.clone();
                 i++;
             }
             return max_score;
@@ -164,13 +189,12 @@ public class MMTS implements TreeSearch {
                     break;
                 state = TablutGame.makeMove(state, m);
                 float cur = MiniMax(state, depth - 1, alpha, beta, true);
-                if (cur <= min_score) {
-                    min_score = cur;
-                }
-                state = saved_state.clone();
+                min_score = Math.min(min_score, cur);
+                beta = Math.min(beta, cur);
                 if (beta <= alpha)
                     break;
                 i++;
+                state = saved_state.clone();
             }
 
             return min_score;

@@ -1,6 +1,5 @@
 package it.unibo.ai.didattica.competition.tablut.ourClient;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.Random;
@@ -28,11 +27,10 @@ public class LookupTable {
     public Float lookForVisitedState(String state_str) {
         String[] eq_state_str = equivalentStates(state_str);
 
-        if (visited_states.containsKey(state_str))
-        // if (visited_states.containsKey(eq_state_str[0]) ||
-        //     visited_states.containsKey(eq_state_str[1]) ||
-        //     visited_states.containsKey(eq_state_str[2]) ||
-        //     visited_states.containsKey(eq_state_str[3]))
+        if (visited_states.containsKey(eq_state_str[0]) ||
+            visited_states.containsKey(eq_state_str[1]) ||
+            visited_states.containsKey(eq_state_str[2]) ||
+            visited_states.containsKey(eq_state_str[3]))
             return visited_states.get(state_str);
         else
             return null;

@@ -14,22 +14,30 @@ import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
 import it.unibo.ai.didattica.competition.tablut.domain.StateTablut;
 import it.unibo.ai.didattica.competition.tablut.ourClient.LookupTable;
 import it.unibo.ai.didattica.competition.tablut.ourClient.interfaces.TreeSearch;
-import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.MMTS;
-import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.NMTS;
 import it.unibo.ai.didattica.competition.tablut.ourClient.SemiRandom;
+import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.MinMaxTreeSearch;
+import it.unibo.ai.didattica.competition.tablut.ourClient.evaluations.Evaluations;
 
 // TODO: draw check and timeout
 public class TablutGameSimulator {
 
 	private int MAX_TURNS = 1000;
-	private int MATCHES = 1;
+	private int MATCHES = 10;
 	int time = 60;
+	private double time_tot = 0;
 
 	Timer timer = new Timer(time);
 
 	public static void main(String[] args) {
 		TablutGameSimulator sim = new TablutGameSimulator();
 		sim.run();
+
+
+		// System.out.println(" ");
+		// State s = new StateTablut();
+		// System.out.println(s.toString());
+		// TreeSearch searchStrategy = new MMTS(1);
+		// System.out.println(searchStrategy.searchTree(s));
 	}
 
 	public void run() {
@@ -74,7 +82,8 @@ public class TablutGameSimulator {
 		// System.out.println(" ");
 		// System.out.println("Max eval: " + MMTS.maxEval);
 		// System.out.println("Min eval: " + MMTS.minEval);
-		// System.out.println("Avg lookup hit: " + ((MMTS.avgs)/(MMTS.avgs_num)) +"%");
+		System.out.println("Avg lookup hit: " + ((MinMaxTreeSearch.avgs)/(MinMaxTreeSearch.avgs_num)) +"%");
+		System.out.println("Avg time per move: " + (time_tot/MATCHES) +"s");
 	}
 
 	private Turn runGame() throws TimeoutException {
@@ -102,6 +111,7 @@ public class TablutGameSimulator {
 			if (timer.timeOutOccurred()) {
 				throw new TimeoutException("The move took too long and exceeded the allowed time limit.");
 			}
+			time_tot += timer.getTimer();
 
 			if (TablutGame.checkMove(state, move)) {
 				TablutGame.makeMove(state, move);
@@ -133,13 +143,13 @@ public class TablutGameSimulator {
 			turns++;
 		}
 
-		System.out.println("endgame state \n" + state.toString());
+		// System.out.println("endgame state \n" + state.toString());
 
 		return state.getTurn();
 	}
 
 	private Action whiteMove(State state) {
-		TreeSearch searchStrategy = new MMTS(3);
+		TreeSearch searchStrategy = new MinMaxTreeSearch(4); 
 		return searchStrategy.searchTree(state);
 	}
 	
@@ -237,7 +247,11 @@ public class TablutGameSimulator {
 			}
 
 			while (!found) {
-				selected = pawns.get(new Random().nextInt(pawns.size() - 1));
+				if (pawns.size() > 1) {
+					selected = pawns.get(new Random().nextInt(pawns.size() - 1));
+				} else {
+					selected = pawns.get(0);
+				}
 				String from = state.getBox(selected[0], selected[1]);
 
 				selected = empty.get(new Random().nextInt(empty.size() - 1));

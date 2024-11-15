@@ -23,7 +23,7 @@ public class Evaluations {
         float eval = 0;
 
         Random random = new Random();
-        eval = ((state.getNumberOf(Pawn.WHITE) * 2) - state.getNumberOf(Pawn.BLACK)) + (random.nextFloat()/1000);
+        eval = ((state.getNumberOf(Pawn.WHITE) * 2) - state.getNumberOf(Pawn.BLACK)) + ((random.nextFloat()-0.5f)/1000);
 
         return (float) Math.atan(eval*5); 
         // return eval;
