@@ -24,13 +24,15 @@ public class HeuristicsWhite extends Heuristics {
                 float alivePawns = numAlive(state);
                 float eatenPawns = numEaten(state);
                 float escapesAccessible = escapesOpen(emptyTiles, kingPos);
-                float freedomKing = freedomOfMovement(emptyTiles, kingPos);
+                float freedomKing = kingFreedom(emptyTiles, kingPos);
 
-                return weights[0] * alivePawns + weights[1] * eatenPawns + weights[2] * escapesAccessible
+                System.out.println("Alive pawns score: " + alivePawns + "Eaten Pawns score:" + (-eatenPawns)
+                                + "Accessible escapes: " + escapesAccessible + "Freedom of movement" + freedomKing);
+                return weights[0] * alivePawns - weights[1] * eatenPawns + weights[2] * escapesAccessible
                                 + weights[3] * freedomKing;
         }
 
-        // How many escape tiles can the king reach in one move.
+        // Gives a score depending on how many escape tiles are available to the king.
         public static float escapesOpen(List<int[]> emptyTiles, int[] kingPosition) {
                 List<int[]> escapingTiles = Arrays.asList(
                                 new int[] { 0, 1 },
@@ -50,10 +52,24 @@ public class HeuristicsWhite extends Heuristics {
                                 new int[] { 8, 6 },
                                 new int[] { 8, 7 });
                 List<int[]> availableEscapingTiles = escapingTiles.stream()
-                                .filter(emptyTiles::contains)
+                                .filter(tile -> emptyTiles.stream()
+                                                .anyMatch(emptyTile -> Arrays.equals(tile, emptyTile)))
                                 .collect(Collectors.toList());
                 int escapesOpen = numberReachableGoals(availableEscapingTiles, kingPosition, emptyTiles);
-                return escapesOpen;
+                switch (escapesOpen) {
+                        case 0:
+                                return -1;
+                        case 1:
+                                return 1;
+                        case 2:
+                                return 20;
+                        case 3:
+                                return 22;
+                        case 4:
+                                return 24;
+                        default:
+                                return 0;
+                }
         }
 
 }

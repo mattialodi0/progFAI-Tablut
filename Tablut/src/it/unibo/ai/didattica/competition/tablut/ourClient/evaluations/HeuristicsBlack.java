@@ -25,15 +25,18 @@ public class HeuristicsBlack extends Heuristics {
         float alivePawns = numAlive(state);
         float eatenPawns = numEaten(state);
         float exitsBlocked = exitsBlocked(emptyTiles, kingPos);
-        float kingReachable = numberReachableGoals(GameHelper.populatePawnList(state),
-                kingPos, emptyTiles);
-        int nearKing = pawnsNearKing(GameHelper.populatePawnList(state), kingPos);
+        float attackingTheKing = approachingPawns(GameHelper.populatePawnList(state),
+                kingPos, emptyTiles, state);
+        float presenceAroundKing = closingKing(GameHelper.populatePawnList(state), kingPos);
         State newState = state.clone();
         newState.setTurn(state.getTurn().equals(Turn.WHITE) ? Turn.BLACK : Turn.WHITE);
-        int possCaptures = possibleCaptures(GameHelper.populatePawnList(state),
+        float possCaptures = possibleCaptures(GameHelper.populatePawnList(state),
                 GameHelper.populatePawnList(newState), emptyTiles);
-        return weights[0] * alivePawns + weights[1] * eatenPawns + weights[2] * kingReachable
-                + weights[3] * exitsBlocked + weights[4] * nearKing + weights[5] * possCaptures;
+        System.out.println("Alive pawns score: " + alivePawns + "Eaten Pawns score:" + (-eatenPawns)
+                + "Exits blocked: " + exitsBlocked + "Attacking the king: " + attackingTheKing + "Presence around king: "
+                + presenceAroundKing + "Poss captures: " + possCaptures);
+        return weights[0] * alivePawns - weights[1] * eatenPawns + weights[2] * attackingTheKing
+                + weights[3] * exitsBlocked + weights[4] * presenceAroundKing + weights[5] * possCaptures;
     }
 
     // Computes the number of exits the king can reach and returns 4 - the number.
@@ -58,23 +61,39 @@ public class HeuristicsBlack extends Heuristics {
                 new int[] { 8, 6 },
                 new int[] { 8, 7 });
         List<int[]> availableEscapingTiles = escapingTiles.stream()
-                .filter(emptyTiles::contains)
+                .filter(tile -> emptyTiles.stream()
+                        .anyMatch(emptyTile -> Arrays.equals(tile, emptyTile)))
                 .collect(Collectors.toList());
         int escapesOpen = numberReachableGoals(availableEscapingTiles, kingPosition, emptyTiles);
-        return 4 - escapesOpen;
+        switch (escapesOpen) {
+            case 4:
+                return -20;
+            case 3:
+                return -18;
+            case 2:
+                return -16;
+            case 1:
+                return -5;
+            case 0:
+                return 5;
+            default:
+                return 0;
+        }
     }
 
-    // Returns the number of black pawns near the king
-    public static int pawnsNearKing(List<int[]> pawns, int[] kingPosition) {
+    // Evaluates based on how many black tiles are near the king
+    public static float closingKing(List<int[]> pawns, int[] kingPosition) {
+        int nearPawns = pawnsNearKing(pawns, kingPosition);
 
-        int numberPawns = 0;
-
-        for (int[] pawn : pawns) {
-            if ((Math.abs(pawn[0] - kingPosition[0]) == 1 && pawn[1] == kingPosition[1])
-                    || (Math.abs(pawn[1] - kingPosition[1]) == 1 && pawn[0] == kingPosition[0])) {
-                numberPawns++;
-            }
+        // if the king is on the throne the black must have more pawns around him
+        if (Arrays.equals(kingPosition, new int[] { 4, 4 })) {
+            return nearPawns - 2;
+        } else if ((Arrays.equals(kingPosition, new int[] { 3, 4 }) || Arrays.equals(kingPosition, new int[] { 5, 4 })
+                || Arrays.equals(kingPosition, new int[] { 4, 5 })
+                || Arrays.equals(kingPosition, new int[] { 4, 3 }))) {
+            return nearPawns - 1;
+        } else {
+            return nearPawns;
         }
-        return numberPawns;
     }
 }

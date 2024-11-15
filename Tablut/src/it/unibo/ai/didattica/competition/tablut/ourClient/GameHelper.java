@@ -120,7 +120,8 @@ public class GameHelper {
         int[] buf;
         for (int i = 0; i < state.getBoard().length; i++) {
             for (int j = 0; j < state.getBoard().length; j++) {
-                if (state.getPawn(i, j).equalsPawn(State.Pawn.EMPTY.toString()) && !(campsList.contains(new int[]{i,j}))) {
+                int[] pawn = {i,j};
+                if (state.getPawn(i, j).equalsPawn(State.Pawn.EMPTY.toString()) && !(campsList.stream().anyMatch(camp -> Arrays.equals(camp,pawn)))) {
                     buf = new int[2];
                     buf[0] = i;
                     buf[1] = j;

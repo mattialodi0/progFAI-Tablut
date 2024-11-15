@@ -10,21 +10,22 @@ import java.util.List;
 
 public class Heuristics {
 
-    // Returns the normalized (between 0,2) number of alive pawns.
+    // Returns the normalized (between 0,1) number of alive pawns.
     public static float numAlive(State state) {
         if (state.getTurn().equals(Turn.WHITE)) {
-            return state.getNumberOf(Pawn.WHITE) / 9;
+            return (float) state.getNumberOf(Pawn.WHITE) / 8;
         } else {
-            return state.getNumberOf(Pawn.BLACK) / 16;
+            return (float) state.getNumberOf(Pawn.BLACK) / 16;
         }
     }
 
-    // Returns the normalized (between 0,2) number of eaten pawns.
+    // Returns the normalized (between 0,1) number of eaten pawns. More it eats the
+    // lower the score is, in HeuristicsWhite and Black have to be with - sign.
     public static float numEaten(State state) {
         if (state.getTurn().equals(Turn.WHITE)) {
-            return (16 - state.getNumberOf(Pawn.BLACK)) / 16;
+            return (float) (state.getNumberOf(Pawn.BLACK)) / 16;
         } else {
-            return (9 - state.getNumberOf(Pawn.WHITE)) / 9;
+            return (float) (state.getNumberOf(Pawn.WHITE)) / 8;
         }
     }
 
@@ -42,7 +43,6 @@ public class Heuristics {
     public static int numberReachableGoals(List<int[]> goals, int[] start, List<int[]> empty) {
 
         int reachedGoals = 0;
-
         for (int[] goal : goals) {
             if (canReach(start, goal, empty)) {
                 reachedGoals += 1;
@@ -91,8 +91,22 @@ public class Heuristics {
         return false;
     }
 
-    // Returns the number of pawns that cans can touch the goal with one move,
-    // divided by the number of player's alive pawns.
+    // Returns the number of black pawns near the king
+    public static int pawnsNearKing(List<int[]> pawns, int[] kingPosition) {
+
+        int numberPawns = 0;
+
+        for (int[] pawn : pawns) {
+            if ((Math.abs(pawn[0] - kingPosition[0]) == 1 && pawn[1] == kingPosition[1])
+                    || (Math.abs(pawn[1] - kingPosition[1]) == 1 && pawn[0] == kingPosition[0])) {
+                numberPawns++;
+            }
+        }
+        return numberPawns;
+    }
+
+    // Evaluates how capable is the black of attacking the king. How many of the
+    // black pawns can touch the goal (king). Is between 0 and 1
     public static float approachingPawns(List<int[]> pawns, int[] goal, List<int[]> empty,
             State state) {
         int pawnCount = 0;
@@ -102,7 +116,10 @@ public class Heuristics {
                 pawnCount += 1;
             }
         }
-        return pawnCount / numAlive(state);
+        if (pawnCount == 0) {
+            return -1f;
+        }
+        return (float) pawnCount / state.getNumberOf(Pawn.BLACK);
     }
 
     protected static Boolean canComeNear(int[] pawn, int[] goal, List<int[]> empty) {
@@ -141,8 +158,63 @@ public class Heuristics {
         return false;
     }
 
-    // Returns the number of adjacent free tiles
-    public static float freedomOfMovement(List<int[]> emptyTiles, int[] pawn) {
+
+    // TODOOOOO -------------------------------------------------------------------------------------
+    public static float kingSecurity(List<int[]> blackPawns, List<int[]> myPawns, int[] king){
+        
+        // If king can be captured very bad
+
+        // King on throne: when more than two black around is bad
+        
+        // King near throne: two black around is bad
+
+        // Otherwise: one black near bad
+
+        // Some bonus points for when white are near?
+        
+        return 0;
+    }
+
+    // Evaluates the freedom of movement of the king. Depending on the position of the king (on
+    // throne, near throne, neither) mult its degrees of freedom. If only
+    // one degree of freedom returns a negative value.
+    public static float kingFreedom(List<int[]> emptyTiles, int[] king) {
+
+        int free = freedomOfMovement(emptyTiles, king);
+        float tolerance = 1;
+
+        // if the king is on the throne has a higher tolerance
+        if (Arrays.equals(king, new int[] { 4, 4 })) {
+            tolerance = 4;
+        }
+
+        // if the king has the throne on one side has a lower tolerance, still better
+        // than 1
+        if (Arrays.equals(king, new int[] { 5, 4 }) || Arrays.equals(king, new int[] { 3, 4 })
+                || Arrays.equals(king, new int[] { 4, 3 }) || Arrays.equals(king, new int[] { 4, 5 })) {
+            tolerance = 2.5f;
+        }
+
+        float res = 0;
+        switch (free) {
+            case 3:
+                res = 1 * tolerance;
+                break;
+            case 4:
+                res = 1.5f * tolerance;
+                break;
+            case 2:
+                res = 0.5f * tolerance;
+                break;
+            case 1:
+                res = -(0.5f * (1 / tolerance));
+                break;
+        }
+        return res;
+    }
+
+    // Checks how many adjacent free tiles a pawn has.
+    public static int freedomOfMovement(List<int[]> emptyTiles, int[] pawn) {
         int freeTilesNear = 0;
         for (int[] empty : emptyTiles) {
             if ((Math.abs(empty[0] - pawn[0]) == 1 && empty[1] == pawn[1])
@@ -153,9 +225,9 @@ public class Heuristics {
         return freeTilesNear;
     }
 
-    // Returns the number of possible enemy pawns a player can capture in the next
+    // Evaluates based on the number of possible enemy pawns a player can capture in the next
     // move
-    public static int possibleCaptures(List<int[]> myPawns, List<int[]> enemPawns, List<int[]> emptyTiles) {
+    public static float possibleCaptures(List<int[]> myPawns, List<int[]> enemPawns, List<int[]> emptyTiles) {
 
         int possCaptures = 0;
         // Check how (where we have to move the black pawn) can enemy pawns be captured
@@ -166,7 +238,7 @@ public class Heuristics {
         List<int[]> criticalTiles = new ArrayList<>();
         for (int[] enem : enemPawns) {
             int[] captureTile = capturingTile(enem, emptyTiles);
-            if (!captureTile.equals(new int[] { -100, -100 })) {
+            if (!Arrays.equals(captureTile, new int[] { -100, -100 })) {
                 criticalTiles.add(captureTile);
             }
         }
@@ -180,7 +252,14 @@ public class Heuristics {
                 }
             }
         }
-        return possCaptures;
+        System.out.println(possCaptures);
+        switch (possCaptures) {
+            case 0:
+                return -0.5f;
+            default:
+                int n = possCaptures / 2;
+                return 0.5f * n + 0.5f;
+        }
     }
 
     // Returns the position where to move if we want to capture the pawn. If there
@@ -193,10 +272,18 @@ public class Heuristics {
                 new int[] { pawn[0] + 1, pawn[1] },
                 new int[] { pawn[0] - 1, pawn[1] } };
 
-        if (emptyTiles.contains(nearPawn[0]) ^ emptyTiles.contains(nearPawn[1])) {
-            return emptyTiles.contains(nearPawn[0]) ? nearPawn[0] : nearPawn[1];
-        } else if (emptyTiles.contains(nearPawn[2]) ^ emptyTiles.contains(nearPawn[3])) {
-            return emptyTiles.contains(nearPawn[2]) ? nearPawn[2] : nearPawn[3];
+        if (emptyTiles.stream()
+                .anyMatch(emptyTile -> Arrays.equals(nearPawn[0], emptyTile))
+                ^ emptyTiles.stream()
+                        .anyMatch(emptyTile -> Arrays.equals(nearPawn[1], emptyTile))) {
+            return emptyTiles.stream()
+                    .anyMatch(emptyTile -> Arrays.equals(nearPawn[0], emptyTile)) ? nearPawn[0] : nearPawn[1];
+        } else if (emptyTiles.stream()
+                .anyMatch(emptyTile -> Arrays.equals(nearPawn[2], emptyTile))
+                ^ emptyTiles.stream()
+                        .anyMatch(emptyTile -> Arrays.equals(nearPawn[3], emptyTile))) {
+            return emptyTiles.stream()
+                    .anyMatch(emptyTile -> Arrays.equals(nearPawn[2], emptyTile)) ? nearPawn[2] : nearPawn[3];
         }
         return new int[] { -100, -100 };
     }
