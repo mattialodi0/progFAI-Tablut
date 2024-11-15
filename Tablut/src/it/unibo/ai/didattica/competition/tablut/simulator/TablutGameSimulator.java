@@ -19,7 +19,7 @@ import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.NMTS;
 public class TablutGameSimulator {
 
 	private int MAX_TURNS = 1000;
-	private int MATCHES = 10;
+	private int MATCHES = 1;
 	int time = 60;
 
 	Timer timer = new Timer(time);
@@ -71,6 +71,7 @@ public class TablutGameSimulator {
 		// System.out.println(" ");
 		// System.out.println("Max eval: " + MMTS.maxEval);
 		// System.out.println("Min eval: " + MMTS.minEval);
+		// System.out.println("Avg lookup hit: " + ((MMTS.avgs)/(MMTS.avgs_num)) +"%");
 	}
 
 	private Turn runGame() throws TimeoutException {
@@ -127,19 +128,19 @@ public class TablutGameSimulator {
 			turns++;
 		}
 
-		// System.out.println("endgame " + state.getTurn().toString());
+		System.out.println("endgame state \n" + state.toString());
 
 		return state.getTurn();
 	}
 
 	private Action whiteMove(State state) {
-		// TreeSearch searchStrategy = new NMTS(Turn.WHITE);
-		return randMove(state);
+		TreeSearch searchStrategy = new MMTS(3);
+		Action move = searchStrategy.searchTree(state);
+		return move;
 	}
 	
 	private Action blackMove(State state) {
-		TreeSearch searchStrategy = new MMTS(3);
-		return searchStrategy.searchTree(state);
+		return randMove(state);
 	}
 
 	private Action randMove(State state) {

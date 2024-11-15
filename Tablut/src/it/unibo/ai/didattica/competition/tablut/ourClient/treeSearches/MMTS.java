@@ -20,10 +20,13 @@ public class MMTS implements TreeSearch {
 
     public static float maxEval = Float.NEGATIVE_INFINITY;
     public static float minEval = Float.POSITIVE_INFINITY;
+    public static int avgs = 0;
+    public static int avgs_num = 0;
+    public int lookups = 0;
+    public int lookups_hits = 0;
+    
+
     private int depth;
-    private int threshold = 2;
-    public int leafs = 0;
-    public int evals = 0;
     public LookupTable lookup = new LookupTable();
 
     public MMTS(int depth) {
@@ -39,9 +42,10 @@ public class MMTS implements TreeSearch {
 
         Action bestAction = null;
         State saved_state = state.clone();
+        float score = 0;
 
         if (state.getTurn() == Turn.WHITE) {
-            float score = Float.NEGATIVE_INFINITY;
+            score = Float.NEGATIVE_INFINITY;
             for (Action m : moves) {
                 state = TablutGame.makeMove(state, m);
                 float cur = MiniMax(state, this.depth - 1, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, false);
@@ -52,7 +56,7 @@ public class MMTS implements TreeSearch {
                 state = saved_state;
             }
         } else {
-            float score = Float.POSITIVE_INFINITY;
+            score = Float.POSITIVE_INFINITY;
             for (Action m : moves) {
                 state = TablutGame.makeMove(state, m);
                 float cur = MiniMax(state, this.depth - 1, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, true);
@@ -65,9 +69,15 @@ public class MMTS implements TreeSearch {
         }
 
         try {
-            // System.out.println("Leafs visited: " + leafs);
-            // System.out.println("Lookup hit: " + (leafs - evals) + " - " + (((leafs - evals) * 100) / leafs) + "%");
-            // System.out.println("Lookup dels: " + lookup.i);
+            // System.out.println("AAAAAAAA");
+            // System.out.println("score "+score);
+            // System.out.println("move"+bestAction);
+            // System.out.println(TablutGame.makeMove(state, bestAction).toString());
+            // System.out.println("Total lookups: " + lookups);
+            // int perc = ((lookups_hits * 100) / lookups);
+            // System.out.println("Lookup hits: " + lookups_hits + " - " + perc + "%");
+            // avgs += perc;
+            // avgs_num++;
         } catch (Exception e) {
         }
 
@@ -82,19 +92,6 @@ public class MMTS implements TreeSearch {
 
     private float MiniMax(State state, int depth, float alpha, float beta, Boolean isWhite) {
 
-        // if we reached max depth
-        if (depth <= 0) {
-            Float eval = lookup.lookForVisitedState(state.boardString());
-            if (eval == null) {
-                eval = Evaluations.evaluateMaterial(state);
-                // eval = Evaluations.evaluateAdvanced(state, state.getTurn());
-                lookup.insertVisitededState(state.boardString(), eval);
-                this.evals++;
-            }
-            this.leafs++;
-            return eval;
-        }
-
         // if this is a leaf
         if (state.getTurn().equals(Turn.DRAW)) {
             return 0;
@@ -102,6 +99,20 @@ public class MMTS implements TreeSearch {
             return Float.POSITIVE_INFINITY;
         } else if (state.getTurn().equals(Turn.BLACKWIN)) {
             return Float.NEGATIVE_INFINITY;
+        }
+
+        Float eval = lookup.lookForVisitedState(state.boardString());
+        this.lookups++;
+        if (eval != null) {
+            this.lookups_hits++;
+            return eval;
+        }
+        // max depth reached
+        else if (depth <= 0) {
+            eval = Evaluations.evaluateMaterial(state);
+            // eval = Evaluations.evaluateAdvanced(state, state.getTurn());
+            lookup.insertVisitededState(state.boardString(), eval);
+            return eval;
         }
 
         List<Action> moves = GameHelper.availableMoves(state);
