@@ -2,6 +2,7 @@ package it.unibo.ai.didattica.competition.tablut.ourClient;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -83,7 +84,6 @@ public class GameHelper {
         return res;
     }
 
-    
     public static List<int[]> populatePawnList(State state) {
         List<int[]> pawns = new ArrayList<int[]>();
 
@@ -112,15 +112,15 @@ public class GameHelper {
         return pawns;
     }
 
-    // Just the available empty, for the white don't show the black citadels.
-    // Care not to return also the throne!
+    // Returns the empty tiles (not the camps)
     public static List<int[]> populateEmptyList(State state) {
         List<int[]> empty = new ArrayList<int[]>();
+        List<int[]> campsList = Arrays.asList(camps);
 
         int[] buf;
         for (int i = 0; i < state.getBoard().length; i++) {
             for (int j = 0; j < state.getBoard().length; j++) {
-                if (state.getPawn(i, j).equalsPawn(State.Pawn.EMPTY.toString())) {
+                if (state.getPawn(i, j).equalsPawn(State.Pawn.EMPTY.toString()) && !(campsList.contains(new int[]{i,j}))) {
                     buf = new int[2];
                     buf[0] = i;
                     buf[1] = j;
@@ -131,7 +131,7 @@ public class GameHelper {
 
         return empty;
     }
- 
+
     public static List<Action> getPawnMoves(State state, int[] pawn) {
         List<Action> pawnMoves = new ArrayList<Action>();
         int row = pawn[0];
@@ -176,7 +176,60 @@ public class GameHelper {
         return pawnMoves;
     }
 
-    
+
+    /* serve per SemiRandom per vedere se una mossa è valida o no. E' uguale al metodo sopra ma ritorna true or false */
+    public static boolean canPawnMove(State state, int[] pawn, int prow, int pcol) {
+        List<Action> pawnMoves = new ArrayList<Action>();
+        int row = pawn[0];
+        int column = pawn[1];
+
+        // for each move i can go either up, or down, or left, or right
+        // i first fix the column, and move up and down, then i fix the row
+        // and go left and right.
+        // i check every time if i find an obstacle.
+
+        // Going upward
+        for (int i = row - 1; i >= 0; i--) {
+            if (isObstacle(state, i, column) || isCamp(i, column)){
+                return false;
+            }
+
+            addMoveIfValid(state, pawn, i, column, pawnMoves);
+        }
+
+        // Going downward
+        for (int i = row + 1; i < state.getBoard().length; i++) {
+            if (isObstacle(state, i, column) || isCamp(i, column)){
+                return false;
+            }
+
+            addMoveIfValid(state, pawn, i, column, pawnMoves);
+        }
+
+        // Going to the left
+        for (int j = column - 1; j >= 0; j--) {
+            if (isObstacle(state, row, j) || isCamp(row, j)) return false;
+            
+            addMoveIfValid(state, pawn, row, j, pawnMoves);
+        }
+
+        // Going to the right
+        for (int j = column + 1; j < state.getBoard().length; j++) {
+            if (isObstacle(state, row, j) || isCamp(row, j)) return false;
+
+
+            addMoveIfValid(state, pawn, row, j, pawnMoves);
+        }
+        
+        // per ogni azione che il pedone può compiere, verifico che ci sia quella nella cella vuota (per completare la cattura a diamante)
+        for(Action a: pawnMoves){
+            if (a.getColumnTo()==pcol && a.getRowFrom()==prow) return true;
+        }
+        return false;
+    }
+
+
+
     // check if the pawn is moving on an occupied cell
     private static boolean isObstacle(State state, int row, int col) {
         Pawn p = state.getPawn(row, col);

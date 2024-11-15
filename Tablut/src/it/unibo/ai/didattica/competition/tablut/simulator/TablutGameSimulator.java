@@ -11,9 +11,11 @@ import it.unibo.ai.didattica.competition.tablut.domain.State;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
 import it.unibo.ai.didattica.competition.tablut.domain.StateTablut;
 import it.unibo.ai.didattica.competition.tablut.ourClient.LookupTable;
+import it.unibo.ai.didattica.competition.tablut.ourClient.SemiRandom;
 import it.unibo.ai.didattica.competition.tablut.ourClient.interfaces.TreeSearch;
 import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.MMTS;
 import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.NMTS;
+import it.unibo.ai.didattica.competition.tablut.ourClient.SemiRandom;
 
 // TODO: draw check and timeout
 public class TablutGameSimulator {
@@ -92,8 +94,8 @@ public class TablutGameSimulator {
 				return Turn.DRAW;	// draw if exceed MAX_TURNS
 			}
 
-				// white move
-				timer.start();
+			// white move
+			timer.start();
 			move = whiteMove(state.clone());
 			if (timer.timeOutOccurred()) {
 				throw new TimeoutException("The move took too long and exceeded the allowed time limit.");
@@ -135,12 +137,14 @@ public class TablutGameSimulator {
 
 	private Action whiteMove(State state) {
 		TreeSearch searchStrategy = new MMTS(3);
-		Action move = searchStrategy.searchTree(state);
-		return move;
+		return searchStrategy.searchTree(state);
 	}
 	
 	private Action blackMove(State state) {
-		return randMove(state);
+		SemiRandom semiRandom = new SemiRandom();
+		return semiRandom.randMove(state);
+		
+		//return randMove(state);
 	}
 
 	private Action randMove(State state) {
@@ -248,7 +252,7 @@ public class TablutGameSimulator {
 
 			}
 			return a;
-		} else
+		}else
 			return null;
 	}
 

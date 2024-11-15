@@ -4,11 +4,33 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import it.unibo.ai.didattica.competition.tablut.domain.State;
+import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
+import it.unibo.ai.didattica.competition.tablut.ourClient.GameHelper;
+
 public class HeuristicsWhite extends Heuristics {
 
-        // add something that helps the other pawns and not only the king
+        private Float[] weights;
 
-        // How many escape tiles can the king reach in one move
+        public HeuristicsWhite(Float[] weights) {
+                this.weights = weights;
+        }
+
+        public float evaluate(State state) {
+
+                int[] kingPos = GameHelper.getKingPosition(state);
+                List<int[]> emptyTiles = GameHelper.populateEmptyList(state);
+
+                float alivePawns = numAlive(state);
+                float eatenPawns = numEaten(state);
+                float escapesAccessible = escapesOpen(emptyTiles, kingPos);
+                float freedomKing = freedomOfMovement(emptyTiles, kingPos);
+
+                return weights[0] * alivePawns + weights[1] * eatenPawns + weights[2] * escapesAccessible
+                                + weights[3] * freedomKing;
+        }
+
+        // How many escape tiles can the king reach in one move.
         public static float escapesOpen(List<int[]> emptyTiles, int[] kingPosition) {
                 List<int[]> escapingTiles = Arrays.asList(
                                 new int[] { 0, 1 },
@@ -30,31 +52,8 @@ public class HeuristicsWhite extends Heuristics {
                 List<int[]> availableEscapingTiles = escapingTiles.stream()
                                 .filter(emptyTiles::contains)
                                 .collect(Collectors.toList());
-                int escapesOpen = numberToReachGoal(availableEscapingTiles, kingPosition, emptyTiles);
-                return (2 * escapesOpen / 16) - 1;
+                int escapesOpen = numberReachableGoals(availableEscapingTiles, kingPosition, emptyTiles);
+                return escapesOpen;
         }
 
-        // How many degrees of freedom does the king have
-        public static float freedomOfMovement(List<int[]> emptyTiles, int[] kingPosition) {
-                int freeTilesNear = 0;
-                for (int[] empty : emptyTiles) {
-                        if ((Math.abs(empty[0] - kingPosition[0]) == 1 && empty[1] == kingPosition[1])
-                                        || (Math.abs(empty[1] - kingPosition[1]) == 1 && empty[0] == kingPosition[0])) {
-                                freeTilesNear++;
-                        }
-                }
-                return (2 * freeTilesNear / 4) - 1;
-                /*
-                 * List<int[]> toCheckTiles = Arrays.asList(
-                 * new int[] { kingPosition[0] + 1, kingPosition[1] },
-                 * new int[] { kingPosition[0] - 1, kingPosition[1] },
-                 * new int[] { kingPosition[0], kingPosition[1] + 1 },
-                 * new int[] { kingPosition[0], kingPosition[1] - 1 });
-                 * int openDirections = (int) toCheckTiles.stream().filter(tileToCheck ->
-                 * emptyTiles.stream()
-                 * .anyMatch(item2 -> Arrays.equals(tileToCheck, item2)))
-                 * .count();
-                 * return openDirections;
-                 */
-        }
 }

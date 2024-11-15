@@ -41,20 +41,29 @@ public class Evaluations {
         List<int[]> emptyTiles = GameHelper.populateEmptyList(state);
         // List<int[]> escapeTiles = new ArrayList<>();
 
-        // Common heuristics, everyone will be computed accordingly to who is calling it
-        float alivePawns = Heuristics.numAlive(state);
-        float eatenPawns = Heuristics.numEaten(state);
-        // white heuristics
-        if (state.getTurn().equals(State.Turn.WHITE)) {
-            float escapesAccessible = HeuristicsWhite.escapesOpen(emptyTiles, kingPos);
-            float freedomKing = HeuristicsWhite.freedomOfMovement(emptyTiles, kingPos);
-            return freedomKing + escapesAccessible + alivePawns + eatenPawns;
+        if (state.getTurn().equals(Turn.WHITE)){
+            Float[] gameWeights = new Float[4];
 
-        } else if (state.getTurn().equals(State.Turn.BLACK)) { // black heuristics
-            float exitsBlocked = HeuristicsBlack.exitsBlocked(emptyTiles, kingPos);
-            float kingReachable = HeuristicsBlack.numberOfPawnsToReachKing(GameHelper.populatePawnList(state),
-                    kingPos, emptyTiles, state);
-            return alivePawns + eatenPawns;
+            gameWeights[0] = 35.1f;
+            gameWeights[1] = 18f;
+            gameWeights[2] = 5f;
+            gameWeights[3] = 42.0f;
+
+            HeuristicsWhite heuristic = new HeuristicsWhite(gameWeights);
+
+            return heuristic.evaluate(state);    
+        } else if(state.getTurn().equals(Turn.BLACK)){
+            Float[] gameWeights = new Float[6];
+
+            gameWeights[0] = 25.2f;
+            gameWeights[1] = 45.0f;
+            gameWeights[2] = 15.0f;
+            gameWeights[3] = 10.0f;
+            gameWeights[4] = 15.0f;
+            gameWeights[5] = 20.0f;
+
+            HeuristicsBlack heuristic = new HeuristicsBlack(gameWeights);
+            return heuristic.evaluate(state);
         }
         return 0;
     }
@@ -80,5 +89,28 @@ public class Evaluations {
     public static float evaluateAggressive(State state, Turn t) {
         // TODO
         return 0f;
+    }
+
+    public static float evaluateAlgiseWhite(State state) {
+        int black_pawns = 0;
+        int white_pawns = 0;
+        int free_way_for_king = 0;
+        int black_near_king = 0;
+        int king_pos = 0;
+        int strategic_free = 0;
+
+        return (float) ((black_pawns * 12) + (white_pawns * 22) + (free_way_for_king * 50) + (black_near_king * 6)
+                + (king_pos * 0.4) + (strategic_free));
+    }
+
+    public static float evaluateAlgiseBlack(State state) {
+        int black_pawns = 0;
+        int white_pawns = 0;
+        int free_way_for_king = 0;
+        int black_near_king = 0;
+        int surround = 0;
+
+        return (float) ((black_pawns * 5) + (white_pawns * 10) + (free_way_for_king * 15) + (black_near_king * 9)
+                + (surround * 900));
     }
 }
