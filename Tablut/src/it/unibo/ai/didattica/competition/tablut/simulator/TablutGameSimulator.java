@@ -7,11 +7,12 @@ import java.util.Random;
 import java.util.concurrent.TimeoutException;
 
 import it.unibo.ai.didattica.competition.tablut.domain.Action;
+import it.unibo.ai.didattica.competition.tablut.domain.Game;
+import it.unibo.ai.didattica.competition.tablut.domain.GameAshtonTablut;
 import it.unibo.ai.didattica.competition.tablut.domain.State;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
 import it.unibo.ai.didattica.competition.tablut.domain.StateTablut;
 import it.unibo.ai.didattica.competition.tablut.ourClient.LookupTable;
-import it.unibo.ai.didattica.competition.tablut.ourClient.SemiRandom;
 import it.unibo.ai.didattica.competition.tablut.ourClient.interfaces.TreeSearch;
 import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.MMTS;
 import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.NMTS;
@@ -87,6 +88,7 @@ public class TablutGameSimulator {
 		state = new StateTablut();
 		state.setTurn(State.Turn.WHITE);
 		LookupTable lookup = new LookupTable();
+		Game rules = new GameAshtonTablut(99, 0, "garbage", "fake", "fake");
 
 		// game loop
 		while (true) {
@@ -100,14 +102,14 @@ public class TablutGameSimulator {
 			if (timer.timeOutOccurred()) {
 				throw new TimeoutException("The move took too long and exceeded the allowed time limit.");
 			}
-			// System.out.println("Time W: " + timer.getTimer());
 
-			// System.out.println("Move: " + move.toString());
 			if (TablutGame.checkMove(state, move)) {
 				TablutGame.makeMove(state, move);
 			}
+			// try {
+            //     rules.checkMove(state, move);
+            // }catch(Exception e) {}
 
-			// System.out.println(state.toString());
 			if (TablutGame.isGameover(state))
 				break;
 
@@ -117,13 +119,14 @@ public class TablutGameSimulator {
 			if (timer.timeOutOccurred()) {
 				throw new TimeoutException("The move took too long and exceeded the allowed time limit.");
 			}
-			// System.out.println("Time: " + timer.getTimer());
 
 			if (TablutGame.checkMove(state, move)) {
 				TablutGame.makeMove(state, move);
 			}
+			// try {
+            //     rules.checkMove(state, move);
+            // }catch(Exception e) {}
 
-			// System.out.println(state.toString());
 			if (TablutGame.isGameover(state))
 				break;
 
@@ -141,10 +144,10 @@ public class TablutGameSimulator {
 	}
 	
 	private Action blackMove(State state) {
-		SemiRandom semiRandom = new SemiRandom();
-		return semiRandom.randMove(state);
+		// SemiRandom semiRandom = new SemiRandom();
+		// return semiRandom.randMove(state);
 		
-		//return randMove(state);
+		return randMove(state);
 	}
 
 	private Action randMove(State state) {
