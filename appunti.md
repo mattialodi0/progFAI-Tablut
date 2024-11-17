@@ -54,4 +54,15 @@ apply a ML method: SGD, Adam, GA, LinReg, SVM, DL
 
 defalut max dim: 1000  
 note: when deleting a few moves (1/10000 x lookup) every round the lookup is more efficient in time and hit rate
-note: when incresig the max dim to 2000 and 4000 the effectiveness and efficiency didn't change -> no need to find the highest possible value, adopt useful policies instead
+note: when incresig the max dim to 2000 and 4000 the effectiveness and efficiency didn't change -> no need to find the highest possible value, adopt 
+rotating the board doesn't change the evaluation -> check for equivalent states on lookup
+
+## Results:
+SemiRand vs Rand, 100 games: 93 - 7
+Rand vs SemiRand, 100 games: 6 - 94
+
+MMTS(4) vs Rand, 10 games: 10 - 0
+Rand vs MMTS(4), 10 games: 2 - 8
+
+MMTS(4) vs SemiRand, 10 games: 10 - 0
+SemiRand vs MMTS(4), 10 games: 6 - 4
