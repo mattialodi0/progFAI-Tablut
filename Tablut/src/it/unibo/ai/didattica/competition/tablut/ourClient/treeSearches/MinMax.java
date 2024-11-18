@@ -113,7 +113,6 @@ public class MinMax implements TreeSearch {
         } catch (Exception e) {
         }
 
-        System.out.println("Level: " + this.depth + ", move: " + bestAction.toString() + ", eval: " + score);
         return bestAction;
     }
 
