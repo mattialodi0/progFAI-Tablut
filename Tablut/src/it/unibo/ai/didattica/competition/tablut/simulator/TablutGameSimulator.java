@@ -14,7 +14,8 @@ import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
 import it.unibo.ai.didattica.competition.tablut.domain.StateTablut;
 import it.unibo.ai.didattica.competition.tablut.ourClient.LookupTable;
 import it.unibo.ai.didattica.competition.tablut.ourClient.interfaces.TreeSearch;
-import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.MinMaxTreeSearch;
+import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.IterativeDeepening;
+import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.MinMax;
 import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.SRTS;
 import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.SemiRandom;
 import it.unibo.ai.didattica.competition.tablut.ourClient.evaluations.Evaluations;
@@ -23,7 +24,7 @@ import it.unibo.ai.didattica.competition.tablut.ourClient.evaluations.Evaluation
 public class TablutGameSimulator {
 
 	private int MAX_TURNS = 1000;
-	private int MATCHES = 10;
+	private int MATCHES = 1;
 	int time = 60;
 	private double time_tot = 0;
 
@@ -131,15 +132,18 @@ public class TablutGameSimulator {
 			turns++;
 		}
 
-		// System.out.println("Endgame state \n" + state.toString());
-		// System.out.println("Turns: " + turns);
+		System.out.println("Endgame state \n" + state.toString());
+		System.out.println("Turns: " + turns);
 
 		return state.getTurn();
 	}
 
 	private Action whiteMove(State state) {
-		TreeSearch searchStrategy = new MinMaxTreeSearch(4); 
+		TreeSearch searchStrategy = new IterativeDeepening(); 
 		return searchStrategy.searchTree(state);
+		
+		// TreeSearch searchStrategy = new MinMax(4); 
+		// return searchStrategy.searchTree(state);
 		
 		// TreeSearch searchStrategy = new SRTS(); 
 		// return searchStrategy.searchTree(state);
@@ -148,13 +152,13 @@ public class TablutGameSimulator {
 	}
 	
 	private Action blackMove(State state) {
-		// TreeSearch searchStrategy = new MinMaxTreeSearch(4); 
+		// TreeSearch searchStrategy = new MinMax(4); 
 		// return searchStrategy.searchTree(state);
 		
-		TreeSearch searchStrategy = new SRTS(); 
-		return searchStrategy.searchTree(state);
+		// TreeSearch searchStrategy = new SRTS(); 
+		// return searchStrategy.searchTree(state);
 		
-		// return randMove(state);
+		return randMove(state);
 	}
 
 	private Action randMove(State state) {

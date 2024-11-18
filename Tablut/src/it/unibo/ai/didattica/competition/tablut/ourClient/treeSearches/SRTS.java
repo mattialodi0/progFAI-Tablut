@@ -1,6 +1,5 @@
 package it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -10,6 +9,7 @@ import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
 import it.unibo.ai.didattica.competition.tablut.ourClient.GameHelper;
 import it.unibo.ai.didattica.competition.tablut.ourClient.interfaces.TreeSearch;
 import it.unibo.ai.didattica.competition.tablut.simulator.TablutGame;
+
 
 public class SRTS implements TreeSearch {
     Turn player;

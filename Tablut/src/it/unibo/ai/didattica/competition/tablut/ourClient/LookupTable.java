@@ -4,11 +4,8 @@ import java.util.HashMap;
 import java.util.Optional;
 import java.util.Random;
 
-/* 
- * board can be rotated but the eval stays the same,
- * might be worthy to check this
- * 
- * make it a cache (more access -> no deletion)
+/*  
+ * we could make it a cache (more access -> no deletion)
  */
 
 public class LookupTable {
