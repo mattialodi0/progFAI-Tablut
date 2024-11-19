@@ -141,12 +141,16 @@ public class TablutGameSimulator {
 	}
 
 	private Action whiteMove(State state) {
-		TreeSearch searchStrategy = new MultiThreadMinMaxLauncher(4); 
-		return searchStrategy.searchTree(state);
+		//TreeSearch searchStrategy = new MultiThreadMinMaxLauncher(3); 
+		//TreeSearch searchStrategy = new MinMax(4);
+		//return searchStrategy.searchTree(state);
+		return randMove(state);
 	}
 	
 	private Action blackMove(State state) {
-		return randMove(state);
+		TreeSearch searchStrategy = new MinMax(4);
+		return searchStrategy.searchTree(state);
+		//return randMove(state);
 	}
 
 	private Action randMove(State state) {

@@ -28,7 +28,7 @@ public class HeuristicsWhite extends Heuristics {
 
                 System.out.println("Alive pawns score: " + alivePawns + "Eaten Pawns score:" + (-eatenPawns)
                                 + "Accessible escapes: " + escapesAccessible + "Freedom of movement" + freedomKing);
-                return weights[0] * alivePawns - weights[1] * eatenPawns + weights[2] * escapesAccessible
+                return 10 * weights[0] * alivePawns - 10 * weights[1] * eatenPawns + weights[2] * escapesAccessible
                                 + weights[3] * freedomKing;
         }
 

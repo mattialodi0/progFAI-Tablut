@@ -48,24 +48,22 @@ public class Evaluations {
 
             gameWeights[0] = 35f;
             gameWeights[1] = 18f;
-            gameWeights[2] = 5f;
-            gameWeights[3] = 42.0f;
+            gameWeights[2] = 42f;
+            gameWeights[3] = 5.0f;
 
             HeuristicsWhite heuristic = new HeuristicsWhite(gameWeights);
-            System.out.println("Im inside Evaluate White");
             return heuristic.evaluate(state);    
         } else if(state.getTurn().equals(Turn.BLACK)){
             Float[] gameWeights = new Float[6];
 
-            gameWeights[0] = 25f;
+            gameWeights[0] = 35f;
             gameWeights[1] = 45.0f;
-            gameWeights[2] = 15.0f;
-            gameWeights[3] = 10.0f;
+            gameWeights[2] = 5.0f;
+            gameWeights[3] = 15.0f;
             gameWeights[4] = 15.0f;
-            gameWeights[5] = 20.0f;
+            gameWeights[5] = 9.0f;
 
             HeuristicsBlack heuristic = new HeuristicsBlack(gameWeights);
-            System.out.println("Im inside Evaluate Black");
             return heuristic.evaluate(state);
         }
         return 0;

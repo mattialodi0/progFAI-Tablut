@@ -3,6 +3,7 @@ package it.unibo.ai.didattica.competition.tablut.ourClient;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -67,7 +68,7 @@ public class GameHelper {
         for (int[] p : pawns) {
             moves.addAll(getPawnMoves(state, p));
         }
-
+        Collections.shuffle(moves);
         return moves;
     }
 

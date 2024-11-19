@@ -152,8 +152,8 @@ public class MinMax implements TreeSearch {
         if (depth <= 0) {
             Float eval = lookup.lookForVisitedState(state.boardString());
             if (eval == null) {
-                eval = Evaluations.evaluateMaterial(state);
-                // eval = Evaluations.evaluateAdvanced(state, state.getTurn());
+                // eval = Evaluations.evaluateMaterial(state);
+                eval = Evaluations.evaluateAdvanced(state, state.getTurn());
                 lookup.insertVisitededState(state.boardString(), eval);
                 this.lookups_hits++;
             }
@@ -173,8 +173,8 @@ public class MinMax implements TreeSearch {
         List<Float> evals = new ArrayList<>();
         for (Action m : moves) {
             state = TablutGame.makeMove(state, m);
-            evals.add(Evaluations.evaluateMaterial(state));
-            // evals.add(Evaluations.evaluateAdvanced(state, state.getTurn()));
+            // evals.add(Evaluations.evaluateMaterial(state));
+            evals.add(Evaluations.evaluateAdvanced(state, state.getTurn()));
             state = saved_state.clone();
         }
         moves_evals = orderByEval(moves, evals);

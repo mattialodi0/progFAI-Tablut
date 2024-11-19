@@ -7,6 +7,8 @@ import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Heuristics {
 
@@ -54,6 +56,38 @@ public class Heuristics {
     // The function checks if the start can reach the goal in one move
     public static Boolean canReach(int[] start, int[] goal, List<int[]> empty) {
 
+        List<int[]> camps = Arrays.asList(
+                // camps on the top
+                new int[] { 0, 3 },
+                new int[] { 0, 4 },
+                new int[] { 0, 5 },
+                new int[] { 1, 4 },
+
+                // camps on the bottom
+                new int[] { 8, 3 },
+                new int[] { 8, 4 },
+                new int[] { 8, 5 },
+                new int[] { 7, 4 },
+
+                // camps on the left
+                new int[] { 3, 0 },
+                new int[] { 4, 0 },
+                new int[] { 5, 0 },
+                new int[] { 4, 1 },
+
+                // camps on the right
+                new int[] { 3, 8 },
+                new int[] { 4, 8 },
+                new int[] { 5, 8 },
+                new int[] { 4, 7 });
+
+        List<int[]> mergedList = new ArrayList<>();
+        int j = 0;
+        if (camps.stream().anyMatch(camp -> Arrays.equals(camp, start))) {
+            mergedList = Stream.concat(empty.stream(), camps.stream())
+                    .collect(Collectors.toList());
+            j = 1;
+        }
         int[][] directions = {
                 { 1, 0 },
                 { -1, 0 },
@@ -77,8 +111,14 @@ public class Heuristics {
                 int[] pos = new int[] { x, y };
                 // stream operation returns true if the current tile is in empty, if not empty
                 // we should change direction
-                if (!empty.stream().anyMatch(tile -> Arrays.equals(pos, tile))) {
-                    break;
+                if (j == 0) {
+                    if (!empty.stream().anyMatch(tile -> Arrays.equals(pos, tile))) {
+                        break;
+                    }
+                } else if (j == 1) {
+                    if (!mergedList.stream().anyMatch(tile -> Arrays.equals(pos, tile))) {
+                        break;
+                    }
                 }
 
                 // check if the current tile is the goal
@@ -124,6 +164,39 @@ public class Heuristics {
 
     protected static Boolean canComeNear(int[] pawn, int[] goal, List<int[]> empty) {
 
+        List<int[]> camps = Arrays.asList(
+                // camps on the top
+                new int[] { 0, 3 },
+                new int[] { 0, 4 },
+                new int[] { 0, 5 },
+                new int[] { 1, 4 },
+
+                // camps on the bottom
+                new int[] { 8, 3 },
+                new int[] { 8, 4 },
+                new int[] { 8, 5 },
+                new int[] { 7, 4 },
+
+                // camps on the left
+                new int[] { 3, 0 },
+                new int[] { 4, 0 },
+                new int[] { 5, 0 },
+                new int[] { 4, 1 },
+
+                // camps on the right
+                new int[] { 3, 8 },
+                new int[] { 4, 8 },
+                new int[] { 5, 8 },
+                new int[] { 4, 7 });
+
+        List<int[]> mergedList = new ArrayList<>();
+        int j = 0;
+        if (camps.stream().anyMatch(camp -> Arrays.equals(camp, pawn))) {
+            mergedList = Stream.concat(empty.stream(), camps.stream())
+                    .collect(Collectors.toList());
+            j = 1;
+        }
+
         int[][] directions = {
                 { 1, 0 },
                 { -1, 0 },
@@ -140,9 +213,16 @@ public class Heuristics {
 
                 // break if the current position is not an empty tile
                 int[] pos = new int[] { x, y };
-                if (!empty.stream().anyMatch(tile -> Arrays.equals(pos, tile))) {
-                    break;
+                if (j == 0) {
+                    if (!empty.stream().anyMatch(tile -> Arrays.equals(pos, tile))) {
+                        break;
+                    }
+                }else if(j == 1){
+                    if (!mergedList.stream().anyMatch(tile -> Arrays.equals(pos, tile))) {
+                        break;
+                    }
                 }
+                
 
                 if (x < 0 || x > 8 || y < 0 || y > 8) {
                     break;
@@ -158,24 +238,25 @@ public class Heuristics {
         return false;
     }
 
+    // TODOOOOO
+    // -------------------------------------------------------------------------------------
+    public static float kingSecurity(List<int[]> blackPawns, List<int[]> myPawns, int[] king) {
 
-    // TODOOOOO -------------------------------------------------------------------------------------
-    public static float kingSecurity(List<int[]> blackPawns, List<int[]> myPawns, int[] king){
-        
         // If king can be captured very bad
 
         // King on throne: when more than two black around is bad
-        
+
         // King near throne: two black around is bad
 
         // Otherwise: one black near bad
 
         // Some bonus points for when white are near?
-        
+
         return 0;
     }
 
-    // Evaluates the freedom of movement of the king. Depending on the position of the king (on
+    // Evaluates the freedom of movement of the king. Depending on the position of
+    // the king (on
     // throne, near throne, neither) mult its degrees of freedom. If only
     // one degree of freedom returns a negative value.
     public static float kingFreedom(List<int[]> emptyTiles, int[] king) {
@@ -225,7 +306,8 @@ public class Heuristics {
         return freeTilesNear;
     }
 
-    // Evaluates based on the number of possible enemy pawns a player can capture in the next
+    // Evaluates based on the number of possible enemy pawns a player can capture in
+    // the next
     // move
     public static float possibleCaptures(List<int[]> myPawns, List<int[]> enemPawns, List<int[]> emptyTiles) {
 
@@ -252,7 +334,6 @@ public class Heuristics {
                 }
             }
         }
-        System.out.println(possCaptures);
         switch (possCaptures) {
             case 0:
                 return -0.5f;
