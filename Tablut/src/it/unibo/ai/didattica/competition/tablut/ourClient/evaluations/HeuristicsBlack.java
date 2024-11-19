@@ -32,11 +32,16 @@ public class HeuristicsBlack extends Heuristics {
         newState.setTurn(state.getTurn().equals(Turn.WHITE) ? Turn.BLACK : Turn.WHITE);
         float possCaptures = possibleCaptures(GameHelper.populatePawnList(state),
                 GameHelper.populatePawnList(newState), emptyTiles);
-        System.out.println("Alive pawns score: " + alivePawns + "Eaten Pawns score:" + (-eatenPawns)
-                + "Exits blocked: " + exitsBlocked + "Attacking the king: " + attackingTheKing + "Presence around king: "
-                + presenceAroundKing + "Poss captures: " + possCaptures);
-        return weights[0] * alivePawns - weights[1] * eatenPawns + weights[2] * attackingTheKing
-                + weights[3] * exitsBlocked + weights[4] * presenceAroundKing + weights[5] * possCaptures;
+        // System.out.println("Alive pawns score: " + alivePawns + "Eaten Pawns score:"
+        // + (-eatenPawns)
+        // + "Exits blocked: " + exitsBlocked + "Attacking the king: " +
+        // attackingTheKing + "Presence around king: "
+        // + presenceAroundKing + "Poss captures: " + possCaptures);
+        float score = - 10 * weights[0] * alivePawns + 10 * weights[1] * eatenPawns - weights[2] * attackingTheKing
+                - weights[3] * exitsBlocked - weights[4] * presenceAroundKing - weights[5] * possCaptures;
+        return score;
+
+        // return weights[0] * alivePawns - weights[1] * eatenPawns;
     }
 
     // Computes the number of exits the king can reach and returns 4 - the number.
@@ -87,11 +92,11 @@ public class HeuristicsBlack extends Heuristics {
 
         // if the king is on the throne the black must have more pawns around him
         if (Arrays.equals(kingPosition, new int[] { 4, 4 })) {
-            return nearPawns - 2;
+            return nearPawns + 2;
         } else if ((Arrays.equals(kingPosition, new int[] { 3, 4 }) || Arrays.equals(kingPosition, new int[] { 5, 4 })
                 || Arrays.equals(kingPosition, new int[] { 4, 5 })
                 || Arrays.equals(kingPosition, new int[] { 4, 3 }))) {
-            return nearPawns - 1;
+            return nearPawns + 1;
         } else {
             return nearPawns;
         }
