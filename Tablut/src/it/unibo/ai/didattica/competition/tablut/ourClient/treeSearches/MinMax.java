@@ -5,11 +5,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import it.unibo.ai.didattica.competition.tablut.domain.Action;
-import it.unibo.ai.didattica.competition.tablut.domain.Game;
-import it.unibo.ai.didattica.competition.tablut.domain.GameAshtonTablut;
 import it.unibo.ai.didattica.competition.tablut.domain.State;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
-import it.unibo.ai.didattica.competition.tablut.domain.StateTablut;
 import it.unibo.ai.didattica.competition.tablut.ourClient.GameHelper;
 import it.unibo.ai.didattica.competition.tablut.ourClient.LookupTable;
 import it.unibo.ai.didattica.competition.tablut.ourClient.evaluations.Evaluations;
@@ -19,7 +16,7 @@ import it.unibo.ai.didattica.competition.tablut.simulator.TablutGame;
 /*
  * Implementation of the Minmax alg. with AlphaBeta pruning, lookuptable, and limited brenches
  */
-public class MinMaxTreeSearch implements TreeSearch {
+public class MinMax implements TreeSearch {
 
     public static float maxEval = Float.NEGATIVE_INFINITY;
     public static float minEval = Float.POSITIVE_INFINITY;
@@ -33,7 +30,7 @@ public class MinMaxTreeSearch implements TreeSearch {
     private int depth;
     public LookupTable lookup = new LookupTable();
 
-    public MinMaxTreeSearch(int depth) {
+    public MinMax(int depth) {
         this.depth = depth;
     }
 
@@ -45,16 +42,29 @@ public class MinMaxTreeSearch implements TreeSearch {
         float alpha = Float.NEGATIVE_INFINITY;
         float beta = Float.POSITIVE_INFINITY;
 
+        // get possible moves
         List<Action> moves = GameHelper.availableMoves(state);
-
         if (moves.size() == 0)
             System.out.println("big prolbem...");
+        List<Action> moves_evals = moves;
+
+        // order moves by eval
+        List<Float> evals = new ArrayList<>();
+        for (Action m : moves) {
+            state = TablutGame.makeMove(state, m);
+            evals.add(Evaluations.evaluateMaterial(state));
+            state = saved_state.clone();
+        }
+        moves_evals = orderByEval(moves, evals);
+        int i = 0;
 
         if (state.getTurn() == Turn.WHITE) {
             score = Float.NEGATIVE_INFINITY;
-            for (Action m : moves) {
+            for (Action m : moves_evals) {
+                // if (i > branchingFactor(this.depth - depth))
+                //     break;
+
                 state = TablutGame.makeMove(state, m);
-                
                 float cur = MiniMax(state, this.depth - 1, alpha, beta, false);
                 if (cur >= score) {
                     score = cur;
@@ -64,10 +74,14 @@ public class MinMaxTreeSearch implements TreeSearch {
                 if (beta <= alpha)
                     break;
                 state = saved_state.clone();
+                i++;
             }
         } else if (state.getTurn() == Turn.BLACK) {
             score = Float.POSITIVE_INFINITY;
-            for (Action m : moves) {
+            for (Action m : moves_evals) {
+                // if (i > branchingFactor(this.depth - depth))
+                //     break;
+
                 state = TablutGame.makeMove(state, m);
                 float cur = MiniMax(state, this.depth - 1, alpha, beta, true);
                 if (cur <= score) {
@@ -76,8 +90,9 @@ public class MinMaxTreeSearch implements TreeSearch {
                 }
                 beta = Math.min(beta, cur);
                 if (beta <= alpha)
-                    break;
+                break;
                 state = saved_state.clone();
+                i++;
             }
         } else {
             System.out.println("big prolbem...");
@@ -107,7 +122,8 @@ public class MinMaxTreeSearch implements TreeSearch {
         throw new UnsupportedOperationException("Unimplemented method 'hasMoreTime'");
     }
 
-    private float MiniMax(State state, int depth, float alpha, float beta, Boolean isWhite) {
+    
+    protected float MiniMax(State state, int depth, float alpha, float beta, Boolean isWhite) {
         this.nodes++;
 
         // if this is a leaf
@@ -122,15 +138,15 @@ public class MinMaxTreeSearch implements TreeSearch {
         // Float eval = lookup.lookForVisitedState(state.boardString());
         // this.lookups++;
         // if (eval != null) {
-        //     this.lookups_hits++;
-        //     return eval;
+        // this.lookups_hits++;
+        // return eval;
         // }
         // // max depth reached
         // else if (depth <= 0) {
-        //     eval = Evaluations.evaluateMaterial(state);
-        //     // eval = Evaluations.evaluateAdvanced(state, state.getTurn());
-        //     lookup.insertVisitededState(state.boardString(), eval);
-        //     return eval;
+        // eval = Evaluations.evaluateMaterial(state);
+        // // eval = Evaluations.evaluateAdvanced(state, state.getTurn());
+        // lookup.insertVisitededState(state.boardString(), eval);
+        // return eval;
         // }
 
         if (depth <= 0) {
@@ -144,7 +160,6 @@ public class MinMaxTreeSearch implements TreeSearch {
             this.lookups++;
             return eval;
         }
-
 
         List<Action> moves = GameHelper.availableMoves(state);
         if (moves.size() == 0) {
@@ -201,20 +216,20 @@ public class MinMaxTreeSearch implements TreeSearch {
         }
     }
 
-    private int branchingFactor(int depth) {
+    protected int branchingFactor(int depth) {
         if (depth <= 2)
-            return 10;
+            return 15;
         else if (depth <= 4)
-            return 5;
+            return 10;
         else if (depth <= 6)
-            return 3;
+            return 5;
         else if (depth <= this.depth)
-            return 2;
+            return 3;
         else
             return 0; // should not return this
     }
 
-    private List<Action> orderByEval(List<Action> moves, List<Float> evals) {
+    protected List<Action> orderByEval(List<Action> moves, List<Float> evals) {
         List<Pair<Action, Float>> pairedList = new ArrayList<>();
 
         for (int i = 0; i < moves.size(); i++) {

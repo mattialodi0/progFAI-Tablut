@@ -14,15 +14,18 @@ import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
 import it.unibo.ai.didattica.competition.tablut.domain.StateTablut;
 import it.unibo.ai.didattica.competition.tablut.ourClient.LookupTable;
 import it.unibo.ai.didattica.competition.tablut.ourClient.interfaces.TreeSearch;
-import it.unibo.ai.didattica.competition.tablut.ourClient.SemiRandom;
-import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.MinMaxTreeSearch;
+import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.IterativeDeepening;
+import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.MinMax;
+import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.MultiThreadMinMaxLauncher;
+import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.SRTS;
+import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.SemiRandom;
 import it.unibo.ai.didattica.competition.tablut.ourClient.evaluations.Evaluations;
 
 // TODO: draw check and timeout
 public class TablutGameSimulator {
 
 	private int MAX_TURNS = 1000;
-	private int MATCHES = 10;
+	private int MATCHES = 1;
 	int time = 60;
 	private double time_tot = 0;
 
@@ -31,13 +34,6 @@ public class TablutGameSimulator {
 	public static void main(String[] args) {
 		TablutGameSimulator sim = new TablutGameSimulator();
 		sim.run();
-
-
-		// System.out.println(" ");
-		// State s = new StateTablut();
-		// System.out.println(s.toString());
-		// TreeSearch searchStrategy = new MMTS(1);
-		// System.out.println(searchStrategy.searchTree(s));
 	}
 
 	public void run() {
@@ -47,7 +43,7 @@ public class TablutGameSimulator {
 		int draws = 0;
 		int errors = 0;
 
-		System.out.println("Starting simulation (NMTS vs Rand)");
+		System.out.println("Starting simulation (MTMM vs MM)");
 
 		for (int i = 0; i < game_reps; i++) {
 			Turn res = null;
@@ -82,8 +78,8 @@ public class TablutGameSimulator {
 		// System.out.println(" ");
 		// System.out.println("Max eval: " + MMTS.maxEval);
 		// System.out.println("Min eval: " + MMTS.minEval);
-		System.out.println("Avg lookup hit: " + ((MinMaxTreeSearch.avgs)/(MinMaxTreeSearch.avgs_num)) +"%");
-		System.out.println("Avg time per move: " + (time_tot/MATCHES) +"s");
+		// System.out.println("Avg lookup hit: " + ((MinMaxTreeSearch.avgs)/(MinMaxTreeSearch.avgs_num)) +"%");
+		// System.out.println("Avg time per move: " + (time_tot/MATCHES) +"s");
 	}
 
 	private Turn runGame() throws TimeoutException {
@@ -96,8 +92,6 @@ public class TablutGameSimulator {
 		// state & game setup
 		state = new StateTablut();
 		state.setTurn(State.Turn.WHITE);
-		LookupTable lookup = new LookupTable();
-		Game rules = new GameAshtonTablut(99, 0, "garbage", "fake", "fake");
 
 		// game loop
 		while (true) {
@@ -112,13 +106,12 @@ public class TablutGameSimulator {
 				throw new TimeoutException("The move took too long and exceeded the allowed time limit.");
 			}
 			time_tot += timer.getTimer();
+			// System.out.println("Time white: "+timer.getTimer());
+
 
 			if (TablutGame.checkMove(state, move)) {
 				TablutGame.makeMove(state, move);
 			}
-			// try {
-            //     rules.checkMove(state, move);
-            // }catch(Exception e) {}
 
 			if (TablutGame.isGameover(state))
 				break;
@@ -129,13 +122,11 @@ public class TablutGameSimulator {
 			if (timer.timeOutOccurred()) {
 				throw new TimeoutException("The move took too long and exceeded the allowed time limit.");
 			}
+			// System.out.println("Time black: "+timer.getTimer());
 
 			if (TablutGame.checkMove(state, move)) {
 				TablutGame.makeMove(state, move);
 			}
-			// try {
-            //     rules.checkMove(state, move);
-            // }catch(Exception e) {}
 
 			if (TablutGame.isGameover(state))
 				break;
@@ -143,20 +134,18 @@ public class TablutGameSimulator {
 			turns++;
 		}
 
-		// System.out.println("endgame state \n" + state.toString());
+		// System.out.println("Endgame state \n" + state.toString());
+		// System.out.println("Turns: " + turns);
 
 		return state.getTurn();
 	}
 
 	private Action whiteMove(State state) {
-		TreeSearch searchStrategy = new MinMaxTreeSearch(4); 
+		TreeSearch searchStrategy = new MultiThreadMinMaxLauncher(4); 
 		return searchStrategy.searchTree(state);
 	}
 	
 	private Action blackMove(State state) {
-		// SemiRandom semiRandom = new SemiRandom();
-		// return semiRandom.randMove(state);
-		
 		return randMove(state);
 	}
 
