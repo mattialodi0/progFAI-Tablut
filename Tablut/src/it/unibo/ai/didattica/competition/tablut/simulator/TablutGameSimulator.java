@@ -25,7 +25,7 @@ import it.unibo.ai.didattica.competition.tablut.ourClient.evaluations.Evaluation
 public class TablutGameSimulator {
 
 	private int MAX_TURNS = 1000;
-	private int MATCHES = 1;
+	private int MATCHES = 10;
 	int time = 60;
 	private double time_tot = 0;
 
@@ -141,12 +141,12 @@ public class TablutGameSimulator {
 	}
 
 	private Action whiteMove(State state) {
-		TreeSearch searchStrategy = new MultiThreadMinMaxLauncher(4); 
-		return searchStrategy.searchTree(state);
+		return randMove(state);
 	}
 	
 	private Action blackMove(State state) {
-		return randMove(state);
+		TreeSearch searchStrategy = new MultiThreadMinMaxLauncher(3); 
+		return searchStrategy.searchTree(state);
 	}
 
 	private Action randMove(State state) {

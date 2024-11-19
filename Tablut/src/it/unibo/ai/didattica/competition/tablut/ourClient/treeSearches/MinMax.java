@@ -1,6 +1,8 @@
 package it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -55,7 +57,7 @@ public class MinMax implements TreeSearch {
             evals.add(Evaluations.evaluateMaterial(state));
             state = saved_state.clone();
         }
-        moves_evals = orderByEval(moves, evals);
+        moves_evals = orderByEval(moves, evals, state.getTurn()==Turn.WHITE);
         int i = 0;
 
         if (state.getTurn() == Turn.WHITE) {
@@ -177,7 +179,7 @@ public class MinMax implements TreeSearch {
             // evals.add(Evaluations.evaluateAdvanced(state, state.getTurn()));
             state = saved_state.clone();
         }
-        moves_evals = orderByEval(moves, evals);
+        moves_evals = orderByEval(moves, evals, state.getTurn()==Turn.WHITE);
 
         if (isWhite) {
             float max_score = Float.NEGATIVE_INFINITY;
@@ -240,6 +242,26 @@ public class MinMax implements TreeSearch {
         pairedList.sort(Comparator.comparing(Pair::getSecond));
 
         // Estrai gli elementi ordinati
+        List<Action> sortedItems = new ArrayList<>();
+        for (Pair<Action, Float> pair : pairedList) {
+            sortedItems.add(pair.getFirst());
+        }
+
+        return sortedItems;
+    }
+
+    protected List<Action> orderByEval(List<Action> moves, List<Float> evals, Boolean isWhite) {
+        List<Pair<Action, Float>> pairedList = new ArrayList<>();
+
+        for (int i = 0; i < moves.size(); i++) {
+            pairedList.add(new Pair<>(moves.get(i), evals.get(i)));
+        }
+
+        pairedList.sort(Comparator.comparing(Pair::getSecond));
+        if(!isWhite) {
+            Collections.reverse(pairedList);
+        }
+        
         List<Action> sortedItems = new ArrayList<>();
         for (Pair<Action, Float> pair : pairedList) {
             sortedItems.add(pair.getFirst());
