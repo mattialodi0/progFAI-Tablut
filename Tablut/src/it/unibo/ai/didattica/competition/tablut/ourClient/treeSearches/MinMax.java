@@ -231,25 +231,6 @@ public class MinMax implements TreeSearch {
             return 0; // should not return this
     }
 
-    protected List<Action> orderByEval(List<Action> moves, List<Float> evals) {
-        List<Pair<Action, Float>> pairedList = new ArrayList<>();
-
-        for (int i = 0; i < moves.size(); i++) {
-            pairedList.add(new Pair<>(moves.get(i), evals.get(i)));
-        }
-
-        // Ordinare la lista di coppie in base al valore Float
-        pairedList.sort(Comparator.comparing(Pair::getSecond));
-
-        // Estrai gli elementi ordinati
-        List<Action> sortedItems = new ArrayList<>();
-        for (Pair<Action, Float> pair : pairedList) {
-            sortedItems.add(pair.getFirst());
-        }
-
-        return sortedItems;
-    }
-
     protected List<Action> orderByEval(List<Action> moves, List<Float> evals, Boolean isWhite) {
         List<Pair<Action, Float>> pairedList = new ArrayList<>();
 
@@ -258,7 +239,7 @@ public class MinMax implements TreeSearch {
         }
 
         pairedList.sort(Comparator.comparing(Pair::getSecond));
-        if(!isWhite) {
+        if(isWhite) {
             Collections.reverse(pairedList);
         }
         

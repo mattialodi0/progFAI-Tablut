@@ -43,7 +43,7 @@ public class MultiThreadMinMaxLauncher implements TreeSearch {
             evals.add(Evaluations.evaluateMaterial(state));
             state = saved_state.clone();
         }
-        moves_evals = MinMax.orderByEval(moves, evals);
+        moves_evals = MinMax.orderByEval(moves, evals, state.getTurn()==Turn.WHITE);
         List<ThreadStruct> threadStructList = new ArrayList<ThreadStruct>();
 
         if (state.getTurn() == Turn.WHITE) {
