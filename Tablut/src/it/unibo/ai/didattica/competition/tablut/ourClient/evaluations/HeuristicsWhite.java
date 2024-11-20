@@ -34,7 +34,7 @@ public class HeuristicsWhite extends Heuristics {
                                 + " Accessible escapes: " + escapesAccessible + " Freedom of movement " + freedomKing 
                                 + " danger " + inDangerKing);
                 return 10 * weights[0] * alivePawns - 10 * weights[1] * eatenPawns + weights[2] * escapesAccessible
-                                + weights[3] * freedomKing - 1000 * inDangerKing;
+                                - 1 * inDangerKing;
         }
 
         // Gives a score depending on how many escape tiles are available to the king.

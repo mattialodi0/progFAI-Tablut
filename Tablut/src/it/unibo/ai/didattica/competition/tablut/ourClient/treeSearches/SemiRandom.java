@@ -108,7 +108,7 @@ public class SemiRandom{
                                     && !state.getPawn(newRow, newCol).equalsPawn(wPawn.toString())) {
                                 count++;
                             } else if (state.getPawn(newRow, newCol).equalsPawn(State.Pawn.EMPTY.toString())
-                                    && GameHelper.canPawnMove(state, wPawn, newRow, newCol)) {
+                                    ){//&& GameHelper.canPawnMove(state, wPawn, newRow, newCol)) {
                                 canCapture = true;
                                 emptySide = new int[]{newRow, newCol};
                             }
@@ -238,7 +238,7 @@ public class SemiRandom{
                                         && !state.getPawn(newRow, newCol).equalsPawn(bPawn.toString())) {
                                     count++;
                                 } else if (state.getPawn(newRow, newCol).equalsPawn(State.Pawn.EMPTY.toString())
-                                        && GameHelper.canPawnMove(state, bPawn, newRow, newCol)) {
+                                        ){//&& GameHelper.canPawnMove(state, bPawn, newRow, newCol)) {
                                     canCaptureKing = true;
                                     emptySideKing = new int[]{newRow, newCol};
                                 }
@@ -258,7 +258,7 @@ public class SemiRandom{
                                         && !state.getPawn(newRow, newCol).equalsPawn(bPawn.toString())) {
                                     count++;
                                 } else if (state.getPawn(newRow, newCol).equalsPawn(State.Pawn.EMPTY.toString())
-                                        && GameHelper.canPawnMove(state, bPawn, newRow, newCol)) {
+                                        ){//&& GameHelper.canPawnMove(state, bPawn, newRow, newCol)) {
                                     canCapturePawn = true;
                                     emptySideWPawn = new int[]{newRow, newCol};
                                 }

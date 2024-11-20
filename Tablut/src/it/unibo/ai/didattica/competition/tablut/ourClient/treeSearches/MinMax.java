@@ -54,7 +54,7 @@ public class MinMax implements TreeSearch {
         List<Float> evals = new ArrayList<>();
         for (Action m : moves) {
             state = TablutGame.makeMove(state, m);
-            evals.add(Evaluations.evaluateMaterial(state));
+            evals.add(Evaluations.evaluateAdvanced(state, state.getTurn()));
             state = saved_state.clone();
         }
         moves_evals = orderByEval(moves, evals, state.getTurn()==Turn.WHITE);
