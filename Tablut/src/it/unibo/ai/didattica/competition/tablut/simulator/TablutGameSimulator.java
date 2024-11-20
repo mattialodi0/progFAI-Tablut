@@ -131,6 +131,7 @@ public class TablutGameSimulator {
 			if (TablutGame.isGameover(state))
 				break;
 
+			System.out.println(state.toString());
 			turns++;
 		}
 
@@ -148,7 +149,7 @@ public class TablutGameSimulator {
 	}
 	
 	private Action blackMove(State state) {
-		TreeSearch searchStrategy = new MinMax(4);
+		TreeSearch searchStrategy = new MultiThreadMinMaxLauncher(4);
 		return searchStrategy.searchTree(state);
 		//return randMove(state);
 	}

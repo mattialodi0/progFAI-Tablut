@@ -26,8 +26,8 @@ public class HeuristicsWhite extends Heuristics {
                 float escapesAccessible = escapesOpen(emptyTiles, kingPos);
                 float freedomKing = kingFreedom(emptyTiles, kingPos);
 
-                System.out.println("Alive pawns score: " + alivePawns + "Eaten Pawns score:" + (-eatenPawns)
-                                + "Accessible escapes: " + escapesAccessible + "Freedom of movement" + freedomKing);
+                //System.out.println("Alive pawns score: " + alivePawns + "Eaten Pawns score:" + (-eatenPawns)
+                //              + "Accessible escapes: " + escapesAccessible + "Freedom of movement" + freedomKing);
                 return 10 * weights[0] * alivePawns - 10 * weights[1] * eatenPawns + weights[2] * escapesAccessible
                                 + weights[3] * freedomKing;
         }
