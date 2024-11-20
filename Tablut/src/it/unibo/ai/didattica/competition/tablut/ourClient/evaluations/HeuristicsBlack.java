@@ -92,11 +92,11 @@ public class HeuristicsBlack extends Heuristics {
 
         // if the king is on the throne the black must have more pawns around him
         if (Arrays.equals(kingPosition, new int[] { 4, 4 })) {
-            return nearPawns + 2;
+            return nearPawns - 2;
         } else if ((Arrays.equals(kingPosition, new int[] { 3, 4 }) || Arrays.equals(kingPosition, new int[] { 5, 4 })
                 || Arrays.equals(kingPosition, new int[] { 4, 5 })
                 || Arrays.equals(kingPosition, new int[] { 4, 3 }))) {
-            return nearPawns + 1;
+            return nearPawns - 1;
         } else {
             return nearPawns;
         }
