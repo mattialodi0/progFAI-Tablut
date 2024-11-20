@@ -25,7 +25,7 @@ import it.unibo.ai.didattica.competition.tablut.ourClient.evaluations.Evaluation
 public class TablutGameSimulator {
 
 	private int MAX_TURNS = 1000;
-	private int MATCHES = 1;
+	private int MATCHES = 10;
 	int time = 60;
 	private double time_tot = 0;
 

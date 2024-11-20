@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.imageio.stream.IIOByteBuffer;
+
 public class Heuristics {
 
     // Returns the normalized (between 0,1) number of alive pawns.
@@ -241,14 +243,60 @@ public class Heuristics {
     // TODOOOOO
     // -------------------------------------------------------------------------------------
     public static float kingSecurity(List<int[]> blackPawns, List<int[]> myPawns, int[] king) {
+        int posCounter = 0;
 
-        // If king can be captured very bad
-
+        int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
         // King on throne: when more than two black around is bad
+        if (Arrays.equals(king, new int[] { 4, 4 })) {
+            for(int[] dir: directions){
+                int newRow = king[0] + dir[0];
+                int newCol = king[1] + dir[1];
+                for(int[] bpwan:blackPawns){
+                    if (Arrays.equals(bpwan, new int[]{newRow, newCol})){
+                        posCounter++;
+                    }
+                }
+            }
+            if(posCounter >= 2){
+                return 10;
+            }
+        }
 
         // King near throne: two black around is bad
+        else if(Arrays.equals(king, new int[] { 4, 3 }) || 
+                Arrays.equals(king, new int[] { 4, 5 }) ||
+                Arrays.equals(king, new int[] { 3, 4 }) ||
+                Arrays.equals(king, new int[] { 5, 4 })){
+                    for(int[] dir: directions){
+                        int newRow = king[0] + dir[0];
+                        int newCol = king[1] + dir[1];
+                        for(int[] bpwan:blackPawns){
+                            if (Arrays.equals(bpwan, new int[]{newRow, newCol})){
+                                posCounter++;
+                            }
+                        }
+                    }
+                    if (posCounter == 1){
+                        return 1;
+                    }else if(posCounter == 2) return 10;
+                
+        }
 
         // Otherwise: one black near bad
+        else{
+            for(int[] dir: directions){
+                int newRow = king[0] + dir[0];
+                int newCol = king[1] + dir[1];
+                for(int[] bpwan:blackPawns){
+                    if (Arrays.equals(bpwan, new int[]{newRow, newCol})){
+                        posCounter++;
+                    }
+                }
+            }
+            if (posCounter >= 1){
+                return 10;
+            }
+        }
 
         // Some bonus points for when white are near?
 
