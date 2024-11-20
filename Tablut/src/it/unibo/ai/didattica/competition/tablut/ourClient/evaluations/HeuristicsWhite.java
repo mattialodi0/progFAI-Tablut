@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import it.unibo.ai.didattica.competition.tablut.domain.Game;
 import it.unibo.ai.didattica.competition.tablut.domain.State;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
 import it.unibo.ai.didattica.competition.tablut.ourClient.GameHelper;
@@ -20,16 +21,19 @@ public class HeuristicsWhite extends Heuristics {
 
                 int[] kingPos = GameHelper.getKingPosition(state);
                 List<int[]> emptyTiles = GameHelper.populateEmptyList(state);
-
+                state.setTurn(Turn.BLACK);
+                List<int[]> blackPaws = GameHelper.populatePawnList(state);
+                state.setTurn(Turn.WHITE);
                 float alivePawns = numAlive(state);
                 float eatenPawns = numEaten(state);
                 float escapesAccessible = escapesOpen(emptyTiles, kingPos);
                 float freedomKing = kingFreedom(emptyTiles, kingPos);
+                float inDangerKing = kingSecurity(blackPaws, emptyTiles, kingPos);
 
                 //System.out.println("Alive pawns score: " + alivePawns + "Eaten Pawns score:" + (-eatenPawns)
                 //              + "Accessible escapes: " + escapesAccessible + "Freedom of movement" + freedomKing);
                 return 10 * weights[0] * alivePawns - 10 * weights[1] * eatenPawns + weights[2] * escapesAccessible
-                                + weights[3] * freedomKing;
+                                + weights[3] * freedomKing - 1000 * inDangerKing;
         }
 
         // Gives a score depending on how many escape tiles are available to the king.
