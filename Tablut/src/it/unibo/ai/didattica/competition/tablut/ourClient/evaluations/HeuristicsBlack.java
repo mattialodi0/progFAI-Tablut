@@ -37,6 +37,7 @@ public class HeuristicsBlack extends Heuristics {
         // + "Exits blocked: " + exitsBlocked + "Attacking the king: " +
         // attackingTheKing + "Presence around king: "
         // + presenceAroundKing + "Poss captures: " + possCaptures);
+
         float score = - 10 * weights[0] * alivePawns + 10 * weights[1] * eatenPawns - weights[2] * attackingTheKing
                 - weights[3] * exitsBlocked - weights[4] * presenceAroundKing - weights[5] * possCaptures;
         return score;
