@@ -24,6 +24,6 @@ public class IterativeDeepening implements TreeSearch {
 
     @Override
     public Boolean hasMoreTime() {
-        return (System.currentTimeMillis()-start_time) < 20000;
+        return (System.currentTimeMillis()-start_time) < 5000;
     }
 }

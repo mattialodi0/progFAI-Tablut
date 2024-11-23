@@ -146,6 +146,8 @@
     <target name="simulator">
         <java classname="it.unibo.ai.didattica.competition.tablut.simulator.TablutGameSimulator" fork="true">
             <classpath>
+                <pathelement location="lib/gson-2.2.2.jar"/>
+                <pathelement location="lib/tensorflow-1.4.0.jar"/>
                 <pathelement location="build"/>
             </classpath>
         </java>
