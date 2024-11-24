@@ -7,14 +7,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MinMaxWorker implements Runnable {
     private int depth;
-    private int maxTimeMillis;
     private State state;
     private AtomicBoolean stopSearch;
     private Action bestAction = null;
 
-    public MinMaxWorker(int depth, int maxTimeMillis, State state, AtomicBoolean stopSearch) {
+    public MinMaxWorker(int depth, State state, AtomicBoolean stopSearch) {
         this.depth = depth;
-        this.maxTimeMillis = maxTimeMillis;
         this.state = state;
         this.stopSearch = stopSearch;
     }
