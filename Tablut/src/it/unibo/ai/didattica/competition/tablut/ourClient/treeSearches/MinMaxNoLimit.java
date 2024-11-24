@@ -54,7 +54,7 @@ public class MinMaxNoLimit implements TreeSearch {
         List<Float> evals = new ArrayList<>();
         for (Action m : moves) {
             state = TablutGame.makeMove(state, m);
-            evals.add(Evaluations.evaluateAdvanced(state, state.getTurn()));
+            evals.add(Evaluations.evaluate(state));
             state = saved_state.clone();
         }
         moves_evals = orderByEval(moves, evals, state.getTurn()==Turn.WHITE);
@@ -154,8 +154,7 @@ public class MinMaxNoLimit implements TreeSearch {
         if (depth <= 0) {
             Float eval = lookup.lookForVisitedState(state.boardString());
             if (eval == null) {
-                // eval = Evaluations.evaluateMaterial(state);
-                eval = Evaluations.evaluateAdvanced(state, state.getTurn());
+                eval = Evaluations.evaluate(state);
                 lookup.insertVisitededState(state.boardString(), eval);
                 this.lookups_hits++;
             }
@@ -175,8 +174,7 @@ public class MinMaxNoLimit implements TreeSearch {
         List<Float> evals = new ArrayList<>();
         for (Action m : moves) {
             state = TablutGame.makeMove(state, m);
-            // evals.add(Evaluations.evaluateMaterial(state));
-            evals.add(Evaluations.evaluateAdvanced(state, state.getTurn()));
+            evals.add(Evaluations.evaluate(state));
             state = saved_state.clone();
         }
         moves_evals = orderByEval(moves, evals, state.getTurn()==Turn.WHITE);

@@ -11,7 +11,7 @@ import it.unibo.ai.didattica.competition.tablut.ourClient.interfaces.TreeSearch;
 import it.unibo.ai.didattica.competition.tablut.simulator.TablutGame;
 
 
-public class SRTS implements TreeSearch {
+public class SemiRandTreeSearch implements TreeSearch {
     Turn player;
 
     @Override

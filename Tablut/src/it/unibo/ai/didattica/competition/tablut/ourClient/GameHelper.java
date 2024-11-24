@@ -255,4 +255,54 @@ public class GameHelper {
         }
     }
 
+
+    
+    public static float getKingOpenFiles(State state) {
+        int[] king_pos = getKingPosition(state);
+        float open = 4f;
+
+        int i = 0;
+        i = king_pos[1];
+        while(i > 0) {
+            if(state.getPawn(king_pos[0], i) == Pawn.EMPTY)
+                i--;
+            else {
+                open--;
+                break;
+            }
+        }
+
+        i = king_pos[1];
+        while(i < 9) {
+            if(state.getPawn(king_pos[0], i) == Pawn.EMPTY)
+                i++;
+            else {
+                open--;
+                break;
+            }
+        }
+
+        i = king_pos[0];
+        while(i > 0) {
+            if(state.getPawn(i, king_pos[1]) == Pawn.EMPTY)
+                i--;
+            else {
+                open--;
+                break;
+            }
+        }
+
+        i = king_pos[0];
+        while(i < 9) {
+            if(state.getPawn(i, king_pos[1]) == Pawn.EMPTY)
+                i++;
+            else {
+                open--;
+                break;
+            }
+        }
+
+        return open;
+    }
+
 }
