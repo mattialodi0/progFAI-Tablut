@@ -40,7 +40,7 @@ public class MultiThreadMinMaxLauncher implements TreeSearch {
         List<Float> evals = new ArrayList<>();
         for (Action m : moves) {
             state = TablutGame.makeMove(state, m);
-            evals.add(Evaluations.evaluateMaterial(state));
+            evals.add(Evaluations.evaluate(state));
             state = saved_state.clone();
         }
         moves_evals = MinMax.orderByEval(moves, evals, state.getTurn()==Turn.WHITE);
