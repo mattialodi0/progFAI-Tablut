@@ -30,7 +30,6 @@ public class TablutStateSimulator {
     int MAX_TURNS = 500;
 
     public static void main(String[] args) {
-
         List<String> dataset = parseJSONDataset();
         List<State> states = stringsToStates(dataset);
         List<Double> win_percs = new ArrayList<>();
