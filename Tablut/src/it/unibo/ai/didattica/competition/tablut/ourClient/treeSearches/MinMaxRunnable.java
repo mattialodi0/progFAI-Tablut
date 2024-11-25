@@ -27,6 +27,7 @@ public class MinMaxRunnable implements TreeSearch, Runnable  {
     AtomicBoolean stopSearch;
     State state;
     Action bestAction1 = null;
+    public float score = 0;
 
     private int depth;
     public LookupTable lookup = new LookupTable();
@@ -41,7 +42,7 @@ public class MinMaxRunnable implements TreeSearch, Runnable  {
     @Override
     public void run(){
         try {// Inserisci qui lo stato iniziale (da passare come parametro o ottenuto da altrove)
-            bestAction1 = searchTree(this.state.clone());
+            bestAction1 = searchTree(state.clone());
         } catch (Exception e) {
             // Gestione delle eccezioni durante la ricerca
             System.out.println("Errore durante l'esecuzione di MinMaxRunnable: " + e.getMessage());
@@ -51,12 +52,14 @@ public class MinMaxRunnable implements TreeSearch, Runnable  {
     public Action getBestAction() {
         return bestAction1;
     }
-    
+    public float getScore(){
+        return score;
+    }
     @Override
     public Action searchTree(State state) {
         Action bestAction = null;
         State saved_state = state.clone();
-        float score = 0;
+        score = 0;
         float alpha = Float.NEGATIVE_INFINITY;
         float beta = Float.POSITIVE_INFINITY;
 
@@ -70,7 +73,7 @@ public class MinMaxRunnable implements TreeSearch, Runnable  {
         List<Float> evals = new ArrayList<>();
         for (Action m : moves) {
             state = TablutGame.makeMove(state.clone(), m);
-            evals.add(Evaluations.evaluateAdvanced(state.clone(), state.getTurn()));
+            evals.add(Evaluations.evaluate(state.clone()));
             state = saved_state.clone();
         }
         moves_evals = orderByEval(moves, evals, state.getTurn()==Turn.WHITE);
@@ -79,8 +82,10 @@ public class MinMaxRunnable implements TreeSearch, Runnable  {
         if (state.getTurn() == Turn.WHITE) {
             score = Float.NEGATIVE_INFINITY;
             for (Action m : moves_evals) {
-                if (stopSearch.get()) break; 
-
+                if (stopSearch.get()) {
+                    System.out.println(bestAction);
+                    break; 
+                }
                 state = TablutGame.makeMove(state.clone(), m);
                 float cur = MiniMax(state.clone(), this.depth - 1, alpha, beta, false);
                 if (cur > score) {
@@ -97,8 +102,10 @@ public class MinMaxRunnable implements TreeSearch, Runnable  {
         } else if (state.getTurn() == Turn.BLACK) {
             score = Float.POSITIVE_INFINITY;
             for (Action m : moves_evals) {
-                if (stopSearch.get()) break;
-
+                if (stopSearch.get()) {
+                    System.out.println(bestAction);
+                    break;
+                }
                 state = TablutGame.makeMove(state.clone(), m);
                 float cur = MiniMax(state.clone(), this.depth - 1, alpha, beta, true);
                 if (cur < score) {
@@ -171,7 +178,7 @@ public class MinMaxRunnable implements TreeSearch, Runnable  {
             Float eval = lookup.lookForVisitedState(state.boardString());
             if (eval == null) {
                 // eval = Evaluations.evaluateMaterial(state);
-                eval = Evaluations.evaluateAdvanced(state.clone(), state.getTurn());
+                eval = Evaluations.evaluate(state.clone());
                 lookup.insertVisitededState(state.boardString(), eval);
                 this.lookups_hits++;
             }
@@ -192,7 +199,7 @@ public class MinMaxRunnable implements TreeSearch, Runnable  {
         for (Action m : moves) {
             state = TablutGame.makeMove(state.clone(), m);
             // evals.add(Evaluations.evaluateMaterial(state));
-            evals.add(Evaluations.evaluateAdvanced(state.clone(), state.getTurn()));
+            evals.add(Evaluations.evaluate(state.clone()));
             state = saved_state.clone();
         }
         moves_evals = orderByEval(moves, evals, state.getTurn()==Turn.WHITE);
@@ -201,8 +208,9 @@ public class MinMaxRunnable implements TreeSearch, Runnable  {
             float max_score = Float.NEGATIVE_INFINITY;
             
             for (Action m : moves_evals) {
-                if(stopSearch.get()) break;
-
+                if(stopSearch.get()) {
+                    break;
+                }
                 state = TablutGame.makeMove(state.clone(), m);
                 float cur = MiniMax(state.clone(), depth - 1, alpha, beta, false);
                 max_score = Math.max(max_score, cur);
@@ -216,8 +224,9 @@ public class MinMaxRunnable implements TreeSearch, Runnable  {
             float min_score = Float.POSITIVE_INFINITY;
 
             for (Action m : moves_evals) {
-                if(stopSearch.get()) break;
-
+                if(stopSearch.get()) {
+                    break;
+                }
                 state = TablutGame.makeMove(state.clone(), m);
                 float cur = MiniMax(state.clone(), depth - 1, alpha, beta, true);
                 min_score = Math.min(min_score, cur);
