@@ -41,7 +41,7 @@ public class TablutStateSimulator {
                 System.out.println(i);
                 // break;
             double win_perc = sim.run(s);
-            // System.out.println(win_perc);
+            System.out.println(win_perc);
             win_percs.add(win_perc);
             i++;
         }
@@ -88,45 +88,38 @@ public class TablutStateSimulator {
                 }
         }
 
-        state = saved_state.clone();
-        state.setTurn(Turn.BLACK);
+        // state = saved_state.clone();
+        // state.setTurn(Turn.BLACK);
 
-        for (i = 0; i < MATCHES; i++) {
-            Turn res = null;
-            try {
-                res = playRandGame(state.clone());
-            } catch (Exception e) {
-                // System.out.print(res);
-                System.out.println("ERR");
-            }
+        // for (i = 0; i < MATCHES; i++) {
+        //     Turn res = null;
+        //     try {
+        //         res = playRandGame(state.clone());
+        //     } catch (Exception e) {
+        //         // System.out.print(res);
+        //         System.out.println("ERR");
+        //     }
 
-            if (res == null) {
-                errors++;
-            } else
-                switch (res) {
-                    case WHITEWIN:
-                        whiteWins++;
-                        break;
-                    case DRAW:
-                        draws++;
-                        break;
-                    case BLACKWIN:
-                        blackWins++;
-                        break;
-                    default:
-                        errors++;
-                        break;
-                }
-        }
+        //     if (res == null) {
+        //         errors++;
+        //     } else
+        //         switch (res) {
+        //             case WHITEWIN:
+        //                 whiteWins++;
+        //                 break;
+        //             case DRAW:
+        //                 draws++;
+        //                 break;
+        //             case BLACKWIN:
+        //                 blackWins++;
+        //                 break;
+        //             default:
+        //                 errors++;
+        //                 break;
+        //         }
+        // }
 
-        // System.out.println("Simulation results for " + MATCHES + " games from state
-        // \n" + state);
-        // System.out.println("White wins - " + whiteWins);
-        // System.out.println("Black wins - " + blackWins);
-        // System.out.println("Draws - " + draws);
-        // System.out.println("Erorrs - " + errors);
-
-        return (double) whiteWins / (MATCHES * 2);
+        return (double) whiteWins / MATCHES;
     }
 
     private Turn playRandGame(State state) throws NullPointerException {
@@ -174,8 +167,6 @@ public class TablutStateSimulator {
 
     private static List<String> parseJSONDataset() {
         Gson gson = new Gson();
-        // String jsonOutput =
-        // "[\"OOOBBBOOOOOOOBOOOOOOOOWOOOOBOOOWOOOBBBWWKWWBBBOOOWOOOBOOOOWOOOOOOOOBOOOOOOOBBBOOO\"]";
         String jsonOutput = "";
         try {
             jsonOutput = new String(Files.readAllBytes(Paths.get("dataset.json")));

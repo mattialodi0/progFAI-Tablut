@@ -73,45 +73,4 @@ public class Evaluations {
      * Patient evaluation for white, tries to keep the position and waits, not
      * openiing lines to the king
      */
-    public static float evaluatePatient(State state) {
-        return evaluatePatient(state, Turn.WHITE);
-    }
-
-    public static float evaluatePatient(State state, Turn t) {
-        // TODO
-        return 0f;
-    }
-
-    /* Aggressive evaluation for black, always tries to capture pieces */
-    public static float evaluateAggressive(State state) {
-        return evaluateAggressive(state, Turn.BLACK);
-    }
-
-    public static float evaluateAggressive(State state, Turn t) {
-        // TODO
-        return 0f;
-    }
-
-    public static float evaluateAlgiseWhite(State state) {
-        int black_pawns = 0;
-        int white_pawns = 0;
-        int free_way_for_king = 0;
-        int black_near_king = 0;
-        int king_pos = 0;
-        int strategic_free = 0;
-
-        return (float) ((black_pawns * 12) + (white_pawns * 22) + (free_way_for_king * 50) + (black_near_king * 6)
-                + (king_pos * 0.4) + (strategic_free));
-    }
-
-    public static float evaluateAlgiseBlack(State state) {
-        int black_pawns = 0;
-        int white_pawns = 0;
-        int free_way_for_king = 0;
-        int black_near_king = 0;
-        int surround = 0;
-
-        return (float) ((black_pawns * 5) + (white_pawns * 10) + (free_way_for_king * 15) + (black_near_king * 9)
-                + (surround * 900));
-    }
 }
