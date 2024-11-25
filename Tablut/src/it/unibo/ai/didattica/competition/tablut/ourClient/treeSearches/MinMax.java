@@ -24,6 +24,8 @@ public class MinMax implements TreeSearch {
     public static float minEval = Float.POSITIVE_INFINITY;
     public static int avgs = 0;
     public static int avgs_num = 0;
+    public static int tot_branching_cuts = 0;
+    public static int good_branching_cuts = 0;
     public int nodes = 0;
     public int lookups = 0;
     public int lookups_hits = 0;
@@ -68,7 +70,7 @@ public class MinMax implements TreeSearch {
 
                 state = TablutGame.makeMove(state, m);
                 float cur = MiniMax(state, this.depth - 1, alpha, beta, false);
-                if (cur >= score) {
+                if (cur > score) {
                     score = cur;
                     bestAction = m;
                 }
@@ -86,7 +88,7 @@ public class MinMax implements TreeSearch {
 
                 state = TablutGame.makeMove(state, m);
                 float cur = MiniMax(state, this.depth - 1, alpha, beta, true);
-                if (cur <= score) {
+                if (cur < score) {
                     score = cur;
                     bestAction = m;
                 }
@@ -112,6 +114,11 @@ public class MinMax implements TreeSearch {
             // System.out.println("Lookup hits: " + lookups_hits + " - " + perc + "%");
             // avgs += perc;
             // avgs_num++;
+            tot_branching_cuts++;
+            if((moves_evals.indexOf(bestAction) <= branchingFactor(this.depth - depth))) {
+                good_branching_cuts++;
+            }
+            System.out.println(moves_evals.indexOf(bestAction) +"/"+ (moves_evals.size()-1));
         } catch (Exception e) {
         }
 
@@ -186,8 +193,8 @@ public class MinMax implements TreeSearch {
             float min_score = Float.POSITIVE_INFINITY;
             int i = 0;
             for (Action m : moves_evals) {
-                // if (i > branchingFactor(this.depth - depth))
-                //     break;
+                if (i > branchingFactor(this.depth - depth))
+                    break;
 
                 state = TablutGame.makeMove(state, m);
                 float cur = MiniMax(state, depth - 1, alpha, beta, true);
@@ -205,15 +212,16 @@ public class MinMax implements TreeSearch {
 
     protected int branchingFactor(int depth) {
         if (depth <= 2)
-            return 15;
-        else if (depth <= 4)
-            return 10;
-        else if (depth <= 6)
-            return 5;
-        else if (depth <= this.depth)
-            return 3;
-        else
-            return 0; // should not return this
+            return 20;
+        // else if (depth <= 4)
+        //     return 10;
+        // else if (depth <= 6)
+        //     return 5;
+        // else if (depth <= this.depth)
+        //     return 3;
+        // else
+        //     return 0; // should not return this
+        return 100;
     }
 
     protected List<Action> orderByEval(List<Action> moves, List<Float> evals, Boolean isWhite) {

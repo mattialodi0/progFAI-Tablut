@@ -12,7 +12,10 @@ import it.unibo.ai.didattica.competition.tablut.ourClient.GameHelper;
 public class Evaluations {
 
     public static float evaluate(State state) {
-        return evaluateQuick(state);
+        float eval = evaluateQuick(state);
+        // float eval = evaluateAdvanced(state, state.getTurn());
+        // System.out.println(eval);
+        return eval;
     }
 
     /* Basic heuristic, normalized between, more pieces -> more points */
@@ -55,7 +58,8 @@ public class Evaluations {
             Float[] gameWeights = { 35f, 45.0f, 5.0f, 15.0f, 15.0f, 9.0f };
 
             HeuristicsBlack heuristic = new HeuristicsBlack(gameWeights);
-            return heuristic.evaluate(state);
+            float e = heuristic.evaluate(state);
+            return e;
         } else
             return 0;
     }
@@ -69,22 +73,22 @@ public class Evaluations {
         } else if (currentTurn == Turn.BLACKWIN) {
             return Float.NEGATIVE_INFINITY;
         }
-
-        float eval = 0;
-
+        
+        double eval = 0;
+        
         int white_pawns = state.getNumberOf(Pawn.WHITE);
         int black_pawns = state.getNumberOf(Pawn.BLACK);
         int pawns = white_pawns + black_pawns;
-        float material = ((white_pawns * 2) - black_pawns) / 16;
-
-        float king_open_files = GameHelper.getKingOpenFiles(state) / 4;
-
+        double material = (double) ((white_pawns * 2) - black_pawns) / 16;
+        
+        double king_open_files = (double) GameHelper.getKingOpenFiles(state) / 4;
+        
+        
         if (currentTurn == Turn.WHITE) {
-
             int k = state.toLinearString().indexOf('K');
             int x = (int) k / 9;
             int y = (int) k % 9;
-            float king_center_distance = (float) (Math.sqrt(Math.pow((4 - x), 2) + Math.pow(4 - y, 2)) / 7);
+            double king_center_distance = (double) (Math.sqrt(Math.pow((4 - x), 2) + Math.pow(4 - y, 2)) / 7);
 
             // List<int[]> allied_pawns = new ArrayList<>();
             List<Integer> distances = new ArrayList<>();
@@ -99,11 +103,11 @@ public class Evaluations {
             float dispersion = distances.stream().mapToInt(f -> f).sum() / distances.size();
 
             if (pawns > 20) { // early game
-                eval = 2 * material - king_center_distance + king_open_files - (float) (2 * Math.atan(dispersion * 5));
+                eval = 2 * Math.atan(material * 5) - Math.atan(king_center_distance * 5) + Math.atan(king_open_files * 5) - (2 * Math.atan(dispersion * 5));
             } else if (pawns > 16) { // mid game
-                eval = material + king_center_distance + 2 * king_open_files;
+                eval = Math.atan(material * 5) + Math.atan(king_center_distance * 5) + Math.atan(king_open_files * 5) + (2 * Math.atan(dispersion * 5));
             } else { // end game
-                eval = material + 2 * king_center_distance + 4 * king_open_files;
+                eval = Math.atan(material * 5) + 2 * Math.atan(king_center_distance * 5) + 4 * Math.atan(king_open_files * 5);
             }
 
         } else if (currentTurn == Turn.BLACK) {
@@ -132,27 +136,25 @@ public class Evaluations {
             }
             float surrounding_king = s / 4;
             
-            // List<int[]> allied_pawns = new ArrayList<>();
             List<Integer> distances = new ArrayList<>();
             String str = state.toLinearString();
             for (int i = 0; i < str.length(); i++) {
                 if (str.charAt(i) == 'B') {
                     int[] p = { i / 9, i % 9 };
-                    // allied_pawns.add(p);
                     distances.add(Math.abs(p[0] - 4) + Math.abs(p[1] - 4));
                 }
             }
             float dispersion = distances.stream().mapToInt(f -> f).sum() / distances.size();
 
             if (pawns > 20) { // early game
-                eval = 4 * material - king_open_files - (float) (2 * Math.atan(dispersion * 5));
+                eval = 4 * Math.atan(material * 5) - Math.atan(king_open_files * 5) - (2 * Math.atan(dispersion * 5));
             } else if (pawns > 16) { // mid game
-                eval = 2 * material - king_open_files + surrounding_king - (float) Math.atan(dispersion * 5);
+                eval = 2 * Math.atan(material * 5) - Math.atan(king_open_files * 5) + Math.atan(surrounding_king * 5) - Math.atan(dispersion * 5);
             } else { // end game
-                eval = material - 2 * king_open_files + surrounding_king;
+                eval = Math.atan(material * 5) - 2 * Math.atan(king_open_files * 5) + Math.atan(surrounding_king * 5);
             }
         }
 
-        return eval;
+        return (float) eval;
     }
 }

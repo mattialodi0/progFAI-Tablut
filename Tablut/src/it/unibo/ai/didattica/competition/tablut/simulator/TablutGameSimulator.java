@@ -83,6 +83,7 @@ public class TablutGameSimulator {
 		// System.out.println("Avg lookup hit: " +
 		// ((MinMaxTreeSearch.avgs)/(MinMaxTreeSearch.avgs_num)) +"%");
 		// System.out.println("Avg time per move: " + (time_tot/MATCHES) +"s");
+		System.out.println("Good cuts %: " +  (double) MinMax.good_branching_cuts / MinMax.tot_branching_cuts);
 	}
 
 	private Turn runGame() throws TimeoutException {
@@ -143,15 +144,15 @@ public class TablutGameSimulator {
 	}
 
 	private Action whiteMove(State state) {
-		// TreeSearch searchStrategy = new SemiRandTreeSearch();
-		// return searchStrategy.searchTree(state);
 		// TreeSearch searchStrategy = new MinMaxNoLimit(2);
-		return randMove(state);
+		TreeSearch searchStrategy = new MinMax(3);
+		return searchStrategy.searchTree(state.clone());
 	}
 	
 	private Action blackMove(State state) {
-		TreeSearch searchStrategy = new MinMax(2);
-		return searchStrategy.searchTree(state);
+		// TreeSearch searchStrategy = new MinMaxNoLimit(3);
+		// return searchStrategy.searchTree(state.clone());
+		return randMove(state);
 	}
 
 	private Action randMove(State state) {

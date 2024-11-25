@@ -108,10 +108,10 @@ public class MinMaxNoLimit implements TreeSearch {
             // System.out.println(TablutGame.makeMove(state, bestAction).toString());
             // System.out.println("Nodes visited: " + nodes);
             // System.out.println("Total lookups: " + lookups);
-            int perc = ((lookups_hits * 100) / lookups);
+            // int perc = ((lookups_hits * 100) / lookups);
             // System.out.println("Lookup hits: " + lookups_hits + " - " + perc + "%");
-            avgs += perc;
-            avgs_num++;
+            // avgs += perc;
+            // avgs_num++;
         } catch (Exception e) {
         }
 

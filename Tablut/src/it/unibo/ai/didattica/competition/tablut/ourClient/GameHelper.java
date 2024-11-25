@@ -262,8 +262,8 @@ public class GameHelper {
         float open = 4f;
 
         int i = 0;
-        i = king_pos[1];
-        while(i > 0) {
+        i = king_pos[1]-1;
+        while(i >= 0) {
             if(state.getPawn(king_pos[0], i) == Pawn.EMPTY)
                 i--;
             else {
@@ -272,7 +272,7 @@ public class GameHelper {
             }
         }
 
-        i = king_pos[1];
+        i = king_pos[1]+1;
         while(i < 9) {
             if(state.getPawn(king_pos[0], i) == Pawn.EMPTY)
                 i++;
@@ -282,8 +282,8 @@ public class GameHelper {
             }
         }
 
-        i = king_pos[0];
-        while(i > 0) {
+        i = king_pos[0]-1;
+        while(i >= 0) {
             if(state.getPawn(i, king_pos[1]) == Pawn.EMPTY)
                 i--;
             else {
@@ -292,7 +292,7 @@ public class GameHelper {
             }
         }
 
-        i = king_pos[0];
+        i = king_pos[0]-1;
         while(i < 9) {
             if(state.getPawn(i, king_pos[1]) == Pawn.EMPTY)
                 i++;
@@ -301,7 +301,7 @@ public class GameHelper {
                 break;
             }
         }
-
+        
         return open;
     }
 
