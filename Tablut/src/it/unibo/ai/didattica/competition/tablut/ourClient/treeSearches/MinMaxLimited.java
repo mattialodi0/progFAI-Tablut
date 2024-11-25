@@ -217,7 +217,7 @@ public class MinMaxLimited implements TreeSearch {
         }
     }
 
-    protected int branchingFactor(int depth) {
+    protected static int branchingFactor(int depth) {
         if (depth <= 4)
             return 20;
         else
