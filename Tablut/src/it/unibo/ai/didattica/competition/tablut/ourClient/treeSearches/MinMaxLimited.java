@@ -18,7 +18,7 @@ import it.unibo.ai.didattica.competition.tablut.simulator.TablutGame;
 /*
  * Implementation of the Minmax alg. with AlphaBeta pruning, lookuptable, and limited brenches
  */
-public class MinMaxNoLimit implements TreeSearch {
+public class MinMaxLimited implements TreeSearch {
 
     public static float maxEval = Float.NEGATIVE_INFINITY;
     public static float minEval = Float.POSITIVE_INFINITY;
@@ -32,7 +32,7 @@ public class MinMaxNoLimit implements TreeSearch {
     private int depth;
     public LookupTable lookup = new LookupTable();
 
-    public MinMaxNoLimit(int depth) {
+    public MinMaxLimited(int depth) {
         this.depth = depth;
     }
 
@@ -63,8 +63,8 @@ public class MinMaxNoLimit implements TreeSearch {
         if (state.getTurn() == Turn.WHITE) {
             score = Float.NEGATIVE_INFINITY;
             for (Action m : moves_evals) {
-                // if (i > branchingFactor(this.depth - depth))
-                //     break;
+                if (i > branchingFactor(this.depth - depth))
+                    break;
 
                 state = TablutGame.makeMove(state, m);
                 float cur = MiniMax(state, this.depth - 1, alpha, beta, false);
@@ -81,8 +81,8 @@ public class MinMaxNoLimit implements TreeSearch {
         } else if (state.getTurn() == Turn.BLACK) {
             score = Float.POSITIVE_INFINITY;
             for (Action m : moves_evals) {
-                // if (i > branchingFactor(this.depth - depth))
-                //     break;
+                if (i > branchingFactor(this.depth - depth))
+                    break;
 
                 state = TablutGame.makeMove(state, m);
                 float cur = MiniMax(state, this.depth - 1, alpha, beta, true);
@@ -183,8 +183,8 @@ public class MinMaxNoLimit implements TreeSearch {
             float max_score = Float.NEGATIVE_INFINITY;
             int i = 0;
             for (Action m : moves_evals) {
-                //if (i > branchingFactor(this.depth - depth))
-                //    break;
+                if (i > branchingFactor(this.depth - depth))
+                   break;
 
                 state = TablutGame.makeMove(state, m);
                 float cur = MiniMax(state, depth - 1, alpha, beta, false);
@@ -200,8 +200,9 @@ public class MinMaxNoLimit implements TreeSearch {
             float min_score = Float.POSITIVE_INFINITY;
             int i = 0;
             for (Action m : moves_evals) {
-                //if (i > branchingFactor(this.depth - depth))
-                //    break;
+                if (i > branchingFactor(this.depth - depth))
+                   break;
+
                 state = TablutGame.makeMove(state, m);
                 float cur = MiniMax(state, depth - 1, alpha, beta, true);
                 min_score = Math.min(min_score, cur);
@@ -217,16 +218,10 @@ public class MinMaxNoLimit implements TreeSearch {
     }
 
     protected int branchingFactor(int depth) {
-        if (depth <= 2)
-            return 15;
-        else if (depth <= 4)
-            return 10;
-        else if (depth <= 6)
-            return 5;
-        else if (depth <= this.depth)
-            return 3;
+        if (depth <= 4)
+            return 20;
         else
-            return 0; // should not return this
+            return 100; // should not return this
     }
 
     protected List<Action> orderByEval(List<Action> moves, List<Float> evals, Boolean isWhite) {

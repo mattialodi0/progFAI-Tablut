@@ -12,7 +12,7 @@ import it.unibo.ai.didattica.competition.tablut.domain.State;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
 import it.unibo.ai.didattica.competition.tablut.domain.StateTablut;
 import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.MinMax;
-import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.MinMaxNoLimit;
+import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.MinMaxLimited;
 import it.unibo.ai.didattica.competition.tablut.simulator.TablutGame;
 import it.unibo.ai.didattica.competition.tablut.simulator.TablutGameSimulator;
 
@@ -83,7 +83,7 @@ public class Testing {
 
     private Action whiteMove(State state) {
         MinMax minMax = new MinMax(3);
-        MinMaxNoLimit minMaxNoLimit = new MinMaxNoLimit(3);
+        MinMaxLimited minMaxNoLimit = new MinMaxLimited(3);
 
         Action minMaxChoses = minMax.searchTree(state.clone());
         Action minMaxNoLimitChoses = minMaxNoLimit.searchTree(state.clone());

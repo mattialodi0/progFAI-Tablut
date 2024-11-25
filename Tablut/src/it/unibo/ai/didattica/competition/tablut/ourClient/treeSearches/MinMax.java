@@ -65,9 +65,6 @@ public class MinMax implements TreeSearch {
         if (state.getTurn() == Turn.WHITE) {
             score = Float.NEGATIVE_INFINITY;
             for (Action m : moves_evals) {
-                // if (i > branchingFactor(this.depth - depth))
-                //     break;
-
                 state = TablutGame.makeMove(state, m);
                 float cur = MiniMax(state, this.depth - 1, alpha, beta, false);
                 if (cur > score) {
@@ -83,9 +80,6 @@ public class MinMax implements TreeSearch {
         } else if (state.getTurn() == Turn.BLACK) {
             score = Float.POSITIVE_INFINITY;
             for (Action m : moves_evals) {
-                // if (i > branchingFactor(this.depth - depth))
-                //     break;
-
                 state = TablutGame.makeMove(state, m);
                 float cur = MiniMax(state, this.depth - 1, alpha, beta, true);
                 if (cur < score) {
@@ -114,11 +108,11 @@ public class MinMax implements TreeSearch {
             // System.out.println("Lookup hits: " + lookups_hits + " - " + perc + "%");
             // avgs += perc;
             // avgs_num++;
-            tot_branching_cuts++;
-            if((moves_evals.indexOf(bestAction) <= branchingFactor(this.depth - depth))) {
-                good_branching_cuts++;
-            }
-            System.out.println(moves_evals.indexOf(bestAction) +"/"+ (moves_evals.size()-1));
+            // tot_branching_cuts++;
+            // if((moves_evals.indexOf(bestAction) <= branchingFactor(this.depth - depth))) {
+            //     good_branching_cuts++;
+            // }
+            // System.out.println(moves_evals.indexOf(bestAction) +"/"+ (moves_evals.size()-1));
         } catch (Exception e) {
         }
 
@@ -176,9 +170,6 @@ public class MinMax implements TreeSearch {
             float max_score = Float.NEGATIVE_INFINITY;
             int i = 0;
             for (Action m : moves_evals) {
-                // if (i > branchingFactor(this.depth - depth))
-                //     break;
-
                 state = TablutGame.makeMove(state, m);
                 float cur = MiniMax(state, depth - 1, alpha, beta, false);
                 max_score = Math.max(max_score, cur);
@@ -193,9 +184,6 @@ public class MinMax implements TreeSearch {
             float min_score = Float.POSITIVE_INFINITY;
             int i = 0;
             for (Action m : moves_evals) {
-                if (i > branchingFactor(this.depth - depth))
-                    break;
-
                 state = TablutGame.makeMove(state, m);
                 float cur = MiniMax(state, depth - 1, alpha, beta, true);
                 min_score = Math.min(min_score, cur);
@@ -208,20 +196,6 @@ public class MinMax implements TreeSearch {
 
             return min_score;
         }
-    }
-
-    protected int branchingFactor(int depth) {
-        if (depth <= 2)
-            return 20;
-        // else if (depth <= 4)
-        //     return 10;
-        // else if (depth <= 6)
-        //     return 5;
-        // else if (depth <= this.depth)
-        //     return 3;
-        // else
-        //     return 0; // should not return this
-        return 100;
     }
 
     protected List<Action> orderByEval(List<Action> moves, List<Float> evals, Boolean isWhite) {
