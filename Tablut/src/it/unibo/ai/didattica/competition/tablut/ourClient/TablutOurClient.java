@@ -103,7 +103,7 @@ public class TablutOurClient extends TablutClient {
 				System.exit(4);
 		}
 
-		searchStrategy = new MultiThreadMinMaxLauncher(4);
+		searchStrategy = new MinMax(4);
 		// searchStrategy = new MultiThreadMinMaxLauncher(4);
 		// searchStrategy = new IterativeDeepening();
 

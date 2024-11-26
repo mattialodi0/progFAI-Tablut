@@ -18,7 +18,7 @@ import it.unibo.ai.didattica.competition.tablut.simulator.TablutGame;
 /*
  * Implementation of the Minmax alg. with AlphaBeta pruning, lookuptable, and limited brenches
  */
-public class MinMax implements TreeSearch {
+public class MinMaxML implements TreeSearch {
 
     public static float maxEval = Float.NEGATIVE_INFINITY;
     public static float minEval = Float.POSITIVE_INFINITY;
@@ -34,7 +34,7 @@ public class MinMax implements TreeSearch {
     private int depth;
     public LookupTable lookup = new LookupTable();
 
-    public MinMax(int depth) {
+    public MinMaxML(int depth) {
         this.depth = depth;
     }
 
@@ -56,7 +56,7 @@ public class MinMax implements TreeSearch {
         List<Float> evals = new ArrayList<>();
         for (Action m : moves) {
             state = TablutGame.makeMove(state, m);
-            evals.add(Evaluations.evaluateAdvanced(state, state.getTurn()));
+            evals.add(Evaluations.evaluate(state));
             state = saved_state.clone();
         }
         moves_evals = orderByEval(moves, evals, state.getTurn()==Turn.WHITE);
@@ -141,7 +141,7 @@ public class MinMax implements TreeSearch {
         if (depth <= 0) {
             Float eval = lookup.lookForVisitedState(state.boardString());
             if (eval == null) {
-                eval = Evaluations.evaluateAdvanced(state, state.getTurn());
+                eval = Evaluations.evaluate(state);
                 lookup.insertVisitededState(state.boardString(), eval);
                 this.lookups_hits++;
             }
@@ -161,7 +161,7 @@ public class MinMax implements TreeSearch {
         List<Float> evals = new ArrayList<>();
         for (Action m : moves) {
             state = TablutGame.makeMove(state, m);
-            evals.add(Evaluations.evaluateAdvanced(state, state.getTurn()));
+            evals.add(Evaluations.evaluate(state));
             state = saved_state.clone();
         }
         moves_evals = orderByEval(moves, evals, state.getTurn()==Turn.WHITE);

@@ -18,6 +18,7 @@ import it.unibo.ai.didattica.competition.tablut.ourClient.interfaces.TreeSearch;
 import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.IterativeDeepening;
 import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.MinMax;
 import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.MinMaxLimited;
+import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.MinMaxML;
 import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.MultiThreadMinMaxLauncher;
 import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.SemiRandTreeSearch;
 import it.unibo.ai.didattica.competition.tablut.ourClient.evaluations.Evaluations;
@@ -27,7 +28,7 @@ import it.unibo.ai.didattica.competition.tablut.ourClient.evaluations.Evaluation
 public class TablutGameSimulator {
 
 	private int MAX_TURNS = 1000;
-	private int MATCHES = 10;
+	private int MATCHES = 1000;
 	int time = 60;
 	private double time_tot = 0;
 
@@ -135,23 +136,23 @@ public class TablutGameSimulator {
 				break;
 
 			turns++;
+			// System.out.println(state.toString());
 		}
 
 		// System.out.println("Endgame state \n" + state.toString());
-		System.out.println("Turns: " + turns);
+		// System.out.println("Turns: " + turns);
 
 		return state.getTurn();
 	}
 
 	private Action whiteMove(State state) {
-		// TreeSearch searchStrategy = new MinMaxNoLimit(2);
-		TreeSearch searchStrategy = new MinMax(3);
-		return searchStrategy.searchTree(state.clone());
+		TreeSearch searchStrategy = new MinMax(1);
+		return searchStrategy.searchTree(state);
 	}
 	
 	private Action blackMove(State state) {
-		TreeSearch searchStrategy = new MinMaxLimited(3);
-		return searchStrategy.searchTree(state.clone());
+		TreeSearch searchStrategy = new MinMaxML(1);
+		return searchStrategy.searchTree(state);
 		// return randMove(state);
 	}
 
