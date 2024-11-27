@@ -14,6 +14,7 @@ import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
 import it.unibo.ai.didattica.competition.tablut.domain.StateTablut;
 import it.unibo.ai.didattica.competition.tablut.ourClient.GameHelper;
 import it.unibo.ai.didattica.competition.tablut.ourClient.LookupTable;
+import it.unibo.ai.didattica.competition.tablut.ourClient.PSO.MinMaxParametric;
 import it.unibo.ai.didattica.competition.tablut.ourClient.interfaces.TreeSearch;
 import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.IterativeDeepening;
 import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.MinMax;
@@ -23,12 +24,11 @@ import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.MultiThre
 import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.SemiRandTreeSearch;
 import it.unibo.ai.didattica.competition.tablut.ourClient.evaluations.Evaluations;
 
-
 // TODO: draw check and timeout
 public class TablutGameSimulator {
 
-	private int MAX_TURNS = 1000;
-	private int MATCHES = 1000;
+	private int MAX_TURNS = 200;
+	private int MATCHES = 100;
 	int time = 60;
 	private double time_tot = 0;
 
@@ -84,7 +84,8 @@ public class TablutGameSimulator {
 		// System.out.println("Avg lookup hit: " +
 		// ((MinMaxTreeSearch.avgs)/(MinMaxTreeSearch.avgs_num)) +"%");
 		// System.out.println("Avg time per move: " + (time_tot/MATCHES) +"s");
-		// System.out.println("Good cuts %: " +  (double) MinMax.good_branching_cuts / MinMax.tot_branching_cuts);
+		// System.out.println("Good cuts %: " + (double) MinMax.good_branching_cuts /
+		// MinMax.tot_branching_cuts);
 	}
 
 	private Turn runGame() throws TimeoutException {
@@ -140,18 +141,19 @@ public class TablutGameSimulator {
 		}
 
 		// System.out.println("Endgame state \n" + state.toString());
-		// System.out.println("Turns: " + turns);
+		System.out.println("Turns: " + turns);
 
 		return state.getTurn();
 	}
 
 	private Action whiteMove(State state) {
-		TreeSearch searchStrategy = new MinMax(1);
+		TreeSearch searchStrategy = new MinMaxParametric(1, new float[]{ -2.0f, 2.8248703f, 0.80661505f, 2.7464278f} );
 		return searchStrategy.searchTree(state);
 	}
-	
+
 	private Action blackMove(State state) {
-		TreeSearch searchStrategy = new MinMaxML(1);
+		// TreeSearch searchStrategy = new MinMaxML(1);
+		TreeSearch searchStrategy = new MinMax(1);
 		return searchStrategy.searchTree(state);
 		// return randMove(state);
 	}
