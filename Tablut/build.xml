@@ -114,7 +114,7 @@
 
     <!-- Our -->
     <target name="ourblack">
-        <java classname="it.unibo.ai.didattica.competition.tablut.ourClient.TablutOurBlackClient" fork="true">
+        <java classname="it.unibo.ai.didattica.competition.tablut.ourClient.ourGame.TablutOurBlackClient" fork="true">
             <classpath>
                 <pathelement location="lib/gson-2.2.2.jar"/>
                 <pathelement location="build"/>
@@ -122,7 +122,7 @@
         </java>
     </target>
     <target name="ourwhite">
-        <java classname="it.unibo.ai.didattica.competition.tablut.ourClient.TablutOurWhiteClient" fork="true">
+        <java classname="it.unibo.ai.didattica.competition.tablut.ourClient.ourGame.TablutOurWhiteClient" fork="true">
             <classpath>
                 <pathelement location="lib/gson-2.2.2.jar"/>
                 <pathelement location="build"/>
@@ -132,32 +132,12 @@
     <target name="our-jar">
         <jar destfile="our.jar" filesetmanifest="mergewithoutmain">
             <manifest>
-                <attribute name="Main-Class" value="it.unibo.ai.didattica.competition.tablut.ourClient.TablutOurClient"/>
+                <attribute name="Main-Class" value="it.unibo.ai.didattica.competition.tablut.ourClient.ourGame.TablutOurClient"/>
                 <attribute name="Class-Path" value="."/>
             </manifest>
             <fileset dir="build"/>
             <zipfileset excludes="META-INF/*.SF" src="lib/gson-2.2.2.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="lib/commons-cli-1.4.jar"/>
-        </jar>
-    </target>
-
-
-    
-    <target name="simulator">
-        <java classname="it.unibo.ai.didattica.competition.tablut.simulator.TablutGameSimulator" fork="true">
-            <classpath>
-                <pathelement location="build"/>
-            </classpath>
-        </java>
-    </target>
-
-    <target name="simulator-jar">
-        <jar destfile="simulator.jar" filesetmanifest="mergewithoutmain">
-            <manifest>
-                <attribute name="Main-Class" value="it.unibo.ai.didattica.competition.tablut.simulator.TablutGameSimulator"/>
-                <attribute name="Class-Path" value="."/>
-            </manifest>
-            <fileset dir="build"/>
         </jar>
     </target>
 </project>
