@@ -50,8 +50,8 @@ public class MultiThreadMinMaxLauncher implements TreeSearch {
             score = Float.NEGATIVE_INFINITY;
 
             for (int j = 0; j < moves_evals.size(); j++) {
-                if (j > MinMax.branchingFactor(0))
-                    break;
+                // if (j > MinMax.branchingFactor(0))
+                //     break;
                 
                 state = TablutGame.makeMove(state, moves_evals.get(j));
 
@@ -64,8 +64,8 @@ public class MultiThreadMinMaxLauncher implements TreeSearch {
                 state = saved_state.clone();
             }
             for (int j = 0; j < moves_evals.size(); j++) {
-                if (j > MinMax.branchingFactor(0))
-                    break;
+                // if (j > MinMax.branchingFactor(0))
+                //     break;
 
                 float cur = 0;
                 try {
@@ -88,8 +88,8 @@ public class MultiThreadMinMaxLauncher implements TreeSearch {
             score = Float.POSITIVE_INFINITY;
 
             for (int j = 0; j < moves_evals.size(); j++) {
-                if (j > MinMax.branchingFactor(0))
-                    break;
+                // if (j > MinMax.branchingFactor(0))
+                //     break;
 
                     state = TablutGame.makeMove(state, moves_evals.get(j));
 
@@ -102,8 +102,8 @@ public class MultiThreadMinMaxLauncher implements TreeSearch {
                     state = saved_state.clone();
             }
             for (int j = 0; j < moves_evals.size(); j++) {
-                if (j > MinMax.branchingFactor(0))
-                    break;
+                // if (j > MinMax.branchingFactor(0))
+                //     break;
 
                 float cur = 0;
                 try {
