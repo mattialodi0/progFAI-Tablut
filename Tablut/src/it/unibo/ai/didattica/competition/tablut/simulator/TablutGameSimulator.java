@@ -7,19 +7,17 @@ import java.util.Random;
 import java.util.concurrent.TimeoutException;
 
 import it.unibo.ai.didattica.competition.tablut.domain.Action;
-import it.unibo.ai.didattica.competition.tablut.domain.Game;
-import it.unibo.ai.didattica.competition.tablut.domain.GameAshtonTablut;
+
 import it.unibo.ai.didattica.competition.tablut.domain.State;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
 import it.unibo.ai.didattica.competition.tablut.domain.StateTablut;
-import it.unibo.ai.didattica.competition.tablut.ourClient.GameHelper;
-import it.unibo.ai.didattica.competition.tablut.ourClient.LookupTable;
 import it.unibo.ai.didattica.competition.tablut.ourClient.interfaces.TreeSearch;
+import it.unibo.ai.didattica.competition.tablut.ourClient.ourUtilities.GameHelper;
+import it.unibo.ai.didattica.competition.tablut.ourClient.ourUtilities.LookupTable;
 import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.IterativeDeepening;
 import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.MinMax;
 import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.MinMaxLimited;
 import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.MultiThreadMinMaxLauncher;
-import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.SemiRandTreeSearch;
 import it.unibo.ai.didattica.competition.tablut.ourClient.evaluations.Evaluations;
 
 
@@ -155,14 +153,7 @@ public class TablutGameSimulator {
 		// return randMove(state);
 	}
 
-	private Action randMove(State state) {
-		List<Action> available_actions = GameHelper.availableMoves(state);
-		if (available_actions.size() == 0)
-			return null;
-
-		Random rand = new Random();
-		return available_actions.get(rand.nextInt(available_actions.size()));
-	}
+	
 
 	private static class Timer {
 		private long duration;

@@ -2,10 +2,10 @@ package it.unibo.ai.didattica.competition.tablut.ourClient;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
+
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.TimeoutException;
+
 
 import it.unibo.ai.didattica.competition.tablut.domain.Action;
 import it.unibo.ai.didattica.competition.tablut.domain.State;
@@ -14,7 +14,6 @@ import it.unibo.ai.didattica.competition.tablut.domain.StateTablut;
 import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.MinMax;
 import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.MinMaxLimited;
 import it.unibo.ai.didattica.competition.tablut.simulator.TablutGame;
-import it.unibo.ai.didattica.competition.tablut.simulator.TablutGameSimulator;
 
 public class Testing {
 

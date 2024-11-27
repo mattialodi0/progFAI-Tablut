@@ -1,4 +1,4 @@
-package it.unibo.ai.didattica.competition.tablut.ourClient;
+package it.unibo.ai.didattica.competition.tablut.ourClient.ourUtilities;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,14 +11,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import it.unibo.ai.didattica.competition.tablut.domain.Action;
-import it.unibo.ai.didattica.competition.tablut.domain.Game;
 import it.unibo.ai.didattica.competition.tablut.domain.State;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Pawn;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
 
 public class GameHelper {
-    private static Turn playerColor;
-    private static Game rules;
     private static Set<String> campSet = new HashSet<>();
 
     // i need to check if that a white pawn does not move on a camp
@@ -55,9 +52,6 @@ public class GameHelper {
         }
     }
 
-    public GameHelper(Turn t) {
-        playerColor = t;
-    }
 
     /* Compute the list of available moves of a player */
     public static List<Action> availableMoves(State state) {

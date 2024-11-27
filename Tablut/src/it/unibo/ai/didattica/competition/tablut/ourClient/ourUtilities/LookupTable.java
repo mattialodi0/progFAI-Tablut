@@ -1,4 +1,4 @@
-package it.unibo.ai.didattica.competition.tablut.ourClient;
+package it.unibo.ai.didattica.competition.tablut.ourClient.ourUtilities;
 
 import java.util.HashMap;
 import java.util.Optional;

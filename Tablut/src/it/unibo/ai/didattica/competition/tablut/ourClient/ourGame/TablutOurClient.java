@@ -1,4 +1,4 @@
-package it.unibo.ai.didattica.competition.tablut.ourClient;
+package it.unibo.ai.didattica.competition.tablut.ourClient.ourGame;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -6,10 +6,8 @@ import it.unibo.ai.didattica.competition.tablut.client.TablutClient;
 import it.unibo.ai.didattica.competition.tablut.domain.*;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
 import it.unibo.ai.didattica.competition.tablut.ourClient.interfaces.TreeSearch;
-import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.BasicTreeSearch;
-import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.IterativeDeepening;
-import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.MinMax;
 import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.MultiThreadMinMaxLauncher;
+import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.IterativeDeepening;
 
 /**
  * 
@@ -103,9 +101,9 @@ public class TablutOurClient extends TablutClient {
 				System.exit(4);
 		}
 
-		searchStrategy = new MultiThreadMinMaxLauncher(4);
 		// searchStrategy = new MultiThreadMinMaxLauncher(4);
-		// searchStrategy = new IterativeDeepening();
+		// searchStrategy = new MultiThreadMinMaxLauncher(4);
+		searchStrategy = new IterativeDeepening();
 
 		System.out.println("You are player " + this.getPlayer().toString() + "!");
 

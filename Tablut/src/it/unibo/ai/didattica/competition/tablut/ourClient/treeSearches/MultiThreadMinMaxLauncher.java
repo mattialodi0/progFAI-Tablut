@@ -2,26 +2,25 @@ package it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
+
 
 import it.unibo.ai.didattica.competition.tablut.domain.Action;
 import it.unibo.ai.didattica.competition.tablut.domain.State;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
-import it.unibo.ai.didattica.competition.tablut.ourClient.GameHelper;
-import it.unibo.ai.didattica.competition.tablut.ourClient.LookupTable;
 import it.unibo.ai.didattica.competition.tablut.ourClient.evaluations.Evaluations;
 import it.unibo.ai.didattica.competition.tablut.ourClient.interfaces.TreeSearch;
+import it.unibo.ai.didattica.competition.tablut.ourClient.ourUtilities.GameHelper;
+import it.unibo.ai.didattica.competition.tablut.ourClient.ourUtilities.LookupTable;
 import it.unibo.ai.didattica.competition.tablut.simulator.TablutGame;
 
 public class MultiThreadMinMaxLauncher implements TreeSearch {
     private int depth;
     public LookupTable lookup = new LookupTable();
-    private MinMax MinMax;
+    private MinMaxLimited MinMax;
 
     public MultiThreadMinMaxLauncher(int depth) {
         this.depth = depth;
-        MinMax = new MinMax(depth);
+        MinMax = new MinMaxLimited(depth);
     }
 
     public Action searchTree(State state) {
@@ -136,8 +135,6 @@ public class MultiThreadMinMaxLauncher implements TreeSearch {
     public class MTMinMax implements Runnable {
         private State state;
         private int depth;
-        private float alpha;
-        private float beta;
         private Boolean isWhite;
         private volatile float eval;
 

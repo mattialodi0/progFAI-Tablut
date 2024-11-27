@@ -1,9 +1,8 @@
-package it.unibo.ai.didattica.competition.tablut.ourClient;
+package it.unibo.ai.didattica.competition.tablut.ourClient.ourGame;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
 
-import it.unibo.ai.didattica.competition.tablut.ourClient.TablutOurClient;
 
 public class TablutOurWhiteClient {
 	
