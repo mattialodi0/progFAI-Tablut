@@ -27,6 +27,7 @@ public class MinMaxRunnable implements TreeSearch, Runnable  {
     AtomicBoolean stopSearch;
     State state;
     Action bestAction1 = null;
+    Action bestAction = null;
     public float score = 0;
 
     private int depth;
@@ -50,14 +51,14 @@ public class MinMaxRunnable implements TreeSearch, Runnable  {
     }
 
     public Action getBestAction() {
-        return bestAction1;
+        return bestAction;
     }
     public float getScore(){
         return score;
     }
     @Override
     public Action searchTree(State state) {
-        Action bestAction = null;
+        bestAction = null;
         State saved_state = state.clone();
         score = 0;
         float alpha = Float.NEGATIVE_INFINITY;
@@ -143,7 +144,6 @@ public class MinMaxRunnable implements TreeSearch, Runnable  {
 
     @Override
     public Boolean hasMoreTime() {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'hasMoreTime'");
     }
 
@@ -160,24 +160,9 @@ public class MinMaxRunnable implements TreeSearch, Runnable  {
             return Float.NEGATIVE_INFINITY;
         }
 
-        // Float eval = lookup.lookForVisitedState(state.boardString());
-        // this.lookups++;
-        // if (eval != null) {
-        // this.lookups_hits++;
-        // return eval;
-        // }
-        // // max depth reached
-        // else if (depth <= 0) {
-        // eval = Evaluations.evaluateMaterial(state);
-        // // eval = Evaluations.evaluateAdvanced(state, state.getTurn());
-        // lookup.insertVisitededState(state.boardString(), eval);
-        // return eval;
-        // }
-
         if (depth <= 0) {
             Float eval = lookup.lookForVisitedState(state.boardString());
             if (eval == null) {
-                // eval = Evaluations.evaluateMaterial(state);
                 eval = Evaluations.evaluate(state.clone());
                 lookup.insertVisitededState(state.boardString(), eval);
                 this.lookups_hits++;
