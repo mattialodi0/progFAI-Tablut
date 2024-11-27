@@ -1,7 +1,6 @@
 package it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -9,10 +8,10 @@ import java.util.List;
 import it.unibo.ai.didattica.competition.tablut.domain.Action;
 import it.unibo.ai.didattica.competition.tablut.domain.State;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
-import it.unibo.ai.didattica.competition.tablut.ourClient.GameHelper;
-import it.unibo.ai.didattica.competition.tablut.ourClient.LookupTable;
 import it.unibo.ai.didattica.competition.tablut.ourClient.evaluations.Evaluations;
 import it.unibo.ai.didattica.competition.tablut.ourClient.interfaces.TreeSearch;
+import it.unibo.ai.didattica.competition.tablut.ourClient.ourUtilities.GameHelper;
+import it.unibo.ai.didattica.competition.tablut.ourClient.ourUtilities.LookupTable;
 import it.unibo.ai.didattica.competition.tablut.simulator.TablutGame;
 
 /*
@@ -60,7 +59,7 @@ public class MinMax implements TreeSearch {
             state = saved_state.clone();
         }
         moves_evals = orderByEval(moves, evals, state.getTurn()==Turn.WHITE);
-        int i = 0;
+
 
         if (state.getTurn() == Turn.WHITE) {
             score = Float.NEGATIVE_INFINITY;
@@ -75,7 +74,7 @@ public class MinMax implements TreeSearch {
                 if (beta <= alpha)
                     break;
                 state = saved_state.clone();
-                i++;
+
             }
         } else if (state.getTurn() == Turn.BLACK) {
             score = Float.POSITIVE_INFINITY;
@@ -90,7 +89,7 @@ public class MinMax implements TreeSearch {
                 if (beta <= alpha)
                 break;
                 state = saved_state.clone();
-                i++;
+
             }
         } else {
             System.out.println("big prolbem...");
@@ -121,7 +120,6 @@ public class MinMax implements TreeSearch {
 
     @Override
     public Boolean hasMoreTime() {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'hasMoreTime'");
     }
 
@@ -168,7 +166,7 @@ public class MinMax implements TreeSearch {
 
         if (isWhite) {
             float max_score = Float.NEGATIVE_INFINITY;
-            int i = 0;
+
             for (Action m : moves_evals) {
                 state = TablutGame.makeMove(state, m);
                 float cur = MiniMax(state, depth - 1, alpha, beta, false);
@@ -177,12 +175,12 @@ public class MinMax implements TreeSearch {
                 if (beta <= alpha)
                     break;
                 state = saved_state.clone();
-                i++;
+
             }
             return max_score;
         } else {
             float min_score = Float.POSITIVE_INFINITY;
-            int i = 0;
+
             for (Action m : moves_evals) {
                 state = TablutGame.makeMove(state, m);
                 float cur = MiniMax(state, depth - 1, alpha, beta, true);
@@ -190,7 +188,7 @@ public class MinMax implements TreeSearch {
                 beta = Math.min(beta, cur);
                 if (beta <= alpha)
                     break;
-                i++;
+
                 state = saved_state.clone();
             }
 

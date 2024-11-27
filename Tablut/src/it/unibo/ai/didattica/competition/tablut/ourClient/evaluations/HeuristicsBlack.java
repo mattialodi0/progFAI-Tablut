@@ -1,13 +1,13 @@
 package it.unibo.ai.didattica.competition.tablut.ourClient.evaluations;
 
-import java.util.ArrayList;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import it.unibo.ai.didattica.competition.tablut.domain.State;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
-import it.unibo.ai.didattica.competition.tablut.ourClient.GameHelper;
+import it.unibo.ai.didattica.competition.tablut.ourClient.ourUtilities.GameHelper;
 
 public class HeuristicsBlack extends Heuristics {
 

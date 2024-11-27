@@ -9,10 +9,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import it.unibo.ai.didattica.competition.tablut.domain.Action;
 import it.unibo.ai.didattica.competition.tablut.domain.State;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
-import it.unibo.ai.didattica.competition.tablut.ourClient.GameHelper;
-import it.unibo.ai.didattica.competition.tablut.ourClient.LookupTable;
 import it.unibo.ai.didattica.competition.tablut.ourClient.evaluations.Evaluations;
 import it.unibo.ai.didattica.competition.tablut.ourClient.interfaces.TreeSearch;
+import it.unibo.ai.didattica.competition.tablut.ourClient.ourUtilities.GameHelper;
+import it.unibo.ai.didattica.competition.tablut.ourClient.ourUtilities.LookupTable;
 import it.unibo.ai.didattica.competition.tablut.simulator.TablutGame;
 
 public class MinMaxRunnable implements TreeSearch, Runnable  {
@@ -30,7 +30,7 @@ public class MinMaxRunnable implements TreeSearch, Runnable  {
     Action bestAction = null;
     public float score = 0;
 
-    private int depth;
+    private int depth = 0;
     public LookupTable lookup = new LookupTable();
 
     public MinMaxRunnable(int depth, AtomicBoolean stopSearch, State state) {
@@ -48,6 +48,10 @@ public class MinMaxRunnable implements TreeSearch, Runnable  {
             // Gestione delle eccezioni durante la ricerca
             System.out.println("Errore durante l'esecuzione di MinMaxRunnable: " + e.getMessage());
         }
+    }
+
+    public int getDepth(){
+        return depth;
     }
 
     public Action getBestAction() {

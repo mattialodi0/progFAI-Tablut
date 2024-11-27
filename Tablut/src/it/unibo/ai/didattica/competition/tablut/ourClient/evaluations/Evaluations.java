@@ -2,19 +2,16 @@ package it.unibo.ai.didattica.competition.tablut.ourClient.evaluations;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import it.unibo.ai.didattica.competition.tablut.domain.State;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Pawn;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
-import it.unibo.ai.didattica.competition.tablut.ourClient.GameHelper;
+import it.unibo.ai.didattica.competition.tablut.ourClient.ourUtilities.GameHelper;
 
 public class Evaluations {
 
     public static float evaluate(State state) {
         float eval = evaluateQuick(state);
-        // float eval = evaluateAdvanced(state, state.getTurn());
-        // System.out.println(eval);
         return eval;
     }
 
