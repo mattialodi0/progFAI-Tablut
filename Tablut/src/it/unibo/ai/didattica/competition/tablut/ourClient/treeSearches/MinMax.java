@@ -65,7 +65,7 @@ public class MinMax implements TreeSearch {
             score = Float.NEGATIVE_INFINITY;
             for (Action m : moves_evals) {
                 state = TablutGame.makeMove(state, m);
-                float cur = MiniMax(state, this.depth - 1, alpha, beta, false);
+                float cur = MiniMax(state.clone(), this.depth - 1, alpha, beta, false);
                 if (cur >= score) {
                     score = cur;
                     bestAction = m;

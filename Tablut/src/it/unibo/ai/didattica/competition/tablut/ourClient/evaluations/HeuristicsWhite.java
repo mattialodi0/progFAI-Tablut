@@ -66,13 +66,13 @@ public class HeuristicsWhite extends Heuristics {
                         case 0:
                                 return -1;
                         case 1:
-                                return 1;
+                                return 0.2f;
                         case 2:
-                                return 20;
+                                return 1;
                         case 3:
-                                return 22;
+                                return 1;
                         case 4:
-                                return 24;
+                                return 1;
                         default:
                                 return 0;
                 }

@@ -253,7 +253,7 @@ public class GameHelper {
     
     public static float getKingOpenFiles(State state) {
         int[] king_pos = getKingPosition(state);
-        float open = 4f;
+        int open = 4;
 
         int i = 0;
         i = king_pos[1]-1;
@@ -295,8 +295,21 @@ public class GameHelper {
                 break;
             }
         }
-        
-        return open;
+    
+        switch (open) {
+            case 0:
+                    return -1;
+            case 1:
+                    return 0.2f;
+            case 2:
+                    return 1;
+            case 3:
+                    return 1;
+            case 4:
+                    return 1;
+            default:
+                    return 0;
+    }
     }
 
 }
