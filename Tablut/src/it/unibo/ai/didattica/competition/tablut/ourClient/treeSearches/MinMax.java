@@ -126,7 +126,7 @@ public class MinMax implements TreeSearch {
     
     protected float MiniMax(State state, int depth, float alpha, float beta, Boolean isWhite) {
         this.nodes++;
-
+        
         // if this is a leaf
         if (state.getTurn().equals(Turn.DRAW)) {
             return 0;

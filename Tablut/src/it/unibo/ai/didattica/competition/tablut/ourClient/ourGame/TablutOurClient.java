@@ -8,6 +8,7 @@ import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
 import it.unibo.ai.didattica.competition.tablut.ourClient.interfaces.TreeSearch;
 import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.MultiThreadMinMaxLauncher;
 import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.IterativeDeepening;
+import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.MinMax;
 
 /**
  * 
@@ -103,7 +104,7 @@ public class TablutOurClient extends TablutClient {
 
 		// searchStrategy = new MultiThreadMinMaxLauncher(4);
 		// searchStrategy = new MultiThreadMinMaxLauncher(4);
-		searchStrategy = new IterativeDeepening();
+		searchStrategy = new MinMax(2); 
 
 		System.out.println("You are player " + this.getPlayer().toString() + "!");
 
