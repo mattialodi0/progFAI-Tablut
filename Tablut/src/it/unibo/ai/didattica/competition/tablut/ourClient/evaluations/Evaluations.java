@@ -12,8 +12,8 @@ public class Evaluations {
 
     public static float evaluate(State state) {
         // float eval = evaluateQuick(state);
+        // float eval = evaluateFinal(state);
         float eval = evaluateFinal(state);
-        // float eval = evaluateAdvanced(state, state.getTurn());
         return eval;
     }
 

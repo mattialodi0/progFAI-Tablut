@@ -51,6 +51,7 @@ public class IterativeDeepening implements TreeSearch {
 
     private void iterativeSearch(State state) {
         int i = 0;
+        int j = 0;
         List<Action> moves = GameHelper.availableMoves(state.clone());
         if (!moves.isEmpty()) {
             bestAction = moves.get(0); // Assegna la prima mossa valida come backup
@@ -62,7 +63,6 @@ public class IterativeDeepening implements TreeSearch {
         */
 
         stopSearch.set(false);
-        int j = 0;
         while (!stopSearch.get()) {
             long elapsedTime = System.currentTimeMillis() - start_time;
             int remainingTime = (int) (MAX_TIME - elapsedTime);
@@ -96,6 +96,7 @@ public class IterativeDeepening implements TreeSearch {
             if (workerThread.isAlive()) {
                 stopSearch.set(true);
                 try {
+                    workerThread.interrupt();
                     workerThread.join();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -108,6 +109,8 @@ public class IterativeDeepening implements TreeSearch {
                 System.out.println("Aggiornata bestAction alla profondita " + i + ": " + bestAction.toString() + " con eval: " + worker.getScore());
             }
             */
+
+    
 
             if (!stopSearch.get() && worker.getBestAction() != null) {
                 bestAction = worker.getBestAction();
