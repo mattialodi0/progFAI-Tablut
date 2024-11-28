@@ -13,7 +13,7 @@ public class Evaluations {
     public static float evaluate(State state) {
         // float eval = evaluateQuick(state);
         // float eval = evaluateFinal(state);
-        float eval = evaluateAdvanced(state, state.getTurn());
+        float eval = evaluateFinal(state);
         return eval;
     }
 
@@ -100,7 +100,7 @@ public class Evaluations {
             }
             float dispersion = distances.stream().mapToInt(f -> f).sum() / distances.size();
 
-            if (pawns > 16) { // early game
+            if (pawns > 20) { // early game
                 eval = 2 * Math.atan(material * 5) - Math.atan(king_center_distance * 5)
                         + Math.atan(king_open_files * 5) - (2 * Math.atan(dispersion * 5));
             } else if (pawns > 16) { // mid game
