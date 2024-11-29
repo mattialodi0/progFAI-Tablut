@@ -10,11 +10,7 @@ import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.MultiThre
 import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.IterativeDeepening;
 import it.unibo.ai.didattica.competition.tablut.ourClient.treeSearches.MinMax;
 
-/**
- * 
- * @author A. Piretti, Andrea Galassi
- *
- */
+
 public class TablutOurClient extends TablutClient {
 
 	private int game;
@@ -104,9 +100,6 @@ public class TablutOurClient extends TablutClient {
 				System.exit(4);
 		}
 
-		// searchStrategy = new MultiThreadMinMaxLauncher(4);
-		// searchStrategy = new MultiThreadMinMaxLauncher(4);
-		// searchStrategy = new MinMax(2); 
 		searchStrategy = new IterativeDeepening(max_time); 
 
 		System.out.println("You are player " + this.getPlayer().toString() + "!");
@@ -189,18 +182,3 @@ public class TablutOurClient extends TablutClient {
 		}
 	}
 }
-
-/*
- * Client functioning:
- * 
- * 0. get the game state
- * 1. checks the state for win/lose/draw
- * 2. checks if can win in a move
- * 3. starts the search of the best possible move
- * - checks time
- * - evaluates a level of the tree
- * - choose a move
- * 
- * lookup tables to not re-evaluate the same position
- * heuristics to evaluate position -> DL/RL
- */

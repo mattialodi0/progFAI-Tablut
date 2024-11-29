@@ -10,9 +10,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class IterativeDeepening implements TreeSearch {
     private long start_time = 0;
-    private int MAX_TIME = 10_000; // massimo tempo di ricerca in millisecondi (9 secondi)
+    private int MAX_TIME = 60_000;
     private AtomicBoolean stopSearch = new AtomicBoolean(false); // Flag per fermare il thread
-    private Action bestAction = null; // Risultato migliore trovato
+    private Action bestAction = null;
 
     public IterativeDeepening() {
     }
