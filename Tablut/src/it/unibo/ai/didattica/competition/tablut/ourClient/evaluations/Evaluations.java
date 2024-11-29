@@ -173,6 +173,7 @@ public class Evaluations {
         float eval = 0;
         float alive;
         float eaten;
+
         if (currentTurn == (Turn.WHITE)) {
             alive = (float) state.getNumberOf(Pawn.WHITE) / 8;
             eaten = (float) (16 - state.getNumberOf(Pawn.BLACK)) / 16;
@@ -180,17 +181,23 @@ public class Evaluations {
             int x = (int) king / 9;
             int y = (int) king % 9;
             float king_center_distance = (float) (Math.sqrt(Math.pow((4 - x), 2) + Math.pow(4 - y, 2)));
+            if (king_center_distance >= 1)
+                king_center_distance = 10;
+            else if (king_center_distance >= 0)
+                king_center_distance = 5;
+            else
+                king_center_distance = 0;
 
-            List<Integer> distances = new ArrayList<>();
-            String str = state.toLinearString();
-            for (int i = 0; i < str.length(); i++) {
-                if (str.charAt(i) == 'W') {
-                    int[] p = { i / 9, i % 9 };
-                    // allied_pawns.add(p);
-                    distances.add(Math.abs(p[0] - 4) + Math.abs(p[1] - 4));
-                }
-            }
-            float dispersion = distances.stream().mapToInt(f -> f).sum() / (distances.size() * 7);
+            // List<Integer> distances = new ArrayList<>();
+            // String str = state.toLinearString();
+            // for (int i = 0; i < str.length(); i++) {
+            //     if (str.charAt(i) == 'W') {
+            //         int[] p = { i / 9, i % 9 };
+            //         // allied_pawns.add(p);
+            //         distances.add(Math.abs(p[0] - 4) + Math.abs(p[1] - 4));
+            //     }
+            // }
+            // float dispersion = distances.stream().mapToInt(f -> f).sum() / (distances.size() * 7);
 
             int s = 0;
             int[] k = GameHelper.getKingPosition(state);
@@ -262,21 +269,21 @@ public class Evaluations {
             float escapesOpen = 0;
             switch (king_open_files) {
                 case 4:
-                    escapesOpen = 24;
+                    escapesOpen = 14;
                 case 3:
-                    escapesOpen = 22;
+                    escapesOpen = 12;
                 case 2:
-                    escapesOpen = 20;
+                    escapesOpen = 10;
                 case 1:
-                    escapesOpen = 5;
+                    escapesOpen = 2;
                 case 0:
                     escapesOpen = -1;
             }
 
-            if (pawns > 18) { // early game
-                eval = 300 * alive + 250 * eaten + surrounding_king + escapesOpen - dispersion;
+            if (pawns > 20) { // early game
+                eval = 250 * alive + 300 * eaten + surrounding_king + escapesOpen - 4 * king_center_distance;
             } else { // end game
-                eval = 300 * alive + 200 * eaten + 2 * surrounding_king + 20 * escapesOpen;
+                eval = 250 * alive + 200 * eaten + 2 * surrounding_king + 20 * escapesOpen;
             }
         } else {
             alive = (float) state.getNumberOf(Pawn.BLACK) / 16;
