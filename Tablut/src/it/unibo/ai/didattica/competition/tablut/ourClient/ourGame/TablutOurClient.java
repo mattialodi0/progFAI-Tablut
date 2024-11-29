@@ -15,7 +15,7 @@ public class TablutOurClient extends TablutClient {
 
 	private int game;
 	private TreeSearch searchStrategy;
-	private static int max_time = 10;
+	private static int max_time = 60;
 
 	public TablutOurClient(String player, String name, int gameChosen, int timeout, String ipAddress)
 			throws UnknownHostException, IOException {
@@ -39,7 +39,7 @@ public class TablutOurClient extends TablutClient {
 	public static void main(String[] args) throws UnknownHostException, IOException, ClassNotFoundException {
 		int gametype = 4;
 		String role = "";
-		String name = "our";
+		String name = "TablutConqueror";
 		String ipAddress = "localhost";
 		int timeout = 60;
 		// TODO: change the behavior?

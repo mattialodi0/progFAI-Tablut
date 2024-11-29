@@ -18,7 +18,8 @@ public class IterativeDeepening implements TreeSearch {
     }
 
     public IterativeDeepening(int timeout) {
-        this.MAX_TIME = timeout * 1000;
+        float margin = (float) (1 / 30f) * timeout;
+        this.MAX_TIME = (int) (timeout - margin) * 1000;
     }
 
     @Override
