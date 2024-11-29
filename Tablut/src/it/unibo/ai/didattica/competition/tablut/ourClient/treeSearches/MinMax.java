@@ -94,27 +94,7 @@ public class MinMax implements TreeSearch {
         } else {
             System.out.println("big prolbem...");
         }
-
-        // debug prints
-        try {
-            // System.out.println(" ");
-            // System.out.println("score "+score);
-            // System.out.println("move"+bestAction);
-            // System.out.println(TablutGame.makeMove(state, bestAction).toString());
-            // System.out.println("Nodes visited: " + nodes);
-            // System.out.println("Total lookups: " + lookups);
-            // int perc = ((lookups_hits * 100) / lookups);
-            // avgs += perc;
-            // avgs_num++;
-            // System.out.println("Lookup hits: " + lookups_hits + " - " + perc + "%");
-            // tot_branching_cuts++;
-            // if((moves_evals.indexOf(bestAction) <= branchingFactor(this.depth - depth))) {
-            //     good_branching_cuts++;
-            // }
-            // System.out.println(moves_evals.indexOf(bestAction) +"/"+ (moves_evals.size()-1));
-        } catch (Exception e) {
-        }
-
+        
         return bestAction;
     }
 

@@ -10,11 +10,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class IterativeDeepening implements TreeSearch {
     private long start_time = 0;
-    private static final int MAX_TIME = 10_000; // massimo tempo di ricerca in millisecondi (9 secondi)
+    private int MAX_TIME = 10_000; // massimo tempo di ricerca in millisecondi (9 secondi)
     private AtomicBoolean stopSearch = new AtomicBoolean(false); // Flag per fermare il thread
     private Action bestAction = null; // Risultato migliore trovato
 
     public IterativeDeepening() {
+    }
+
+    public IterativeDeepening(int timeout) {
+        this.MAX_TIME = timeout * 1000;
     }
 
     @Override
@@ -50,49 +54,28 @@ public class IterativeDeepening implements TreeSearch {
     }
 
     private void iterativeSearch(State state) {
-        int i = 0;
+        int i = 1;
         int j = 0;
         List<Action> moves = GameHelper.availableMoves(state.clone());
         if (!moves.isEmpty()) {
             bestAction = moves.get(0); // Assegna la prima mossa valida come backup
         }
-    
-        /* 
-        long previousDepthTime = 0; // Tempo impiegato per completare la profondità precedente
-        double growthFactor = 1.5;  // Fattore di crescita esponenziale (ad esempio, base 2)
-        */
 
         stopSearch.set(false);
         while (!stopSearch.get()) {
             long elapsedTime = System.currentTimeMillis() - start_time;
             int remainingTime = (int) (MAX_TIME - elapsedTime);
-    
-            // Calcola il tempo stimato per la prossima profondità con un fattore di crescita esponenziale
-            
-            /*
-            long estimatedTimeForNextDepth = (previousDepthTime > 0) 
-                                                ? (long) (previousDepthTime * Math.pow(growthFactor, i))
-                                                : 1000;
-            System.out.println("Depth: " + i + " ElapsedTime: " + elapsedTime/1000 + "s RemainingTime: " + 
-                           remainingTime/1000 + "s EstimatedTime: " + estimatedTimeForNextDepth/1000 + "s");
-    
-            // Se il tempo rimanente è troppo poco per completare la prossima profondità, interrompi
-            if (remainingTime <= estimatedTimeForNextDepth) break;
-            
 
-            long depthStartTime = System.currentTimeMillis();
-            */
-    
             MinMaxRunnable worker = new MinMaxRunnable(i, stopSearch, state);
             Thread workerThread = new Thread(worker);
             workerThread.start();
-    
+
             try {
                 workerThread.join(remainingTime);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-    
+
             if (workerThread.isAlive()) {
                 stopSearch.set(true);
                 try {
@@ -102,35 +85,18 @@ public class IterativeDeepening implements TreeSearch {
                     e.printStackTrace();
                 }
             }
-    
-            /* 
-            if (!stopSearch.get() && worker.getBestAction() != null) {
-                bestAction = worker.getBestAction();
-                System.out.println("Aggiornata bestAction alla profondita " + i + ": " + bestAction.toString() + " con eval: " + worker.getScore());
-            }
-            */
-
-    
 
             if (!stopSearch.get() && worker.getBestAction() != null) {
                 bestAction = worker.getBestAction();
-                System.out.println("Aggiornata bestAction alla profondita " + i + ": " + bestAction.toString() + " con eval: " + worker.getScore());
                 j++;
             } else if (worker.getBestAction() != null) {
                 // Aggiorna la miglior azione trovata anche se il tempo è scaduto
-                if(worker.getDepth() >= j) {
+                if (worker.getDepth() > j) {
                     bestAction = worker.getBestAction();
-                    System.out.println("2: Aggiornata bestAction alla profondita " + i + ": " + bestAction.toString() + " con eval: " + worker.getScore());
                 }
             }
-            // Calcola il tempo impiegato per questa profondità
-            // previousDepthTime = System.currentTimeMillis() - depthStartTime;
-            //System.out.println("Profondita corrente: " + i + ", Tempo impiegato: " + previousDepthTime + "ms");
-    
             i++;
         }
-    
-        System.out.println("Fine della ricerca iterativeSearch, profondita raggiunta: " + (i));
     }
 
     @Override

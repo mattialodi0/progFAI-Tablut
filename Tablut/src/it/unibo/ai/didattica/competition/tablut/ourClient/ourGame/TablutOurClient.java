@@ -19,6 +19,7 @@ public class TablutOurClient extends TablutClient {
 
 	private int game;
 	private TreeSearch searchStrategy;
+	private static int max_time = 10;
 
 	public TablutOurClient(String player, String name, int gameChosen, int timeout, String ipAddress)
 			throws UnknownHostException, IOException {
@@ -61,6 +62,7 @@ public class TablutOurClient extends TablutClient {
 			ipAddress = args[2];
 		}
 		System.out.println("Selected client: " + args[0]);
+		max_time = timeout;
 
 		TablutOurClient client = new TablutOurClient(role, name, gametype, timeout, ipAddress);
 		client.run();
@@ -104,7 +106,8 @@ public class TablutOurClient extends TablutClient {
 
 		// searchStrategy = new MultiThreadMinMaxLauncher(4);
 		// searchStrategy = new MultiThreadMinMaxLauncher(4);
-		searchStrategy = new MinMax(2); 
+		// searchStrategy = new MinMax(2); 
+		searchStrategy = new IterativeDeepening(max_time); 
 
 		System.out.println("You are player " + this.getPlayer().toString() + "!");
 

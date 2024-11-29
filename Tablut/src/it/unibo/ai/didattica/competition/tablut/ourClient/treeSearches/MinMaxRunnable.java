@@ -15,7 +15,7 @@ import it.unibo.ai.didattica.competition.tablut.ourClient.ourUtilities.GameHelpe
 import it.unibo.ai.didattica.competition.tablut.ourClient.ourUtilities.LookupTable;
 import it.unibo.ai.didattica.competition.tablut.simulator.TablutGame;
 
-public class MinMaxRunnable implements TreeSearch, Runnable  {
+public class MinMaxRunnable implements TreeSearch, Runnable {
     public static float maxEval = Float.NEGATIVE_INFINITY;
     public static float minEval = Float.POSITIVE_INFINITY;
     public static int avgs = 0;
@@ -38,11 +38,11 @@ public class MinMaxRunnable implements TreeSearch, Runnable  {
         this.stopSearch = stopSearch;
         this.state = state;
     }
-    
 
     @Override
-    public void run(){
-        try {// Inserisci qui lo stato iniziale (da passare come parametro o ottenuto da altrove)
+    public void run() {
+        try {// Inserisci qui lo stato iniziale (da passare come parametro o ottenuto da
+             // altrove)
             bestAction1 = searchTree(state.clone());
         } catch (Exception e) {
             // Gestione delle eccezioni durante la ricerca
@@ -50,16 +50,18 @@ public class MinMaxRunnable implements TreeSearch, Runnable  {
         }
     }
 
-    public int getDepth(){
+    public int getDepth() {
         return depth;
     }
 
     public Action getBestAction() {
         return bestAction;
     }
-    public float getScore(){
+
+    public float getScore() {
         return score;
     }
+
     @Override
     public Action searchTree(State state) {
         bestAction = null;
@@ -81,66 +83,47 @@ public class MinMaxRunnable implements TreeSearch, Runnable  {
             evals.add(Evaluations.evaluate(state.clone()));
             state = saved_state.clone();
         }
-        moves_evals = orderByEval(moves, evals, state.getTurn()==Turn.WHITE);
-        
+        moves_evals = orderByEval(moves, evals, state.getTurn() == Turn.WHITE);
 
         if (state.getTurn() == Turn.WHITE) {
             score = Float.NEGATIVE_INFINITY;
             for (Action m : moves_evals) {
                 if (stopSearch.get()) {
-                    System.out.println(bestAction);
-                    break; 
+                    break;
                 }
                 state = TablutGame.makeMove(state.clone(), m);
                 float cur = MiniMax(state.clone(), this.depth - 1, alpha, beta, false);
-                if (cur > score) {
+                if (cur >= score) {
                     score = cur;
                     bestAction = m;
-                    //this.bestAction1 = bestAction;
                 }
                 alpha = Math.max(alpha, cur);
                 if (beta <= alpha)
                     break;
                 state = saved_state.clone();
-                
+
             }
         } else if (state.getTurn() == Turn.BLACK) {
             score = Float.POSITIVE_INFINITY;
             for (Action m : moves_evals) {
                 if (stopSearch.get()) {
-                    System.out.println(bestAction);
                     break;
                 }
                 state = TablutGame.makeMove(state.clone(), m);
                 float cur = MiniMax(state.clone(), this.depth - 1, alpha, beta, true);
-                if (cur < score) {
+                if (cur <= score) {
                     score = cur;
                     bestAction = m;
-                    //this.bestAction1 = bestAction;
+                    // this.bestAction1 = bestAction;
                 }
                 beta = Math.min(beta, cur);
                 if (beta <= alpha)
-                break;
+                    break;
                 state = saved_state.clone();
-                
+
             }
         } else {
             System.out.println("big problem...");
-        }
-
-        // debug prints
-        try {
-            // System.out.println(" ");
-            // System.out.println("score "+score);
-            // System.out.println("move"+bestAction);
-            // System.out.println(TablutGame.makeMove(state, bestAction).toString());
-            // System.out.println("Nodes visited: " + nodes);
-            // System.out.println("Total lookups: " + lookups);
-            int perc = ((lookups_hits * 100) / lookups);
-            // System.out.println("Lookup hits: " + lookups_hits + " - " + perc + "%");
-            avgs += perc;
-            avgs_num++;
-        } catch (Exception e) {
         }
 
         return bestAction;
@@ -151,7 +134,6 @@ public class MinMaxRunnable implements TreeSearch, Runnable  {
         throw new UnsupportedOperationException("Unimplemented method 'hasMoreTime'");
     }
 
-    
     protected float MiniMax(State state, int depth, float alpha, float beta, Boolean isWhite) {
         this.nodes++;
 
@@ -187,17 +169,16 @@ public class MinMaxRunnable implements TreeSearch, Runnable  {
         List<Float> evals = new ArrayList<>();
         for (Action m : moves) {
             state = TablutGame.makeMove(state.clone(), m);
-            // evals.add(Evaluations.evaluateMaterial(state));
             evals.add(Evaluations.evaluate(state.clone()));
             state = saved_state.clone();
         }
-        moves_evals = orderByEval(moves, evals, state.getTurn()==Turn.WHITE);
+        moves_evals = orderByEval(moves, evals, state.getTurn() == Turn.WHITE);
 
         if (isWhite) {
             float max_score = Float.NEGATIVE_INFINITY;
-            
+
             for (Action m : moves_evals) {
-                if(stopSearch.get()) {
+                if (stopSearch.get()) {
                     break;
                 }
                 state = TablutGame.makeMove(state.clone(), m);
@@ -213,7 +194,7 @@ public class MinMaxRunnable implements TreeSearch, Runnable  {
             float min_score = Float.POSITIVE_INFINITY;
 
             for (Action m : moves_evals) {
-                if(stopSearch.get()) {
+                if (stopSearch.get()) {
                     break;
                 }
                 state = TablutGame.makeMove(state.clone(), m);
@@ -229,20 +210,6 @@ public class MinMaxRunnable implements TreeSearch, Runnable  {
         }
     }
 
-    protected int branchingFactor(int depth) {
-        /*if (depth <= 2)
-            return 15;
-        else if (depth <= 4)
-            return 10;
-        else if (depth <= 6)
-            return 5;
-        else if (depth <= this.depth)
-            return 3;
-        else
-            return 0;*/ // should not return this
-        return 50;
-    }
-
     protected List<Action> orderByEval(List<Action> moves, List<Float> evals, Boolean isWhite) {
         List<Pair<Action, Float>> pairedList = new ArrayList<>();
 
@@ -251,10 +218,10 @@ public class MinMaxRunnable implements TreeSearch, Runnable  {
         }
 
         pairedList.sort(Comparator.comparing(Pair::getSecond));
-        if(isWhite) {
+        if (isWhite) {
             Collections.reverse(pairedList);
         }
-        
+
         List<Action> sortedItems = new ArrayList<>();
         for (Pair<Action, Float> pair : pairedList) {
             sortedItems.add(pair.getFirst());
